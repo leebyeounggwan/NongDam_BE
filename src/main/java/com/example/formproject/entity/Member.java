@@ -1,5 +1,6 @@
 package com.example.formproject.entity;
 
+import com.example.formproject.security.OAuthAttributes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,5 +42,10 @@ public class Member extends TimeStamp {
     @OneToMany(fetch = FetchType.LAZY)
     @Builder.Default
     private List<Crop> crops = new ArrayList<>();
+
+    public void updateMember(OAuthAttributes attributes){
+        this.name = attributes.getName();
+        this.profileImage = attributes.getPicture();
+    }
 
 }
