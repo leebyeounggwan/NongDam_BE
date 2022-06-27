@@ -24,7 +24,7 @@ public class Crop extends TimeStamp{
     private int type;
 
     @Column
-    private int kind;
+    private String kind;
 
     @Column
     private String name;
