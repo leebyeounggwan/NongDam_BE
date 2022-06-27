@@ -12,6 +12,11 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "customUnique", columnNames = {"type","category","kind"})
+        }
+)
 public class Crop extends TimeStamp{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
