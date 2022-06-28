@@ -49,5 +49,6 @@ public class WorkLog {
     private List<String> pictures = new ArrayList<>();
 
     @Column
-    private long harvest = 0;
+    @Builder.Default
+    private long harvest = 0L;
 }
