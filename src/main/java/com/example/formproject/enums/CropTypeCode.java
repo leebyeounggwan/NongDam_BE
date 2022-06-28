@@ -2,6 +2,9 @@ package com.example.formproject.enums;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 @Getter
 public enum CropTypeCode {
     쌀(111),찹쌀(112),콩(141),팥(142),녹두(143),메밀(144),고구마(151),감자(152),
@@ -10,5 +13,9 @@ public enum CropTypeCode {
     private int type;
     CropTypeCode(int type){
         this.type = type;
+    }
+
+    public static CropTypeCode getNameByCode(int code){
+        return Arrays.stream(values()).filter(e->e.getType() == code).collect(Collectors.toList()).get(0);
     }
 }

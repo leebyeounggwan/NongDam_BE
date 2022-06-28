@@ -50,5 +50,7 @@ public class WorkLog {
 
     @Column
     @Builder.Default
-    private long harvest = 0;
+
+    private long harvest = 0L;
+
 }
