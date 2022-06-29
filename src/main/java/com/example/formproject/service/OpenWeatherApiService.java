@@ -24,7 +24,7 @@ public class OpenWeatherApiService {
     private final GeoService geoService;
 //    public static void main(String[] args) throws IOException, ParseException {
     public WeatherResponse getWeather() throws IOException, ParseException {
-        String[] coords = geoService.getGeoPoint("서울시 강서구 화곡로 320");
+        String[] coords = geoService.getGeoPoint("서울시 강서구 화곡로 300");
         String lat = coords[1];
         String lon = coords[0];
 //        StringBuilder urlBuilder = new StringBuilder("http://api.openweathermap.org/data/2.5/weather?q=seoul&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr"); /*URL*/
