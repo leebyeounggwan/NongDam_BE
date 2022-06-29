@@ -1,11 +1,12 @@
 package com.example.formproject.service;
 
 import com.example.formproject.dto.response.CropCategoryDto;
+import com.example.formproject.dto.response.PersonalCropDto;
 import com.example.formproject.entity.Crop;
 import com.example.formproject.enums.CropCategoryCode;
 import com.example.formproject.repository.CropRepository;
+import com.example.formproject.security.MemberDetail;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +47,17 @@ public class CropService {
         ret.add(vegitable);
         ret.add(fruits);
         return ret;
+    }
+
+    public List<PersonalCropDto> getPersonalCrop(MemberDetail memberdetail) {
+        List<Crop> cropList = cropRepository.findAllByMember(memberdetail.getMember());
+        List<PersonalCropDto> list = new ArrayList<>();
+        for (Crop c : cropList) {
+            PersonalCropDto personalCropDto = new PersonalCropDto();
+            personalCropDto.setId(c.getId());
+            personalCropDto.setName(c.getName());
+            list.add(personalCropDto);
+        }
+        return list;
     }
 }

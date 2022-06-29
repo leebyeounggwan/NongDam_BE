@@ -24,7 +24,7 @@ public class Member extends TimeStamp {
     @Column
     private String name;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     @Column
