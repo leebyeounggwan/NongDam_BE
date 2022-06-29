@@ -26,16 +26,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        Cookie tokenCookie = CookieUtils.getCookie(request,"token").orElse(null);
-        String token = "";
-        if(tokenCookie != null) {
-            token = tokenCookie.getValue();
-        }else {
-            token = request.getHeader("Authorization");
-        }
+//        Cookie tokenCookie = CookieUtils.getCookie(request,"token").orElse(null);
+        String token  = request.getHeader("Authorization");
+//        if(tokenCookie != null) {
+//            token = tokenCookie.getValue();
+//        }else {
+//
+//        }
         // 유효한 토큰인지 확인
         if (token != null) {
-            String jwtToken = token.replace("Bearer ", "");
+            String jwtToken = token.replaceAll("Bearer ", "");
             if (provider.validateToken(jwtToken)) {
                 // 토큰값과 refresh 토큰으로 유저 정보를 받아옴
                 MemberDetail detail = provider.getMemberDetail(jwtToken);

@@ -28,7 +28,6 @@ public class SecurityConfig {
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/member/oauth").access("#oauth2.hasScope('profile')")
                 .anyRequest().permitAll()
                 .and()
                 .oauth2Login()
