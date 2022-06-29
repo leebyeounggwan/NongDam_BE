@@ -3,6 +3,8 @@ package com.example.formproject.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter @Setter
 public class WeatherResponse {
     //기온 / 날씨 / 강수량 / 습도 / 바람 (하루기준)
@@ -15,11 +17,22 @@ public class WeatherResponse {
         weather : “” (날씨)
     }*/
 
-    private String minTemp;
-    private String maxTemp;
-    private String sumRn;
-    private String avgWs;
-    private String avgRhm;
+    // 기온
+    private String temp;
+    //강수량
+    private String rn;
+    //적설량
+    private String sn;
+    //풍속
+    private String ws;
+    //습도
+    private String rhm;
+    //날씨
     private String weather;
+    //시간별 날씨
+    private List<HourlyDto> hour;
+    //주간 날씨
+    private List<DailyDto> day;
+
 
 }
