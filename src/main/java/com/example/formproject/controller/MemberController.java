@@ -10,6 +10,7 @@ import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.EmailService;
 import com.example.formproject.service.MemberService;
+import com.example.formproject.service.OAuthService;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.http.ResponseEntity;
@@ -29,44 +30,32 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
-    private final MemberRepository repository;
     private final MemberService memberService;
     private final EmailService emailService;
 
+    private final OAuthService oAuthService;
+
     // 로그인
     @PostMapping("/member/login")
-    public String loginMember(@RequestBody LoginDto dto, HttpServletResponse response) throws AuthenticationException {
+    public String loginMember(@RequestBody  LoginDto dto, HttpServletResponse response) throws AuthenticationException {
         String token = memberService.login(dto);
 
-        response.addHeader("Authorization", "Bearer " + token);
-        return "Bearer " + token;
+        response.addHeader("Authorization","Bearer "+token);
+        return "Bearer "+token;
     }
-
     @PostMapping("/member/email")
     public String emailToken(MailDto dto) throws MessagingException {
         String randomChars = RandomString.make(6);
-        return emailService.sendHtmlEmail(dto, randomChars);
+        return emailService.sendHtmlEmail(dto,randomChars);
     }
-
-    @PostMapping("/member/oauth")
-    public void accessTokenToMember(@RequestBody String t) {
-        System.out.println("token : " + t);
-        Map<String, Object> maps = new HashMap<>();
-        OAuth2AccessTokenResponse.withToken(t).tokenType(OAuth2AccessToken.TokenType.BEARER).additionalParameters(maps);
-        for (String key : maps.keySet()) {
-            System.out.println(key + ":" + maps.get(key));
-        }
-        System.out.println("end print");
+    @PostMapping("/member/auth")
+    public String accessTokenToMember(@RequestBody  String t){
+        String jwtToken = oAuthService.kakaoLogin(t);
+        return jwtToken;
     }
-
     @PostMapping("/member")
     public void joinMember(@RequestBody MemberRequestDto dto) throws IOException {
         memberService.save(dto);
-    }
-
-    @GetMapping("/member}")
-    public List<Member> getMember(@AuthenticationPrincipal MemberDetail memberDetail) {
-        return repository.findAllByMember(memberDetail.getMember());
     }
 
 //    @PutMapping("/member/{memberid}")

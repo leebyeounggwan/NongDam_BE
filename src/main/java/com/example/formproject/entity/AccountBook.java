@@ -1,5 +1,7 @@
 package com.example.formproject.entity;
 
+import com.example.formproject.FinalValue;
+import com.example.formproject.dto.request.AccountRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,4 +35,11 @@ public class AccountBook {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Member member;
+
+    public void update(AccountRequestDto dto){
+        this.type = dto.getType();
+        this.price = dto.getPrice();
+        this.memo = dto.getMemo();
+        this.date = LocalDate.parse(dto.getDate(), FinalValue.DAY_FORMATTER);
+    }
 }
