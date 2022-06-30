@@ -40,20 +40,20 @@ public class MemberService {
     }
 
 
-    public ResponseEntity<?> updateMember(int memberid, MemberInfoRequestDto requestDto, String username) {
-        Member member = repository.findById(memberid).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않습니다."));
-
-        int memberId = member.getId();
-
-        if (Objects.equals(memberId, memberid)) {
-            Member member = repository.findById(memberid).orElse(null);
-
-
-
-
-            return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);
-    }
+//    public ResponseEntity<?> updateMember(int memberid, MemberInfoRequestDto requestDto, String username) {
+//        Member member = repository.findById(memberid).orElseThrow(
+//                () -> new IllegalArgumentException("존재하지 않습니다."));
+//
+//        int memberId = member.getId();
+//
+//        if (Objects.equals(memberId, memberid)) {
+//            Member member = repository.findById(memberid).orElse(null);
+//
+//
+//
+//
+//            return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
+//        }
+//        return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);
+//    }
 }
