@@ -18,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
@@ -58,12 +59,11 @@ public class MemberController {
         memberService.save(dto);
     }
 
-//    @PutMapping("/member/{memberid}")
-//    public ResponseEntity<?> updateMember(@PathVariable int memberid,
-//                                          @RequestBody MemberInfoRequestDto requestDto,
-//                                          @AuthenticationPrincipal MemberDetail memberDetails) {
-//        String username = memberDetails.getUsername();
-//
-//        return memberService.updateMember(memberid, requestDto, username);
-//    }
+    @PutMapping("/member/{memberid}")
+    public ResponseEntity<?> updateMember(@PathVariable int memberid,
+                                          @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+                                          @RequestBody MemberInfoRequestDto requestDto,
+                                          @AuthenticationPrincipal MemberDetail memberDetails) {
+        return memberService.updateMember(memberid, profileImage, requestDto, memberDetails.getUsername());
+    }
 }
