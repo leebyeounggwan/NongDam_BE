@@ -20,11 +20,11 @@ public class AccountBookQueryDsl extends QuerydslRepositorySupport {
         super(AccountBook.class);
         this.queryFactory = queryFactory;
     }
-//    public List<AccountBook> findByMaxResult(Member member,int maxResult){
-//        return queryFactory.selectFrom(accountBook)
-//                .where(accountBook.member.id.eq(member.getId()))
-//                .orderBy(accountBook.date.desc())
-//                .limit(maxResult)
-//                .fetch();
-//    }
+    public List<AccountBook> findByMaxResult(Member member,int maxResult){
+        return queryFactory.selectFrom(accountBook)
+                .where(accountBook.member.id.eq(member.getId()))
+                .orderBy(accountBook.date.desc())
+                .limit(maxResult)
+                .fetch();
+    }
 }

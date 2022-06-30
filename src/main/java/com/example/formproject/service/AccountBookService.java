@@ -83,11 +83,11 @@ public class AccountBookService {
         book.update(dto);
         return new AccountResponseDto(accountBookRepository.save(book));
     }
-//
-//    public List<AccountResponseDto> findByLimits(Member member,int maxResult){
-//        List<AccountBook> books = accountBookQueryDsl.findByMaxResult(member,maxResult);
-//        return convertResponse(books);
-//    }
+
+    public List<AccountResponseDto> findByLimits(Member member,int maxResult){
+        List<AccountBook> books = accountBookQueryDsl.findByMaxResult(member,maxResult);
+        return convertResponse(books);
+    }
     public List<AccountResponseDto> findByMonth(Member member,int year,int month){
         List<AccountBook> books = accountBookRepository.findAccountBookByMonth(member.getId(),year,month);
         return convertResponse(books);
