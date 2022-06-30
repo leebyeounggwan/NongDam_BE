@@ -1,8 +1,9 @@
 package com.example.formproject.service;
 
-import com.example.formproject.dto.response.DailyDto;
-import com.example.formproject.dto.response.HourlyDto;
+import com.example.formproject.dto.response.DailyWeatherDto;
+import com.example.formproject.dto.response.HourlyWeatherDto;
 import com.example.formproject.dto.response.WeatherResponse;
+import com.example.formproject.security.MemberDetail;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,13 +24,19 @@ import java.util.*;
 public class OpenWeatherApiService {
     private final GeoService geoService;
 //    public static void main(String[] args) throws IOException, ParseException {
-    public WeatherResponse getWeather() throws IOException, ParseException {
-        String[] coords = geoService.getGeoPoint("서울시 강서구 화곡로 300");
+    public WeatherResponse getWeather(MemberDetail memberdetail) throws IOException, ParseException {
+        String address;
+        if (memberdetail.getMember().getContryCode() == 0) {
+            address = "서울시 강서구 화곡로 320";
+        } else {
+            address = "서울시 강서구 화곡로 320";
+        }
+
+        String[] coords = geoService.getGeoPoint(address);
         String lat = coords[1];
         String lon = coords[0];
-//        StringBuilder urlBuilder = new StringBuilder("http://api.openweathermap.org/data/2.5/weather?q=seoul&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr"); /*URL*/
-        StringBuilder urlBuilder = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr"); /*URL*/
 
+        StringBuilder urlBuilder = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr"); /*URL*/
 
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -58,13 +65,13 @@ public class OpenWeatherApiService {
 
         JSONObject snow = (JSONObject) parse_response.get("snow");
         if(snow == null){
-            weatherResponse.setSn("null");
+            weatherResponse.setSn("-");
         } else {
             weatherResponse.setSn(snow.get("1h").toString());
         }
         JSONObject rain = (JSONObject) parse_response.get("rain");
         if(rain == null){
-            weatherResponse.setRn("null");
+            weatherResponse.setRn("-");
         } else {
             weatherResponse.setRn(rain.get("1h").toString());
         }
@@ -73,15 +80,17 @@ public class OpenWeatherApiService {
         weatherResponse.setRhm(parse_response.get("humidity").toString());
         JSONArray parse_weather = (JSONArray) parse_response.get("weather");
         JSONObject value = (JSONObject) parse_weather.get(0);
-        weatherResponse.setWeather(value.get("main").toString());
+        weatherResponse.setWeather(value.get("description").toString());
+        String icon = value.get("icon").toString();
+        weatherResponse.setIconURL("http://openweathermap.org/img/wn/"+icon+"@2x.png");
 
 
         // 시간별 기온을 위한 데이터 파싱
         JSONArray hourlyArr = (JSONArray) obj.get("hourly");
 
-        List<HourlyDto> hourList = new ArrayList<>();
+        List<HourlyWeatherDto> hourList = new ArrayList<>();
         for(int i=1; i<17; i+=3) {
-            HourlyDto hour = new HourlyDto();
+            HourlyWeatherDto hour = new HourlyWeatherDto();
             JSONObject hourObj = (JSONObject)hourlyArr.get(i);
             String time = hourObj.get("dt").toString();
 
@@ -96,9 +105,9 @@ public class OpenWeatherApiService {
         // 일별 기온을 위한 데이터 파싱
         JSONArray dailyArr = (JSONArray) obj.get("daily");
 
-        List<DailyDto> dayList = new ArrayList<>();
+        List<DailyWeatherDto> dayList = new ArrayList<>();
         for(int i=1; i<7; i++) {
-            DailyDto day = new DailyDto();
+            DailyWeatherDto day = new DailyWeatherDto();
             JSONObject dayObj = (JSONObject) dailyArr.get(i);
             String time = dayObj.get("dt").toString();
 

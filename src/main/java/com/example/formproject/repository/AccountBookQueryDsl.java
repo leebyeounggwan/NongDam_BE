@@ -2,7 +2,6 @@ package com.example.formproject.repository;
 
 import com.example.formproject.entity.AccountBook;
 import com.example.formproject.entity.Member;
-import com.example.formproject.entity.QAccountBook;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
