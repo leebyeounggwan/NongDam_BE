@@ -1,7 +1,7 @@
 package com.example.formproject.service;
 
-import com.example.formproject.dto.response.DailyDto;
-import com.example.formproject.dto.response.HourlyDto;
+import com.example.formproject.dto.response.DailyWeatherDto;
+import com.example.formproject.dto.response.HourlyWeatherDto;
 import com.example.formproject.dto.response.WeatherResponse;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -73,15 +73,15 @@ public class OpenWeatherApiService {
         weatherResponse.setRhm(parse_response.get("humidity").toString());
         JSONArray parse_weather = (JSONArray) parse_response.get("weather");
         JSONObject value = (JSONObject) parse_weather.get(0);
-        weatherResponse.setWeather(value.get("main").toString());
+        weatherResponse.setWeather(value.get("description").toString());
 
 
         // 시간별 기온을 위한 데이터 파싱
         JSONArray hourlyArr = (JSONArray) obj.get("hourly");
 
-        List<HourlyDto> hourList = new ArrayList<>();
+        List<HourlyWeatherDto> hourList = new ArrayList<>();
         for(int i=1; i<17; i+=3) {
-            HourlyDto hour = new HourlyDto();
+            HourlyWeatherDto hour = new HourlyWeatherDto();
             JSONObject hourObj = (JSONObject)hourlyArr.get(i);
             String time = hourObj.get("dt").toString();
 
@@ -96,9 +96,9 @@ public class OpenWeatherApiService {
         // 일별 기온을 위한 데이터 파싱
         JSONArray dailyArr = (JSONArray) obj.get("daily");
 
-        List<DailyDto> dayList = new ArrayList<>();
+        List<DailyWeatherDto> dayList = new ArrayList<>();
         for(int i=1; i<7; i++) {
-            DailyDto day = new DailyDto();
+            DailyWeatherDto day = new DailyWeatherDto();
             JSONObject dayObj = (JSONObject) dailyArr.get(i);
             String time = dayObj.get("dt").toString();
 

@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DailyDto {
-    private String day;
+public class HourlyWeatherDto {
+    private String time;
     private String temp;
     private String pop;
 }

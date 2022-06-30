@@ -30,9 +30,9 @@ public class WeatherResponse {
     //날씨
     private String weather;
     //시간별 날씨
-    private List<HourlyDto> hour;
+    private List<HourlyWeatherDto> hour;
     //주간 날씨
-    private List<DailyDto> day;
+    private List<DailyWeatherDto> day;
 
 
 }
