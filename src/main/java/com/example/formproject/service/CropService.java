@@ -5,6 +5,7 @@ import com.example.formproject.dto.response.PersonalCropDto;
 import com.example.formproject.entity.Crop;
 import com.example.formproject.enums.CropCategoryCode;
 import com.example.formproject.repository.CropRepository;
+import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.security.MemberDetail;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 @Service
 public class CropService {
     private final CropRepository cropRepository;
+    private final MemberRepository memberRepository;
 
     public List<CropCategoryDto> findAllData(){
         List<Crop> crops = cropRepository.findAll();
@@ -50,7 +52,7 @@ public class CropService {
     }
 
     public List<PersonalCropDto> getPersonalCrop(MemberDetail memberdetail) {
-        List<Crop> cropList = cropRepository.findAllByMember(memberdetail.getMember());
+        List<Crop> cropList = memberRepository.findAllByMember(memberdetail.getMember().getId());
         List<PersonalCropDto> list = new ArrayList<>();
         for (Crop c : cropList) {
             PersonalCropDto personalCropDto = new PersonalCropDto();
