@@ -87,9 +87,6 @@ public class OpenWeatherApiService {
 
         String[] strAddr = address.split(" ");
 
-        System.out.println(strAddr[0]);
-        System.out.println(strAddr[1]);
-
         weatherResponse.setAddress(strAddr[0]+" "+strAddr[1]);
         weatherResponse.setDewPoint(parse_response.get("dew_point").toString());
 //        (([가-힣]+(시|도)|[서울]|[인천]|[대구]|[광주]|[부산]|[울산])( |)[가-힣]+(시|군|구))
