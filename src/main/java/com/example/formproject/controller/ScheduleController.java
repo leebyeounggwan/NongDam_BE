@@ -30,12 +30,12 @@ public class ScheduleController {
     }
 
     @PostMapping("/schedule")
-    public ScheduleResponseDto saveSchedule(ScheduleRequestDto dto, @AuthenticationPrincipal MemberDetail detail){
+    public ScheduleResponseDto saveSchedule(@RequestBody ScheduleRequestDto dto, @AuthenticationPrincipal MemberDetail detail){
         return scheduleService.save(detail.getMember(),dto);
     }
 
     @PutMapping("/schedule/{scheduleId}")
-    public ScheduleResponseDto editSchedule(@PathVariable Long scheduleId,ScheduleRequestDto dto){
+    public ScheduleResponseDto editSchedule(@PathVariable Long scheduleId,@RequestBody ScheduleRequestDto dto){
         return scheduleService.save(scheduleId,dto);
     }
     @DeleteMapping("/schedule/{scheduleId}")
