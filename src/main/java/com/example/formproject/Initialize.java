@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -20,7 +21,7 @@ public class Initialize {
         this.cropRepository = cropRepository;
     }
 
-    List<Crop> cropsData = new ArrayList<>(List.of(
+    List<Crop> cropsData = Arrays.asList(
             new Crop[]{
                     Crop.builder().category(CropCategoryCode.식량작물.getCategory()).type(CropTypeCode.쌀.getType()).kind("01").name("일반계").build(),
                     Crop.builder().category(CropCategoryCode.식량작물.getCategory()).type(CropTypeCode.쌀.getType()).kind("02").name("백미").build(),
@@ -133,7 +134,7 @@ public class Initialize {
                     Crop.builder().category(CropCategoryCode.과일류.getCategory()).type(CropTypeCode.감귤.getType()).kind("02").name("시설").build(),
                     Crop.builder().category(CropCategoryCode.과일류.getCategory()).type(CropTypeCode.단감.getType()).kind("00").name("단감").build(),
                     Crop.builder().category(CropCategoryCode.과일류.getCategory()).type(CropTypeCode.참다래.getType()).kind("01").name("참다래").build(),
-            }));
+            });
     
     @PostConstruct
     public void initializeData(){

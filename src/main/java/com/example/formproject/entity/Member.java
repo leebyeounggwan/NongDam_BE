@@ -1,5 +1,6 @@
 package com.example.formproject.entity;
 
+import com.example.formproject.dto.request.MemberInfoRequestDto;
 import com.example.formproject.security.OAuthAttributes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -31,6 +33,9 @@ public class Member extends TimeStamp {
     private String password;
 
     @Column
+    private String address;
+
+    @Column
     private int contryCode;
 
     @Column
@@ -48,4 +53,11 @@ public class Member extends TimeStamp {
         this.profileImage = attributes.getPicture();
     }
 
+    public void updateMember(MemberInfoRequestDto requestDto, Map<String, String> profileImage){
+        this.nickname = requestDto.getNickname();
+        this.address = requestDto.getAddress();
+        this.contryCode = requestDto.getContryCode();
+        this.crops = requestDto.getCrops();
+        this.profileImage = profileImage.get("url");
+    }
 }
