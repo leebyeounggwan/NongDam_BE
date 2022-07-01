@@ -21,10 +21,10 @@ public class AccountBookController {
         String[] tmp = yearMonth.split("-");
         return service.findByMonth(detail.getMember(),Integer.parseInt(tmp[0]),Integer.parseInt(tmp[1]));
     }
-//    @GetMapping("/accountbook")
-//    public List<AccountResponseDto> findByLimit(@AuthenticationPrincipal MemberDetail detail){
-//        return service.findByLimits(detail.getMember(),10);
-//    }
+    @GetMapping("/accountbook")
+    public List<AccountResponseDto> findByLimit(@AuthenticationPrincipal MemberDetail detail){
+        return service.findByLimits(detail.getMember(),10);
+    }
     @PostMapping("/accountbook")
     public AccountResponseDto saveAccount(@AuthenticationPrincipal MemberDetail detail, @RequestBody AccountRequestDto dto){
         return service.save(detail.getMember(),dto);

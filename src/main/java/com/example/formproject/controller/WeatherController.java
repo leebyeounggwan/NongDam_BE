@@ -31,7 +31,8 @@ public class WeatherController {
 
     @GetMapping("/weather")
     public WeatherResponse getWeather(@AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
-        return weatherService.getWeather(memberdetail);
+//        String cacheKey = memberdetail.getMember().getName()+":"+memberdetail.getMember().getId();
+        return weatherService.getWeather(memberdetail,memberdetail.getMember().getId());
     }
 
 //    @GetMapping("/geo")

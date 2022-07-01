@@ -32,6 +32,7 @@ public class ScheduleService {
         schedule.update(dto,cropRepository);
         return new ScheduleResponseDto(scheduleRepository.save(schedule));
     }
+    @Transactional(readOnly = true)
     public List<ScheduleResponseDto> findScheduleOfWeek(Member member){
         LocalDateTime now = LocalDate.now().atTime(23,59,59);
         LocalDateTime lastWeek = now.minusWeeks(1L).toLocalDate().atTime(0,0,0);
@@ -40,12 +41,14 @@ public class ScheduleService {
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
         return ret;
     }
+    @Transactional(readOnly = true)
     public List<ScheduleResponseDto> findScheduleOfMonth(Member member,int year,int month){
         List<Schedule> schedules = scheduleRepository.findScheduleOfMonth(member.getId(),year,month);
         List<ScheduleResponseDto> ret = new ArrayList<>();
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
         return ret;
     }
+    @Transactional(readOnly = true)
     public List<ScheduleResponseDto> findScheduleOfDay(Member member){
         LocalDate now = LocalDate.now();
         List<Schedule> schedules = scheduleRepository.findScheduleOfDay(member.getId(),now.atTime(0,0,0),now.atTime(23,59,59));

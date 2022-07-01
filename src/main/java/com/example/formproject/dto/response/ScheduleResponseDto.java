@@ -2,7 +2,9 @@ package com.example.formproject.dto.response;
 
 import com.example.formproject.FinalValue;
 import com.example.formproject.entity.Schedule;
+import lombok.Getter;
 
+@Getter
 public class ScheduleResponseDto {
     private long id;
     private String startTime;

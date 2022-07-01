@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.response.DailyWeatherDto;
 import com.example.formproject.dto.response.HourlyWeatherDto;
 import com.example.formproject.dto.response.WeatherResponse;
@@ -25,7 +26,8 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class OpenWeatherApiService {
     private final GeoService geoService;
-    public WeatherResponse getWeather(MemberDetail memberdetail) throws IOException, ParseException {
+    @UseCache(ttlHour = 2L,cacheKey = "cacheKey")
+    public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
         String address;
         if (memberdetail.getMember().getContryCode() == 0) {
             address = "서울시 강서구 화곡로 302";
