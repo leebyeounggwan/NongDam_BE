@@ -36,7 +36,7 @@ public class Member extends TimeStamp {
     private String address;
 
     @Column
-    private int contryCode;
+    private int countryCode;
 
     @Column
     private String profileImage;
@@ -56,7 +56,7 @@ public class Member extends TimeStamp {
     public void updateMember(MemberInfoRequestDto requestDto, Map<String, String> profileImage){
         this.nickname = requestDto.getNickname();
         this.address = requestDto.getAddress();
-        this.contryCode = requestDto.getContryCode();
+        this.countryCode = requestDto.getCountryCode();
         this.crops = requestDto.getCrops();
         this.profileImage = profileImage.get("url");
     }

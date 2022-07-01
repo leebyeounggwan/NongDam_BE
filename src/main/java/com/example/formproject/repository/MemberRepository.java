@@ -13,4 +13,6 @@ public interface MemberRepository extends JpaRepository<Member,Integer> {
     Optional<Member> findByEmail(String email);
     @Query("select this_.crops from Member this_ where this_.id=:id")
     List<Crop> findAllByMember(int id);
+
+    List<Member> findAllByMember(Member member);
 }

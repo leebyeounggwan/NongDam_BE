@@ -31,6 +31,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final EmailService emailService;
 
@@ -57,6 +58,11 @@ public class MemberController {
     @PostMapping("/member")
     public void joinMember(@RequestBody MemberRequestDto dto) throws IOException {
         memberService.save(dto);
+    }
+
+    @GetMapping("/member")
+    public List<Member> getMember(@AuthenticationPrincipal MemberDetail memberDetail) {
+        return memberRepository.findAllByMember(memberDetail.getMember());
     }
 
     @PutMapping("/member/{memberid}")

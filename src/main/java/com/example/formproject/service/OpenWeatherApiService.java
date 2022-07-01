@@ -29,7 +29,7 @@ public class OpenWeatherApiService {
     @UseCache(ttlHour = 2L,cacheKey = "cacheKey")
     public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
         String address;
-        if (memberdetail.getMember().getContryCode() == 0) {
+        if (memberdetail.getMember().getCountryCode() == 0) {
             address = "서울시 강서구 화곡로 302";
         } else {
             address = "서울시 강서구 화곡로 302";
