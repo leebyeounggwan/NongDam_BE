@@ -23,6 +23,10 @@ public class WeatherResponse {
     private String weather;
     //아이콘 URL
     private String iconURL;
+    //지역
+    private String address;
+    //이슬점
+    private String dewPoint;
     //시간별 날씨
     private List<HourlyWeatherDto> hour;
     //주간 날씨
