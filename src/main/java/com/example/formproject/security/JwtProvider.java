@@ -58,6 +58,7 @@ public class JwtProvider {
                 .compact();
     }
 
+
     // Principal 반환
     public Authentication getAuthentication(MemberDetail userDetails) {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());

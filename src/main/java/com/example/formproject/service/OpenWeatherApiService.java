@@ -18,18 +18,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class OpenWeatherApiService {
     private final GeoService geoService;
-//    public static void main(String[] args) throws IOException, ParseException {
     public WeatherResponse getWeather(MemberDetail memberdetail) throws IOException, ParseException {
         String address;
         if (memberdetail.getMember().getContryCode() == 0) {
-            address = "서울시 강서구 화곡로 320";
+            address = "서울시 강서구 화곡로 302";
         } else {
-            address = "서울시 강서구 화곡로 320";
+            address = "서울시 강서구 화곡로 302";
         }
 
         String[] coords = geoService.getGeoPoint(address);
@@ -65,13 +66,13 @@ public class OpenWeatherApiService {
 
         JSONObject snow = (JSONObject) parse_response.get("snow");
         if(snow == null){
-            weatherResponse.setSn("-");
+            weatherResponse.setSn("0");
         } else {
             weatherResponse.setSn(snow.get("1h").toString());
         }
         JSONObject rain = (JSONObject) parse_response.get("rain");
         if(rain == null){
-            weatherResponse.setRn("-");
+            weatherResponse.setRn("0");
         } else {
             weatherResponse.setRn(rain.get("1h").toString());
         }
@@ -84,40 +85,76 @@ public class OpenWeatherApiService {
         String icon = value.get("icon").toString();
         weatherResponse.setIconURL("http://openweathermap.org/img/wn/"+icon+"@2x.png");
 
+        String[] strAddr = address.split(" ");
+
+        System.out.println(strAddr[0]);
+        System.out.println(strAddr[1]);
+
+        weatherResponse.setAddress(strAddr[0]+" "+strAddr[1]);
+        weatherResponse.setDewPoint(parse_response.get("dew_point").toString());
+//        (([가-힣]+(시|도)|[서울]|[인천]|[대구]|[광주]|[부산]|[울산])( |)[가-힣]+(시|군|구))
 
         // 시간별 기온을 위한 데이터 파싱
         JSONArray hourlyArr = (JSONArray) obj.get("hourly");
 
         List<HourlyWeatherDto> hourList = new ArrayList<>();
+        List<String> hTimeList = new ArrayList<>();
+        List<String> hTempList = new ArrayList<>();
+        List<String> hPopList = new ArrayList<>();
+        HourlyWeatherDto hour = new HourlyWeatherDto();
         for(int i=1; i<17; i+=3) {
-            HourlyWeatherDto hour = new HourlyWeatherDto();
             JSONObject hourObj = (JSONObject)hourlyArr.get(i);
             String time = hourObj.get("dt").toString();
+            hTimeList.add(getTimestampToDate(time));
+            hTempList.add(hourObj.get("temp").toString());
 
-            hour.setTime(getTimestampToDate(time));
-            hour.setTemp(hourObj.get("temp").toString());
-            hour.setPop(hourObj.get("pop").toString());
-
-            hourList.add(hour);
+            if (hourObj.get("pop").toString().equals("0")) {
+                hPopList.add("0");
+            } else if (hourObj.get("pop").toString().equals("1")) {
+                hPopList.add("100");
+            }
+            else {
+                double dPop = (double) hourObj.get("pop") * 100;
+                int iPop = (int) dPop;
+                hPopList.add(Integer.toString(iPop));
+            }
+            hour.setTime(hTimeList);
+            hour.setTemp(hTempList);
+            hour.setPop(hPopList);
         }
+        hourList.add(hour);
         weatherResponse.setHour(hourList);
 
         // 일별 기온을 위한 데이터 파싱
         JSONArray dailyArr = (JSONArray) obj.get("daily");
 
         List<DailyWeatherDto> dayList = new ArrayList<>();
+        List<String> dTimeList = new ArrayList<>();
+        List<String> dTempList = new ArrayList<>();
+        List<String> dPopList = new ArrayList<>();
+        DailyWeatherDto day = new DailyWeatherDto();
         for(int i=1; i<7; i++) {
-            DailyWeatherDto day = new DailyWeatherDto();
             JSONObject dayObj = (JSONObject) dailyArr.get(i);
             String time = dayObj.get("dt").toString();
+            dTimeList.add(getTimestampToDate(time));
 
-            day.setDay(getTimestampToDate(time));
             JSONObject dayTemp = (JSONObject) dayObj.get("temp");
-            day.setTemp(dayTemp.get("day").toString());
-            day.setPop(dayObj.get("pop").toString());
+            dTempList.add(dayTemp.get("day").toString());
+            if(dayObj.get("pop").toString().equals("0")) {
+                dPopList.add("0");
+            } else if (dayObj.get("pop").toString().equals("1")) {
+                dPopList.add("100");
+            } else {
 
-            dayList.add(day);
+                double dPop = (double) dayObj.get("pop") * 100;
+                int iPop = (int) dPop;
+                dPopList.add(Integer.toString(iPop));
+            }
+            day.setDay(dTimeList);
+            day.setTemp(dTempList);
+            day.setPop(dPopList);
         }
+        dayList.add(day);
         weatherResponse.setDay(dayList);
 
         return weatherResponse;
