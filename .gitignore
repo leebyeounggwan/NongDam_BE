@@ -18,8 +18,7 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-gradlew
-gradlew.bat
+*.db
 /gradle/*
 .idea
 *.iws
