@@ -24,6 +24,9 @@ public class JwtProvider {
 
     private final String JWT_SECRET = Base64.getEncoder().encodeToString("AirBnb".getBytes());
     private final long ValidTime = 1000L * 60 * 60;
+
+    private final long refreshValidTime = 1000L * 60 * 60 * 3;
+
     private MemberRepository repo;
 
     @Autowired
@@ -52,6 +55,15 @@ public class JwtProvider {
                 .setHeaderParam("typ", "JWT")
                 .setClaims(claims)
                 .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + ValidTime))
+                .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
+                .compact();
+    }
+
+    private String doGenerateRefreshToken() {
+        return Jwts.builder()
+                .setHeaderParam("typ", "JWT")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + ValidTime))
                 .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
