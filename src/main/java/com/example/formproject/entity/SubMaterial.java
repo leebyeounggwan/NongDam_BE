@@ -1,6 +1,5 @@
 package com.example.formproject.entity;
 
-import com.example.formproject.enums.ContryCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

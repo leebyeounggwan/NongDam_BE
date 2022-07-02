@@ -3,6 +3,7 @@ package com.example.formproject.service;
 import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MemberInfoRequestDto;
 import com.example.formproject.dto.request.MemberRequestDto;
+import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.repository.MemberRepository;
@@ -14,9 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,5 +57,9 @@ public class MemberService {
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
         }
         else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);
+    }
+    @Transactional(readOnly = true)
+    public MemberResponseDto makeMemberResponseDto(Member member){
+        return new MemberResponseDto(member);
     }
 }

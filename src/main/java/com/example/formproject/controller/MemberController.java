@@ -4,6 +4,7 @@ import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MailDto;
 import com.example.formproject.dto.request.MemberInfoRequestDto;
 import com.example.formproject.dto.request.MemberRequestDto;
+import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.repository.MemberRepository;
@@ -57,6 +58,11 @@ public class MemberController {
     @PostMapping("/member")
     public void joinMember(@RequestBody MemberRequestDto dto) throws IOException {
         memberService.save(dto);
+    }
+
+    @GetMapping("/member")
+    public MemberResponseDto getMember(@AuthenticationPrincipal MemberDetail memberDetail) {
+        return memberService.makeMemberResponseDto(memberDetail.getMember());
     }
 
     @PutMapping("/member/{memberid}")
