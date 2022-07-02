@@ -4,6 +4,7 @@ import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MailDto;
 import com.example.formproject.dto.request.MemberInfoRequestDto;
 import com.example.formproject.dto.request.MemberRequestDto;
+import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.repository.MemberRepository;
@@ -31,7 +32,6 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
-    private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final EmailService emailService;
 
@@ -61,8 +61,8 @@ public class MemberController {
     }
 
     @GetMapping("/member")
-    public List<Member> getMember(@AuthenticationPrincipal MemberDetail memberDetail) {
-        return memberRepository.findAllByMember(memberDetail.getMember());
+    public MemberResponseDto getMember(@AuthenticationPrincipal MemberDetail memberDetail) {
+        return memberService.makeMemberResponseDto(memberDetail.getMember());
     }
 
     @PutMapping("/member/{memberid}")

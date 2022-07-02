@@ -44,7 +44,7 @@ public class Member extends TimeStamp {
     @Column
     private String nickname;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     @Builder.Default
     private List<Crop> crops = new ArrayList<>();
 
