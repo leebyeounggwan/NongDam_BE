@@ -1,5 +1,7 @@
 package com.example.formproject.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -46,5 +48,11 @@ public class RedisConfig {
                 .entryTtl(Duration.ofHours(2L));
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory())
                 .cacheDefaults(configuration).build();
+    }
+    @Bean
+    public ObjectMapper getMapper(){
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
 }
