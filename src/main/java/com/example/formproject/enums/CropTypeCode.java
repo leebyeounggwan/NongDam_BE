@@ -15,7 +15,7 @@ public enum CropTypeCode {
         this.type = type;
     }
 
-    public static CropTypeCode getNameByCode(int code){
+    public static CropTypeCode findByCode(int code){
         return Arrays.stream(values()).filter(e->e.getType() == code).collect(Collectors.toList()).get(0);
     }
 }

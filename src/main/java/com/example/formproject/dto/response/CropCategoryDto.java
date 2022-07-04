@@ -17,10 +17,10 @@ public class CropCategoryDto {
     public void addCrop(Crop c){
         CropTypeDto dto = null;
         try {
-            dto = types.stream().filter(e -> e.getType().equals(CropTypeCode.getNameByCode(c.getType()).name())).collect(Collectors.toList()).get(0);
+            dto = types.stream().filter(e -> e.getType().equals(CropTypeCode.findByCode(c.getType()).name())).collect(Collectors.toList()).get(0);
         }catch (IndexOutOfBoundsException e){
             dto = new CropTypeDto();
-            dto.setType(CropTypeCode.getNameByCode(c.getType()).name());
+            dto.setType(CropTypeCode.findByCode(c.getType()).name());
             types.add(dto);
         }
         dto.addCrop(CropDto.builder().id(c.getId()).name(c.getName()).build());
