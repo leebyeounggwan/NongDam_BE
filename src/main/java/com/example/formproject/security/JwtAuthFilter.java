@@ -2,6 +2,7 @@ package com.example.formproject.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,8 @@ import java.io.IOException;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private JwtProvider provider;
+    private RedisTemplate<?, ?> redisTemplate;
+
 
     @Autowired
     public JwtAuthFilter(JwtProvider provider) {
@@ -28,6 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 //        Cookie tokenCookie = CookieUtils.getCookie(request,"token").orElse(null);
         String token  = request.getHeader("Authorization");
+        String reToken = request.getHeader("RefreshToken");
 //        if(tokenCookie != null) {
 //            token = tokenCookie.getValue();
 //        }else {
@@ -36,14 +40,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // 유효한 토큰인지 확인
         if (token != null) {
             String jwtToken = token.replaceAll("Bearer ", "");
-            if (provider.validateToken(jwtToken)) {
-                // 토큰값과 refresh 토큰으로 유저 정보를 받아옴
-                MemberDetail detail = provider.getMemberDetail(jwtToken);
-                if (detail.getMember() != null) {
-                    Authentication authentication = provider.getAuthentication(detail);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+            String refreshToken = reToken.replace("Bearer ", "");
+            if (provider.validateToken(refreshToken)){
+
+                if (provider.validateToken(jwtToken)) {
+                    // 토큰값과 refresh 토큰으로 유저 정보를 받아옴
+                    MemberDetail detail = provider.getMemberDetail(jwtToken);
+                    if (detail.getMember() != null) {
+                        Authentication authentication = provider.getAuthentication(detail);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                } else {
+                    String newToken = provider.checkRefreshToken(jwtToken, refreshToken);
+                    provider.setAuthHeader(response, newToken);
+
+                    MemberDetail detail = provider.getMemberDetail(newToken);
+                    if (detail.getMember() != null) {
+                        Authentication authentication = provider.getAuthentication(detail);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
             }
+
+
         }
         chain.doFilter(request, response);
     }

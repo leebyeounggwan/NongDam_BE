@@ -1,11 +1,13 @@
 package com.example.formproject.dto.response;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Getter @Setter
+@NoArgsConstructor
 public class WeatherResponse {
 
 
@@ -28,9 +30,9 @@ public class WeatherResponse {
     //이슬점
     private String dewPoint;
     //시간별 날씨
-    private List<HourlyWeatherDto> hour;
+    private HourlyWeatherDto hour;
     //주간 날씨
-    private List<DailyWeatherDto> day;
+    private DailyWeatherDto day;
 
 }
 

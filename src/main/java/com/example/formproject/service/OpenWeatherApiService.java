@@ -91,12 +91,11 @@ public class OpenWeatherApiService {
 
         weatherResponse.setAddress(strAddr[0]+" "+strAddr[1]);
         weatherResponse.setDewPoint(parse_response.get("dew_point").toString());
-//        (([가-힣]+(시|도)|[서울]|[인천]|[대구]|[광주]|[부산]|[울산])( |)[가-힣]+(시|군|구))
 
         // 시간별 기온을 위한 데이터 파싱
         JSONArray hourlyArr = (JSONArray) obj.get("hourly");
 
-        List<HourlyWeatherDto> hourList = new ArrayList<>();
+        HourlyWeatherDto hourList = new HourlyWeatherDto();
         List<String> hTimeList = new ArrayList<>();
         List<String> hTempList = new ArrayList<>();
         List<String> hPopList = new ArrayList<>();
@@ -121,13 +120,13 @@ public class OpenWeatherApiService {
             hour.setTemp(hTempList);
             hour.setPop(hPopList);
         }
-        hourList.add(hour);
-        weatherResponse.setHour(hourList);
+
+        weatherResponse.setHour(hour);
 
         // 일별 기온을 위한 데이터 파싱
         JSONArray dailyArr = (JSONArray) obj.get("daily");
 
-        List<DailyWeatherDto> dayList = new ArrayList<>();
+        DailyWeatherDto dayList = new DailyWeatherDto();
         List<String> dTimeList = new ArrayList<>();
         List<String> dTempList = new ArrayList<>();
         List<String> dPopList = new ArrayList<>();
@@ -153,8 +152,8 @@ public class OpenWeatherApiService {
             day.setTemp(dTempList);
             day.setPop(dPopList);
         }
-        dayList.add(day);
-        weatherResponse.setDay(dayList);
+
+        weatherResponse.setDay(day);
 
         return weatherResponse;
     }

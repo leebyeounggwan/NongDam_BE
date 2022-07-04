@@ -58,6 +58,6 @@ public class OAuthService {
         }
         m.updateMember(attr);
         memberRepository.save(m);
-        return "Bearer "+provider.generateToken(m);
+        return "Bearer "+provider.generateToken(m, m.getId());
     }
 }

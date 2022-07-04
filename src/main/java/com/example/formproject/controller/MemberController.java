@@ -4,6 +4,7 @@ import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MailDto;
 import com.example.formproject.dto.request.MemberInfoRequestDto;
 import com.example.formproject.dto.request.MemberRequestDto;
+import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.exception.AuthenticationException;
@@ -40,10 +41,11 @@ public class MemberController {
     // 로그인
     @PostMapping("/member/login")
     public String loginMember(@RequestBody  LoginDto dto, HttpServletResponse response) throws AuthenticationException {
-        String token = memberService.login(dto);
+        JwtResponseDto token = memberService.login(dto);
 
-        response.addHeader("Authorization","Bearer "+token);
-        return "Bearer "+token;
+        response.addHeader("Authorization","Bearer "+token.getToken());
+        response.addHeader("RefreshToken", "Bearer "+token.getRefreshToken());
+        return "Bearer "+token.getToken();
     }
     @PostMapping("/member/email")
     public String emailToken(MailDto dto) throws MessagingException {
