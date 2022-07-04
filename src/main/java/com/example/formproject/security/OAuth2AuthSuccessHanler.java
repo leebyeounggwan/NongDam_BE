@@ -1,6 +1,7 @@
 package com.example.formproject.security;
 
 import com.example.formproject.FinalValue;
+import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +25,13 @@ public class OAuth2AuthSuccessHanler extends SavedRequestAwareAuthenticationSucc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         Member member = ((OAuth2User) authentication.getPrincipal()).getAttribute("member");
-        String token = provider.generateToken(member);
+        JwtResponseDto token = provider.generateToken(member, member.getId());
         provider.setTokenHeader(token, response);
         getRedirectStrategy().sendRedirect(request, response, determineTargetUrl(token));
     }
 // http://localhost:3000?member=jwttoken
     //token을 생성하고 이를 포함한 프론트엔드로의 uri를 생성한다.
-    protected String determineTargetUrl(String token) {
+    protected String determineTargetUrl(JwtResponseDto token) {
         String targetUri = FinalValue.REDIRECT_URL + "?";
         return UriComponentsBuilder.fromUriString(targetUri).queryParam("member", token).build().toUriString();
     }

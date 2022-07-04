@@ -1,14 +1,17 @@
 package com.example.formproject.service;
 
+import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MemberInfoRequestDto;
 import com.example.formproject.dto.request.MemberRequestDto;
+import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
+import com.example.formproject.entity.RefreshToken;
 import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.repository.MemberRepository;
+import com.example.formproject.repository.RefreshTokenRepository;
 import com.example.formproject.security.JwtProvider;
-import com.example.formproject.security.MemberDetail;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +31,16 @@ public class MemberService {
     private final MemberRepository repository;
     private final BCryptPasswordEncoder encoder;
     private final AwsS3Service s3Service;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    public String login(LoginDto login) throws AuthenticationException {
+    @Transactional
+    public JwtResponseDto login(LoginDto login) throws AuthenticationException {
         Member member = repository.findByEmail(login.getEmail()).orElseThrow(()->new AuthenticationException("계정을 찾을수 없습니다."));
         if(encoder.matches(login.getPassword(),member.getPassword())){
-            return provider.generateToken(member);
+            JwtResponseDto jwtResponseDto = provider.generateToken(member, member.getId());
+            RefreshToken refreshToken = new RefreshToken(jwtResponseDto, member.getId());
+            refreshTokenRepository.save(refreshToken);
+            return jwtResponseDto;
         }else{
             throw new AuthenticationException("계정 또는 비밀번호가 틀렸습니다.");
         }
@@ -62,4 +67,5 @@ public class MemberService {
     public MemberResponseDto makeMemberResponseDto(Member member){
         return new MemberResponseDto(member);
     }
+
 }
