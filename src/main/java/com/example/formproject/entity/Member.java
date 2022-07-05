@@ -1,6 +1,7 @@
 package com.example.formproject.entity;
 
 import com.example.formproject.dto.request.MemberInfoRequestDto;
+import com.example.formproject.repository.CropRepository;
 import com.example.formproject.security.OAuthAttributes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,11 +54,13 @@ public class Member extends TimeStamp {
         this.profileImage = attributes.getPicture();
     }
 
-    public void updateMember(MemberInfoRequestDto requestDto, Map<String, String> profileImage){
+    public void updateMember(MemberInfoRequestDto requestDto, Map<String, String> profileImage, CropRepository repository){
         this.nickname = requestDto.getNickname();
         this.address = requestDto.getAddress();
         this.countryCode = requestDto.getCountryCode();
-        this.crops = requestDto.getCrops();
         this.profileImage = profileImage.get("url");
+        this.crops.clear();
+        List<Crop> cr = repository.findAllIds(requestDto.getCrops());
+        this.crops.addAll(cr);
     }
 }

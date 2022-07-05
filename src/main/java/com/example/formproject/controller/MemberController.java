@@ -13,6 +13,8 @@ import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.EmailService;
 import com.example.formproject.service.MemberService;
 import com.example.formproject.service.OAuthService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,8 @@ public class MemberController {
     private final EmailService emailService;
 
     private final OAuthService oAuthService;
+
+    private final ObjectMapper mapper;
 
     // 로그인
     @PostMapping("/member/login")
@@ -70,8 +74,9 @@ public class MemberController {
     @PutMapping("/member/{memberid}")
     public ResponseEntity<?> updateMember(@PathVariable int memberid,
                                           @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-                                          @RequestBody MemberInfoRequestDto requestDto,
-                                          @AuthenticationPrincipal MemberDetail memberDetails) {
+                                          @RequestPart String data,
+                                          @AuthenticationPrincipal MemberDetail memberDetails) throws JsonProcessingException {
+        MemberInfoRequestDto requestDto = mapper.readValue(data,MemberInfoRequestDto.class);
         return memberService.updateMember(memberid, profileImage, requestDto, memberDetails.getUsername());
     }
 }
