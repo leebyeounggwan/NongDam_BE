@@ -9,6 +9,7 @@ import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.entity.RefreshToken;
 import com.example.formproject.exception.AuthenticationException;
+import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.repository.RefreshTokenRepository;
 import com.example.formproject.security.JwtProvider;
@@ -33,6 +34,8 @@ public class MemberService {
     private final AwsS3Service s3Service;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final CropRepository cropRepository;
+
     @Transactional
     public JwtResponseDto login(LoginDto login) throws AuthenticationException {
         Member member = repository.findByEmail(login.getEmail()).orElseThrow(()->new AuthenticationException("계정을 찾을수 없습니다."));
@@ -55,10 +58,10 @@ public class MemberService {
                 () -> new IllegalArgumentException("존재하지 않습니다."));
         String memberEmail = member.getEmail();
         if (Objects.equals(memberEmail, username)) {
-            if (requestDto.getProfileImage() != null) {
-                s3Service.deleteFile(requestDto.getProfileImage());
-            }
-            member.updateMember(requestDto, s3Service.uploadFile(profileImage));
+//            if (requestDto.getProfileImage() != null) {
+//                s3Service.deleteFile(requestDto.getProfileImage());
+//            }
+            member.updateMember(requestDto, s3Service.uploadFile(profileImage),cropRepository);
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
         }
         else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);

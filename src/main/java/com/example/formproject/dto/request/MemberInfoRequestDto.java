@@ -10,6 +10,5 @@ public class MemberInfoRequestDto {
     private String nickname;
     private String address;
     private int countryCode;
-    private List<Crop> crops;
-    private String profileImage;
+    private List<Integer> crops;
 }
