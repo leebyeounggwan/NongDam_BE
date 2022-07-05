@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ import java.util.List;
 public class WorkLogService {
     private final WorkLogRepository workLogRepository;
     private final CropRepository cropRepository;
+    private final AwsS3Service s3Service;
     public LineChartDto getHarvestData(Member m){
         LineChartDto ret = new LineChartDto();
         LocalDateTime[] times = workLogRepository.findTimesOfHarvest(m.getId());
@@ -40,10 +43,14 @@ public class WorkLogService {
             }
             ret.addData(dto);
         }
-        return  ret;
+        return ret;
     }
-    public void saveWork(Member member,WorkLogRequestDto dto, List<MultipartFile> files){
-        workLogRepository.save(dto.build(member,cropRepository));
-    }
+//    public void saveWork(Member member,WorkLogRequestDto dto, List<MultipartFile> files){
+//        Map<String, String> imageFile = new HashMap<>();
+//        for (MultipartFile file : files) {
+//            imageFile = s3Service.uploadFileList(file);
+//        }
+//        workLogRepository.save(dto.build(member,cropRepository));
+//    }
 
 }

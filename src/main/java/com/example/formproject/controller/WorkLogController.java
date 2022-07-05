@@ -18,10 +18,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WorkLogController {
     private final WorkLogService workLogService;
-    @PostMapping(value = "/worklog",consumes = {"multipart/form-data"})
-    public void saveWorkLog(@AuthenticationPrincipal MemberDetail detail, @RequestPart(required = false) String data,@RequestPart List<MultipartFile> images) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        WorkLogRequestDto dto = mapper.readValue(data,WorkLogRequestDto.class);
-        workLogService.saveWork(detail.getMember(),dto,images);
-    }
+//    @PostMapping(value = "/worklog",consumes = {"multipart/form-data"})
+//    public void saveWorkLog(@AuthenticationPrincipal MemberDetail detail, @RequestPart(required = false) String data,@RequestPart List<MultipartFile> images) throws JsonProcessingException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        WorkLogRequestDto dto = mapper.readValue(data,WorkLogRequestDto.class);
+//        workLogService.saveWork(detail.getMember(),dto,images);
+//    }
 }
