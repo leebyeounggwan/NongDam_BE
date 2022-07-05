@@ -1,7 +1,6 @@
 package com.example.formproject.configuration;
 
 
-import com.example.formproject.annotation.SaveRefresh;
 import com.example.formproject.annotation.UseCache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -17,10 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
-import java.util.Map;
 
 @Component
 @Aspect
@@ -59,16 +56,7 @@ public class AOPConfig {
             return o;
         }
     }
-    @AfterReturning(value = "@annotation(com.example.formproject.annotation.SaveRefresh)",returning = "returnValue")
-    public void saveRefresh(JoinPoint joinPoint, Object returnValue){
-        MethodSignature signature = (MethodSignature) joinPoint.getStaticPart().getSignature();
-        SaveRefresh annotation = signature.getMethod().getAnnotation(SaveRefresh.class);
-        String keyArg =  annotation.keyArg();
-        String cacheKey = getCacheKeyArg(keyArg,joinPoint,signature).toString();
-        BoundValueOperations<String,Object> saveObject = template.boundValueOps(cacheKey);
-        saveObject.expire(Duration.ofHours(annotation.ttlHour()));
-        saveObject.set(returnValue);
-    }
+
     public Object getCacheKeyArg(String keyArg,JoinPoint joinPoint,MethodSignature signature){
         String[] argNames = signature.getParameterNames();
         int idx = -1;
