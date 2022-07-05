@@ -18,6 +18,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +41,7 @@ public class OpenWeatherApiService {
         String lat = coords[1];
         String lon = coords[0];
 
-        StringBuilder urlBuilder = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr"); /*URL*/
+        StringBuilder urlBuilder = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr"); //URL
 
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -78,8 +80,8 @@ public class OpenWeatherApiService {
         } else {
             weatherResponse.setRn(rain.get("1h").toString());
         }
-        weatherResponse.setTemp(parse_response.get("temp").toString());
-        weatherResponse.setWs(parse_response.get("wind_speed").toString());
+        weatherResponse.setTemp(parse_response.get("temp").toString().split("\\.")[0]);
+        weatherResponse.setWs(String.format("%.1f" ,parse_response.get("wind_speed")));
         weatherResponse.setRhm(parse_response.get("humidity").toString());
         JSONArray parse_weather = (JSONArray) parse_response.get("weather");
         JSONObject value = (JSONObject) parse_weather.get(0);
@@ -90,21 +92,21 @@ public class OpenWeatherApiService {
         String[] strAddr = address.split(" ");
 
         weatherResponse.setAddress(strAddr[0]+" "+strAddr[1]);
-        weatherResponse.setDewPoint(parse_response.get("dew_point").toString());
+        weatherResponse.setDewPoint(String.format("%.1f" ,parse_response.get("dew_point")));
 
         // 시간별 기온을 위한 데이터 파싱
         JSONArray hourlyArr = (JSONArray) obj.get("hourly");
 
-        HourlyWeatherDto hourList = new HourlyWeatherDto();
-        List<String> hTimeList = new ArrayList<>();
+        List<Long> hTimeList = new ArrayList<>();
         List<String> hTempList = new ArrayList<>();
         List<String> hPopList = new ArrayList<>();
         HourlyWeatherDto hour = new HourlyWeatherDto();
+
         for(int i=1; i<17; i+=3) {
             JSONObject hourObj = (JSONObject)hourlyArr.get(i);
-            String time = hourObj.get("dt").toString();
-            hTimeList.add(getTimestampToDate(time));
-            hTempList.add(hourObj.get("temp").toString());
+            Long time = (Long) hourObj.get("dt");
+            hTimeList.add(time);
+            hTempList.add(hourObj.get("temp").toString().split("\\.")[0]);
 
             if (hourObj.get("pop").toString().equals("0")) {
                 hPopList.add("0");
@@ -126,24 +128,22 @@ public class OpenWeatherApiService {
         // 일별 기온을 위한 데이터 파싱
         JSONArray dailyArr = (JSONArray) obj.get("daily");
 
-        DailyWeatherDto dayList = new DailyWeatherDto();
-        List<String> dTimeList = new ArrayList<>();
+        List<Long> dTimeList = new ArrayList<>();
         List<String> dTempList = new ArrayList<>();
         List<String> dPopList = new ArrayList<>();
         DailyWeatherDto day = new DailyWeatherDto();
         for(int i=1; i<7; i++) {
             JSONObject dayObj = (JSONObject) dailyArr.get(i);
-            String time = dayObj.get("dt").toString();
-            dTimeList.add(getTimestampToDate(time));
+            Long time = (Long) dayObj.get("dt");
+            dTimeList.add(time);
 
             JSONObject dayTemp = (JSONObject) dayObj.get("temp");
-            dTempList.add(dayTemp.get("day").toString());
+            dTempList.add(dayTemp.get("day").toString().split("\\.")[0]);
             if(dayObj.get("pop").toString().equals("0")) {
                 dPopList.add("0");
             } else if (dayObj.get("pop").toString().equals("1")) {
                 dPopList.add("100");
             } else {
-
                 double dPop = (double) dayObj.get("pop") * 100;
                 int iPop = (int) dPop;
                 dPopList.add(Integer.toString(iPop));
@@ -159,15 +159,17 @@ public class OpenWeatherApiService {
     }
 
 
-
-    // UMC -> timeStamp 변환
-    public static String getTimestampToDate(String timestampStr){
-         long timestamp = Long.parseLong(timestampStr);
-         Date date = new java.util.Date(timestamp*1000L);
-         SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-         sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+9"));
-         String formattedDate = sdf.format(date);
-         return formattedDate;
-    }
+/*    // UMC -> timeStamp 변환
+    public static LocalDateTime getTimestampToDate(String timestampStr){
+        long timestamp = Long.parseLong(timestampStr);
+        Date date = new java.util.Date(timestamp*1000L);
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+9"));
+        String formattedDate = sdf.format(date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime cDate = LocalDateTime.parse(formattedDate, formatter);
+        System.out.println(cDate);
+        return cDate;
+    }*/
 
 }

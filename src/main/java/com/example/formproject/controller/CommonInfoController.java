@@ -1,6 +1,7 @@
 package com.example.formproject.controller;
 
 import com.example.formproject.dto.response.CropCategoryDto;
+import com.example.formproject.dto.response.CropDto;
 import com.example.formproject.dto.response.PersonalCropDto;
 import com.example.formproject.entity.Crop;
 import com.example.formproject.security.MemberDetail;
@@ -17,7 +18,7 @@ import java.util.List;
 public class CommonInfoController {
     private final CropService cropService;
     @GetMapping("/crops")
-    public List<CropCategoryDto> getAllCrops(){
+    public List<CropDto> getAllCrops(){
         return cropService.findAllData();
     }
 

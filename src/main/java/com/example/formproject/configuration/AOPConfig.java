@@ -2,8 +2,11 @@ package com.example.formproject.configuration;
 
 
 import com.example.formproject.annotation.UseCache;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -15,7 +18,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
-import java.util.Map;
 
 @Component
 @Aspect
@@ -24,6 +26,8 @@ import java.util.Map;
 public class AOPConfig {
 
     private final RedisTemplate<String, Object> template;
+
+    private final ObjectMapper mapper;
     @Pointcut("execution(* com.example.formproject.controller..*.*(..))")
     private void cut(){}
 
@@ -42,20 +46,18 @@ public class AOPConfig {
         UseCache annotation = signature.getMethod().getAnnotation(UseCache.class);
         String keyArg =  annotation.cacheKey();
         String cacheKey = signature.getMethod().getReturnType().getName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
-
         if(template.hasKey(cacheKey)){
-            System.out.println("Redis Cache 조회");
-            return template.opsForValue().get(cacheKey);
+            return mapper.readValue(template.opsForValue().get(cacheKey).toString(),signature.getMethod().getReturnType());
         }else{
             Object o = joinPoint.proceed();
             BoundValueOperations<String,Object> saveObject = template.boundValueOps(cacheKey);
             saveObject.expire(Duration.ofHours(annotation.ttlHour()));
-            saveObject.set(o);
+            saveObject.set(mapper.writer().writeValueAsString(o));
             return o;
         }
     }
 
-    public Object getCacheKeyArg(String keyArg,ProceedingJoinPoint joinPoint,MethodSignature signature){
+    public Object getCacheKeyArg(String keyArg,JoinPoint joinPoint,MethodSignature signature){
         String[] argNames = signature.getParameterNames();
         int idx = -1;
         for(int i = 0; i < argNames.length; i++){

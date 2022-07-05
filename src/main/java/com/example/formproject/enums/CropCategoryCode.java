@@ -9,7 +9,7 @@ public enum CropCategoryCode {
     CropCategoryCode(int category){
         this.category = category;
     }
-    public String findByCode(int num){
+    public static String findByCode(int num){
         for(CropCategoryCode c : values()){
             if(c.getCategory() == num)
                 return c.name();
