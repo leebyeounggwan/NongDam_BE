@@ -1,3 +1,4 @@
+/*
 package com.example.formproject.configuration;
 
 import org.h2.tools.Server;
@@ -13,3 +14,4 @@ public class H2Config {
         return Server.createTcpServer().start();
     }
 }
+*/

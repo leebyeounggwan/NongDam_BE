@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class OpenWeatherApiService {
     private final GeoService geoService;
-    @UseCache(ttlHour = 2L,cacheKey = "cacheKey")
+//    @UseCache(ttlHour = 2L,cacheKey = "cacheKey")
     public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
         String address;
         if (memberdetail.getMember().getCountryCode() == 0) {
