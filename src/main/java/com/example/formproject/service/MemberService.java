@@ -61,7 +61,8 @@ public class MemberService {
 //            if (requestDto.getProfileImage() != null) {
 //                s3Service.deleteFile(requestDto.getProfileImage());
 //            }
-            member.updateMember(requestDto, s3Service.uploadFile(profileImage),cropRepository);
+            if(profileImage != null)
+                member.updateMember(requestDto, s3Service.uploadFile(profileImage),cropRepository);
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
         }
         else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);

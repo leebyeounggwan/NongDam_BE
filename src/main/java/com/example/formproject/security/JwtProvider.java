@@ -31,10 +31,10 @@ public class JwtProvider {
 
     private final String JWT_SECRET = Base64.getEncoder().encodeToString("AirBnb".getBytes());
 //    private final long ValidTime = 1000L * 30;
-    private final long ValidTime = 1000L * 60 * 60 * 10;
 
-    private final long refreshValidTime = 1000L * 60 * 60 * 20;
-//    private final long refreshValidTime = 1000L * 60 * 60 * 2;
+    private final long ValidTime = 1000L * 60 * 60 * 3;
+    private final long refreshValidTime = 1000L * 60 * 60 * 2;
+
 
     private MemberRepository repo;
 

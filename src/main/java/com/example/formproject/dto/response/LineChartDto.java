@@ -1,5 +1,6 @@
 package com.example.formproject.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.util.List;
 public class LineChartDto {
 
     @Builder.Default
+    @Schema(type = "List",example = "[\"2021-06\",\"2022-07\"]")
     private List<String> xLabel = new ArrayList<>();
 
     @Builder.Default

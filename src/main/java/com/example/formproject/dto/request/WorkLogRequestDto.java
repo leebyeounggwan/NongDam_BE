@@ -4,6 +4,7 @@ import com.example.formproject.FinalValue;
 import com.example.formproject.entity.Member;
 import com.example.formproject.entity.WorkLog;
 import com.example.formproject.repository.CropRepository;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,14 +18,17 @@ import java.util.List;
 @Builder
 @Getter
 public class WorkLogRequestDto {
+    @Schema(type = "String",example = "2022-07-06 10:00")
     private String startTime;
+    @Schema(type = "String",example = "2022-07-06 10:00")
     private String endTime;
+    @Schema(type = "int",example = "1")
     private int crop;
+    @Schema(type = "String",example = "오늘은 000을 했다.")
     private String memo;
+    @Schema(type = "int",example = "100")
     private int harvest;
     private List<SubMaterialRequestDto> subMaterial;
-
-    private List<String> pictures;
 
     public WorkLog build(Member member, CropRepository repository){
         WorkLog workLog = WorkLog.builder()
