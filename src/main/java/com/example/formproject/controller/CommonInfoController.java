@@ -1,11 +1,20 @@
 package com.example.formproject.controller;
 
+import com.example.formproject.FinalValue;
+import com.example.formproject.dto.response.AccountResponseDto;
 import com.example.formproject.dto.response.CropCategoryDto;
 import com.example.formproject.dto.response.CropDto;
 import com.example.formproject.dto.response.PersonalCropDto;
 import com.example.formproject.entity.Crop;
 import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.CropService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,14 +24,30 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Common Info Api",description = "기준정보 관련 API(이경동)")
 public class CommonInfoController {
     private final CropService cropService;
     @GetMapping("/crops")
+    @Operation(summary = "전체 작물 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = CropDto.class)))
+            }),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)
+    })
     public List<CropDto> getAllCrops(){
         return cropService.findAllData();
     }
 
     @GetMapping("/crop")
+    @Operation(summary = "개인 작물 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = CropDto.class))) }),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
     public List<PersonalCropDto> getPersonalCrop(@AuthenticationPrincipal MemberDetail memberdetail) {
         return cropService.getPersonalCrop(memberdetail);
     }

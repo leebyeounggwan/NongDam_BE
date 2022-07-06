@@ -1,6 +1,7 @@
 package com.example.formproject.dto.request;
 
 import com.example.formproject.FinalValue;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MailDto {
+    @Schema(type = "email",example = "example@abcd.com")
     private String email;
 
     public String buildContent(String confirmChars) {
