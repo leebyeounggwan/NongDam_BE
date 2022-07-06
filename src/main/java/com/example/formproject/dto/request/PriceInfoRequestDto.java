@@ -25,10 +25,11 @@ public class PriceInfoRequestDto {
     private int month = new LocalDateTime().getMonthOfYear();
     private int day = new LocalDateTime().getDayOfMonth();
 
-    public PriceInfoRequestDto(Crop crop, String productClsCode, String gradeRank, MemberDetail memberdetail) {
+    public PriceInfoRequestDto(Crop crop, PriceInfoRequestDto2 priceInfoRequestDto2, MemberDetail memberdetail) {
 
-        this.productClsCode = productClsCode;
-        this.gradeRank = gradeRank;
+
+        this.productClsCode = priceInfoRequestDto2.getProductClsCode();
+        this.gradeRank = priceInfoRequestDto2.getGradeRank();
         this.category = crop.getCategory();
         this.type = crop.getType();
         this.kind = crop.getKind();

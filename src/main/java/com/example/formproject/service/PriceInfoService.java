@@ -1,6 +1,7 @@
 package com.example.formproject.service;
 
 import com.example.formproject.dto.request.PriceInfoRequestDto;
+import com.example.formproject.dto.request.PriceInfoRequestDto2;
 import com.example.formproject.dto.response.PriceInfoResponseDto;
 import com.example.formproject.entity.Crop;
 import com.example.formproject.repository.CropRepository;
@@ -34,9 +35,10 @@ public class PriceInfoService {
     @Value("lbk0622")
     private static String certId;
 
-    public PriceInfoResponseDto priceInfo(String productClsCode, String gradeRank, int cropId, MemberDetail memberdetail) throws IOException, ParseException {
-        Crop crop = cropRepository.findById(cropId).orElseThrow(null);
-        PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, productClsCode, gradeRank, memberdetail);
+    public PriceInfoResponseDto priceInfo(PriceInfoRequestDto2 priceInfoRequestDto2, MemberDetail memberdetail) throws IOException, ParseException {
+        Crop crop = cropRepository.findById(priceInfoRequestDto2.getCropId()).orElseThrow(null);
+
+        PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceInfoRequestDto2, memberdetail);
         PriceInfoResponseDto priceInfoResponseDto = new PriceInfoResponseDto();
         List<String> priceList = monthlyPrice(priceInfoRequestDto, priceInfoResponseDto);
         int todayPrice = dailyPrice(priceInfoRequestDto);
@@ -142,8 +144,6 @@ public class PriceInfoService {
                     priceList.add(sumList.get(j));
                 }
                 Collections.reverse(priceList);
-
-
             }
         }
         return priceList;
