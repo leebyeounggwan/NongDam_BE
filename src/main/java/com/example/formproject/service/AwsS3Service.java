@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class AwsS3Service {
     private String bucket;
 
     private final AmazonS3 amazonS3;
-
+    
     @Transactional
     public Map<String, String> uploadFile(MultipartFile multipartFile) {
         ObjectMetadata objectMetadata = new ObjectMetadata();

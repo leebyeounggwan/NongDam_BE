@@ -5,6 +5,7 @@ import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.WorkLogService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "WorkLog Api",description = "작업 결과 관련 Api(설계 진행중,이경동)")
 public class WorkLogController {
     private final WorkLogService workLogService;
 //    @PostMapping(value = "/worklog",consumes = {"multipart/form-data"})
