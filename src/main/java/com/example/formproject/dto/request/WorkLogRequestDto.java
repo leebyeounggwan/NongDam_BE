@@ -24,6 +24,8 @@ public class WorkLogRequestDto {
     private int harvest;
     private List<SubMaterialRequestDto> subMaterial;
 
+    private List<String> pictures;
+
     public WorkLog build(Member member, CropRepository repository){
         WorkLog workLog = WorkLog.builder()
                 .startTime(LocalDateTime.parse(this.startTime, FinalValue.DAYTIME_FORMATTER))
