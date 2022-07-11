@@ -42,3 +42,6 @@ PriceService.java
 gradlew
 gradlew.bat
 src/main/resources/application.yml
+
+### Amazon S3 ###
+application-s3.properties

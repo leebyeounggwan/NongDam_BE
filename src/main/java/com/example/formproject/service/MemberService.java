@@ -58,9 +58,6 @@ public class MemberService {
                 () -> new IllegalArgumentException("존재하지 않습니다."));
         String memberEmail = member.getEmail();
         if (Objects.equals(memberEmail, username)) {
-//            if (requestDto.getProfileImage() != null) {
-//                s3Service.deleteFile(requestDto.getProfileImage());
-//            }
             if(profileImage != null)
                 member.updateMember(requestDto, s3Service.uploadFile(profileImage),cropRepository);
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
