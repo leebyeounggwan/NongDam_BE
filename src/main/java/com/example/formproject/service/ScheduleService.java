@@ -55,6 +55,5 @@ public class ScheduleService {
         List<ScheduleResponseDto> ret = new ArrayList<>();
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
         return ret;
-
     }
 }

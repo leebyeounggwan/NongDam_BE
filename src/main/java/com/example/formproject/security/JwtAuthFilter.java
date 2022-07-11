@@ -29,40 +29,42 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-//        Cookie tokenCookie = CookieUtils.getCookie(request,"token").orElse(null);
+        withRefreshToken(request,response);
+        chain.doFilter(request, response);
+    }
+    private void withRefreshToken(HttpServletRequest request,HttpServletResponse response){
         String token = request.getHeader("Authorization");
-//        String reToken = request.getHeader("RefreshToken");
-//        if(tokenCookie != null) {
-//            token = tokenCookie.getValue();
-//        }else {
-//
-//        }
-        // 유효한 토큰인지 확인
-//        if (token != null && reToken != null) {
-//            String jwtToken = token.replaceAll("Bearer ", "");
-//            String refreshToken = reToken.replace("Bearer ", "");
-//            if (provider.validateToken(refreshToken) && provider.checkRefreshToken(refreshToken,jwtToken)){
-//
-//                if (provider.validateToken(jwtToken)) {
-//                    // 토큰값과 refresh 토큰으로 유저 정보를 받아옴
-//                    MemberDetail detail = provider.getMemberDetail(jwtToken);
-//                    if (detail.getMember() != null) {
-//                        Authentication authentication = provider.getAuthentication(detail);
-//                        SecurityContextHolder.getContext().setAuthentication(authentication);
-//                    }
-//                } else {
-//                    String pk = provider.getUserPk(jwtToken);
-//                    Member m = provider.getMember(Integer.parseInt(pk));
-//                    String newToken = provider.generateToken(m);
-//                    provider.saveRefreshToken(refreshToken,newToken);
-//                    provider.setAuthHeader(response, newToken);
-//                    MemberDetail detail = new MemberDetail(m);
-//                    Authentication authentication = provider.getAuthentication(detail);
-//                    SecurityContextHolder.getContext().setAuthentication(authentication);
-//                    provider.setAuthHeader(response,newToken);
-//                }
-//            }
-//        }
+        String reToken = request.getHeader("RefreshToken");
+        if (token != null && reToken != null) {
+            String jwtToken = token.replaceAll("Bearer ", "");
+            String refreshToken = reToken.replace("Bearer ", "");
+            log.info("valid refresh :" + provider.validateToken(refreshToken));
+            log.info("check cache :" + provider.checkRefreshToken(refreshToken,jwtToken));
+            if (provider.validateToken(refreshToken) && provider.checkRefreshToken(refreshToken,jwtToken)){
+                log.info("valid token");
+                if (provider.validateToken(jwtToken)) {
+                    // 토큰값과 refresh 토큰으로 유저 정보를 받아옴
+                    MemberDetail detail = provider.getMemberDetail(jwtToken);
+                    if (detail.getMember() != null) {
+                        Authentication authentication = provider.getAuthentication(detail);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                } else {
+                    String pk = provider.getUserPk(jwtToken);
+                    Member m = provider.getMember(Integer.parseInt(pk));
+                    String newToken = provider.generateToken(m);
+                    provider.saveRefreshToken(refreshToken,newToken);
+                    provider.setAuthHeader(response, newToken);
+                    MemberDetail detail = new MemberDetail(m);
+                    Authentication authentication = provider.getAuthentication(detail);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    provider.setAuthHeader(response,newToken);
+                }
+            }
+        }
+    }
+    private void onlyJwtToken(HttpServletRequest request){
+        String token = request.getHeader("Authorization");
         if (token != null) {
             String jwtToken = token.replaceAll("Bearer ", "");
 
@@ -75,6 +77,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             }
         }
-        chain.doFilter(request, response);
     }
 }

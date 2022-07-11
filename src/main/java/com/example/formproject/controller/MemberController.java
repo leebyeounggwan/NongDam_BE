@@ -61,10 +61,7 @@ public class MemberController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "로그인 필요",content=@Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
     public String loginMember(@RequestBody  LoginDto dto, HttpServletResponse response) throws AuthenticationException {
-        JwtResponseDto token = memberService.login(dto);
-
-        response.addHeader("Authorization","Bearer "+token.getToken());
-        response.addHeader("RefreshToken", "Bearer "+token.getRefreshToken());
+        JwtResponseDto token = memberService.login(dto,response);
         return "Bearer "+token.getToken();
     }
     @PostMapping("/member/email")
@@ -91,9 +88,10 @@ public class MemberController {
             ),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)
     })
-    public String accessTokenToMember(@RequestBody  String t){
-        String jwtToken = oAuthService.kakaoLogin(t);
-        return jwtToken;
+    public String accessTokenToMember(@RequestBody  String t,HttpServletResponse response){
+        JwtResponseDto dto = oAuthService.kakaoLogin(t,response);
+
+        return dto.getToken();
     }
     @PostMapping("/member")
     @Operation(summary = "회원가입 (백규현)")

@@ -25,7 +25,7 @@ public class OAuth2AuthSuccessHanler extends SavedRequestAwareAuthenticationSucc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         Member member = ((OAuth2User) authentication.getPrincipal()).getAttribute("member");
-        JwtResponseDto token = provider.generateToken(member, member.getId());
+        JwtResponseDto token = provider.generateToken(member,response);
         provider.setTokenHeader(token, response);
         getRedirectStrategy().sendRedirect(request, response, determineTargetUrl(token));
     }

@@ -29,12 +29,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtProvider {
 
-    private final String JWT_SECRET = Base64.getEncoder().encodeToString("AirBnb".getBytes());
-//    private final long ValidTime = 1000L * 30;
-
-    private final long ValidTime = 1000L * 60 * 60 * 3;
-    private final long refreshValidTime = 1000L * 60 * 60 * 2;
-
+    private final String JWT_SECRET = Base64.getEncoder().encodeToString("NongDam".getBytes());
+    //    private final long ValidTime = 1000L * 30;
+    private final long ValidTime = 1000L * 60 * 60;
+    private final long refreshValidTime = 1000L * 60 * 60 * 24;
 
     private MemberRepository repo;
 
@@ -50,7 +48,7 @@ public class JwtProvider {
         response.addHeader("Authorization",token.getToken());
         response.addHeader("RefreshToken",token.getRefreshToken());
     }
-    public JwtResponseDto generateToken(Member m, int cacheKey) {
+    public JwtResponseDto generateToken(Member m,HttpServletResponse response) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", m.getId());
 //        claims.put("member",m);
@@ -58,6 +56,7 @@ public class JwtProvider {
         String refreshToken = doGenerateRefreshToken(token);
 
         JwtResponseDto jwtResponseDto = new JwtResponseDto(token, refreshToken);
+        setTokenHeader(jwtResponseDto,response);
 
         return jwtResponseDto;
     }
@@ -97,6 +96,8 @@ public class JwtProvider {
         return refreshToken;
     }
     public void saveRefreshToken(String refreshToken,String jwtToken){
+        refreshToken = refreshToken.replaceAll("Bearer ","");
+        jwtToken = jwtToken.replaceAll("Bearer ","");
         BoundValueOperations<String,Object> saveObject = template.boundValueOps(refreshToken);
         saveObject.expire(Duration.ofMillis(refreshValidTime));
         saveObject.set(jwtToken);
@@ -109,8 +110,10 @@ public class JwtProvider {
     }
     public boolean checkRefreshToken(String refreshToken,String jwtToken){
         if(template.hasKey(refreshToken)){
+            log.info("check Key");
             return template.opsForValue().get(refreshToken).equals(jwtToken);
         }
+        log.info("no cache Key");
         return false;
     }
     public MemberDetail getMemberDetail(String token) {
@@ -163,3 +166,4 @@ public class JwtProvider {
 //        return null;
 //    }
 }
+
