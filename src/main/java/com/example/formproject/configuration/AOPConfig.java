@@ -18,6 +18,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 @Aspect
@@ -27,7 +29,6 @@ public class AOPConfig {
 
     private final RedisTemplate<String, Object> template;
 
-    private final ObjectMapper mapper;
     @Pointcut("execution(* com.example.formproject.controller..*.*(..))")
     private void cut(){}
 
@@ -42,6 +43,8 @@ public class AOPConfig {
     }
     @Around("@annotation(com.example.formproject.annotation.UseCache)")
     public Object useCache(ProceedingJoinPoint joinPoint) throws Throwable {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         MethodSignature signature = (MethodSignature) joinPoint.getStaticPart().getSignature();
         UseCache annotation = signature.getMethod().getAnnotation(UseCache.class);
         String keyArg =  annotation.cacheKey();
@@ -51,7 +54,12 @@ public class AOPConfig {
         }else{
             Object o = joinPoint.proceed();
             BoundValueOperations<String,Object> saveObject = template.boundValueOps(cacheKey);
-            saveObject.expire(Duration.ofHours(annotation.ttlHour()));
+            if(annotation.ttlHour() != 0L)
+                saveObject.expire(Duration.ofHours(annotation.ttlHour()));
+            else {
+                LocalDateTime expireTime = LocalDate.now().atTime(LocalDateTime.now().getHour()+1,0,0);
+                saveObject.expire(Duration.between(LocalDateTime.now(), expireTime));
+            }
             saveObject.set(mapper.writer().writeValueAsString(o));
             return o;
         }

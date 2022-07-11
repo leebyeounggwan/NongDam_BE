@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 @Service
@@ -37,12 +38,11 @@ public class MemberService {
     private final CropRepository cropRepository;
 
     @Transactional
-    public JwtResponseDto login(LoginDto login) throws AuthenticationException {
+    public JwtResponseDto login(LoginDto login, HttpServletResponse response) throws AuthenticationException {
         Member member = repository.findByEmail(login.getEmail()).orElseThrow(()->new AuthenticationException("계정을 찾을수 없습니다."));
         if(encoder.matches(login.getPassword(),member.getPassword())){
-            JwtResponseDto jwtResponseDto = provider.generateToken(member, member.getId());
-            RefreshToken refreshToken = new RefreshToken(jwtResponseDto, member.getId());
-            refreshTokenRepository.save(refreshToken);
+            JwtResponseDto jwtResponseDto = provider.generateToken(member, response);
+
             return jwtResponseDto;
         }else{
             throw new AuthenticationException("계정 또는 비밀번호가 틀렸습니다.");
