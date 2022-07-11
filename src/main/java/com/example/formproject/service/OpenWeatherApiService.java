@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+
 import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.response.DailyWeatherDto;
 import com.example.formproject.dto.response.HourlyWeatherDto;
@@ -8,65 +9,49 @@ import com.example.formproject.security.MemberDetail;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 @Service
 @RequiredArgsConstructor
 public class OpenWeatherApiService {
+    private final OpenApiService openApiService;
     private final GeoService geoService;
     @UseCache(ttlHour = 2L,cacheKey = "cacheKey")
     public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
+        WeatherResponse weatherResponse = new WeatherResponse();
         String address;
-        if (memberdetail.getMember().getCountryCode() == 0) {
-            address = "서울시 강서구 화곡로 302";
+
+        if (memberdetail.getMember().getAddress() == null) {
+            address = "서울 송파구 양재대로 932";
         } else {
-            address = "서울시 강서구 화곡로 302";
+            address = memberdetail.getMember().getAddress();
         }
 
         String[] coords = geoService.getGeoPoint(address);
-        String lat = coords[1];
-        String lon = coords[0];
+        StringBuilder apiURL = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat=" + coords[1] + "&lon=" + coords[0] + "&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr");
 
-        StringBuilder urlBuilder = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr"); //URL
-
-        URL url = new URL(urlBuilder.toString());
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-type", "application/json");
-
-        BufferedReader rd;
-
-        rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
-        rd.close();
-        conn.disconnect();
-        String result = sb.toString();
-
-        // Json parser를 만들어 만들어진 문자열 데이터를 객체화
-        JSONParser parser = new JSONParser();
-        JSONObject obj = (JSONObject) parser.parse(result);
+        // API 호출
+        JSONObject obj = openApiService.ApiCall(apiURL);
 
         // 현재 기온을 위한 데이터를 파싱
+        currentTempParse(obj, address, weatherResponse);
+
+        // 시간별 기온을 위한 데이터 파싱
+        hourlyTempParse(obj, weatherResponse);
+
+        // 일별 기온을 위한 데이터 파싱
+        daillyTempParse(obj, weatherResponse);
+
+        return weatherResponse;
+    }
+
+
+    public void currentTempParse(JSONObject obj, String address, WeatherResponse weatherResponse) {
         JSONObject parse_response = (JSONObject) obj.get("current");
-        WeatherResponse weatherResponse = new WeatherResponse();
 
         JSONObject snow = (JSONObject) parse_response.get("snow");
         if(snow == null){
@@ -87,14 +72,16 @@ public class OpenWeatherApiService {
         JSONObject value = (JSONObject) parse_weather.get(0);
         weatherResponse.setWeather(value.get("description").toString());
         String icon = value.get("icon").toString();
-        weatherResponse.setIconURL("http://openweathermap.org/img/wn/"+icon+"@2x.png");
+//        weatherResponse.setIconURL("http://openweathermap.org/img/wn/"+icon+"@2x.png");
+        weatherResponse.setIconURL("http://idontcare.shop/static/weathericon/"+icon+".png");
 
         String[] strAddr = address.split(" ");
 
         weatherResponse.setAddress(strAddr[0]+" "+strAddr[1]);
         weatherResponse.setDewPoint(String.format("%.1f" ,parse_response.get("dew_point")));
+    }
 
-        // 시간별 기온을 위한 데이터 파싱
+    public void hourlyTempParse (JSONObject obj, WeatherResponse weatherResponse) {
         JSONArray hourlyArr = (JSONArray) obj.get("hourly");
 
         List<Long> hTimeList = new ArrayList<>();
@@ -124,8 +111,9 @@ public class OpenWeatherApiService {
         }
 
         weatherResponse.setHour(hour);
+    }
 
-        // 일별 기온을 위한 데이터 파싱
+    public void daillyTempParse (JSONObject obj, WeatherResponse weatherResponse) {
         JSONArray dailyArr = (JSONArray) obj.get("daily");
 
         List<Long> dTimeList = new ArrayList<>();
@@ -154,22 +142,5 @@ public class OpenWeatherApiService {
         }
 
         weatherResponse.setDay(day);
-
-        return weatherResponse;
     }
-
-
-/*    // UMC -> timeStamp 변환
-    public static LocalDateTime getTimestampToDate(String timestampStr){
-        long timestamp = Long.parseLong(timestampStr);
-        Date date = new java.util.Date(timestamp*1000L);
-        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+9"));
-        String formattedDate = sdf.format(date);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime cDate = LocalDateTime.parse(formattedDate, formatter);
-        System.out.println(cDate);
-        return cDate;
-    }*/
-
 }
