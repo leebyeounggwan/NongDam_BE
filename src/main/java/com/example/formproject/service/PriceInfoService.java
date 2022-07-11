@@ -81,8 +81,8 @@ public class PriceInfoService {
         String p_kindcode = priceInfoRequestDto.getKind();
 //        String p_productrankcode = "04";
         String p_productrankcode = (priceInfoRequestDto.getGradeRank().equals("상품")) ? "04" : "05";
-//        String p_countrycode = priceInfoRequestDto.getCountryCode()+"";
-        String p_countrycode = "1101";
+        String p_countrycode = priceInfoRequestDto.getCountryCode()+"";
+//        String p_countrycode = "1101";
         String p_productclscode = (priceInfoRequestDto.getProductClsCode().equals("소매")) ? "01" : "02";
         //</editor-fold>
 
@@ -117,8 +117,8 @@ public class PriceInfoService {
         String kindCode = priceInfoRequestDto.getKind();
 //        String gradeRank = "1";
         String gradeRank = (priceInfoRequestDto.getGradeRank().equals("상품")) ? "1" : "2";
-//        String countyCode = priceInfoRequestDto.getCountryCode()+"";
-        String countyCode = "1101";
+        String countyCode = priceInfoRequestDto.getCountryCode()+"";
+//        String countyCode = "1101";
         int month = priceInfoRequestDto.getMonth();
         String nowYear = priceInfoRequestDto.getYear() + "";
         //</editor-fold>

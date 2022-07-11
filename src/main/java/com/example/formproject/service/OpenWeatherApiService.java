@@ -1,6 +1,7 @@
 package com.example.formproject.service;
 
 
+import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.response.DailyWeatherDto;
 import com.example.formproject.dto.response.HourlyWeatherDto;
 import com.example.formproject.dto.response.WeatherResponse;
@@ -19,24 +20,22 @@ import java.util.*;
 public class OpenWeatherApiService {
     private final OpenApiService openApiService;
     private final GeoService geoService;
-//    @UseCache(ttlHour = 2L,cacheKey = "cacheKey")
+    @UseCache(ttlHour = 2L,cacheKey = "cacheKey")
     public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
         WeatherResponse weatherResponse = new WeatherResponse();
         String address;
 
-        if (memberdetail.getMember().getCountryCode() == 0) {
+        if (memberdetail.getMember().getAddress() == null) {
             address = "서울 송파구 양재대로 932";
         } else {
-            address = "서울시 강서구 화곡로 302";
+            address = memberdetail.getMember().getAddress();
         }
 
         String[] coords = geoService.getGeoPoint(address);
-
         StringBuilder apiURL = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat=" + coords[1] + "&lon=" + coords[0] + "&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr");
 
         // API 호출
         JSONObject obj = openApiService.ApiCall(apiURL);
-
 
         // 현재 기온을 위한 데이터를 파싱
         currentTempParse(obj, address, weatherResponse);
