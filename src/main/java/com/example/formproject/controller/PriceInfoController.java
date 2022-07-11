@@ -23,13 +23,13 @@ public class PriceInfoController {
 
     @PostMapping("/marketprice")
     public PriceInfoResponseDto PriceInfo(@RequestBody PriceInfoRequestDto2 priceInfoRequestDto2,
-                                          @AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
-        //정보 받은걸 여기서 풀어서 통합 DTO로 만들고 넘겨준다.
+                                          @AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException, java.text.ParseException {
+
         Crop crop = cropRepository.findById(priceInfoRequestDto2.getCropId()).orElseThrow();
         System.out.println(crop.getCategory());
         System.out.println(crop.getType());
         System.out.println(crop.getKind());
-        PriceInfoResponseDto priceInfoResponseDto = priceInfoService.priceInfo(priceInfoRequestDto2, memberdetail);
-        return priceInfoResponseDto;
+
+        return priceInfoService.mainPriceInfo(priceInfoRequestDto2, memberdetail);
     }
 }
