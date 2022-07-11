@@ -73,7 +73,7 @@ public class OpenWeatherApiService {
         weatherResponse.setWeather(value.get("description").toString());
         String icon = value.get("icon").toString();
 //        weatherResponse.setIconURL("http://openweathermap.org/img/wn/"+icon+"@2x.png");
-        weatherResponse.setIconURL("http://localhost:8080/static/weathericon/"+icon+".png");
+        weatherResponse.setIconURL("http://idontcare.shop/static/weathericon/"+icon+".png");
 
         String[] strAddr = address.split(" ");
 
