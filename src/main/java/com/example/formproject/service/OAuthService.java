@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.security.JwtProvider;
@@ -13,6 +14,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +38,7 @@ public class OAuthService {
         return ret.get("access_token").toString();
     }
     @Transactional
-    public String kakaoLogin(String code){
+    public JwtResponseDto kakaoLogin(String code, HttpServletResponse response){
         String accessToken = getAccessToken(code);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -44,11 +46,8 @@ public class OAuthService {
         HttpEntity request = new HttpEntity(headers);
 
         RestTemplate template = new RestTemplate();
-        ResponseEntity<Map> response = template.exchange(kakaoOauth.getKAKAO_USER_INFO_URL(),HttpMethod.GET,request,Map.class);
-        OAuthAttributes attr = OAuthAttributes.ofKakao(null,response.getBody());
-        System.out.println(attr.getName());
-        System.out.println(attr.getEmail());
-        System.out.println(attr.getPicture());
+        ResponseEntity<Map> res = template.exchange(kakaoOauth.getKAKAO_USER_INFO_URL(),HttpMethod.GET,request,Map.class);
+        OAuthAttributes attr = OAuthAttributes.ofKakao(null,res.getBody());
         Member m = memberRepository.findByEmail(attr.getEmail()).orElse(null);
         if(m == null){
             m = Member.builder()
@@ -58,6 +57,6 @@ public class OAuthService {
         }
         m.updateMember(attr);
         memberRepository.save(m);
-        return "Bearer "+provider.generateToken(m, m.getId());
+        return provider.generateToken(m,response);
     }
 }

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ScheduleRequestDto {
     @Schema(type = "int",example = "1")
-    private int crop;
+    private int cropId;
     @Schema(type = "String",example = "2022-07-06 10:00")
     private String startTime;
     @Schema(type = "String",example = "2022-07-06 10:00")
@@ -28,7 +28,7 @@ public class ScheduleRequestDto {
 
     public Schedule build(Member member, CropRepository repository){
         return Schedule.builder()
-                .crop(repository.findById(this.crop).get())
+                .crop(repository.findById(this.cropId).get())
                 .startTime(LocalDateTime.parse(this.startTime, FinalValue.DAYTIME_FORMATTER))
                 .endTime(LocalDateTime.parse(this.endTime, FinalValue.DAYTIME_FORMATTER))
                 .toDo(this.toDo)

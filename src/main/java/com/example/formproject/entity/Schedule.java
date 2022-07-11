@@ -41,7 +41,7 @@ public class Schedule {
     public void update(ScheduleRequestDto dto, CropRepository repository){
         this.startTime = LocalDateTime.parse(dto.getStartTime(), FinalValue.DAYTIME_FORMATTER);
         this.endTime = LocalDateTime.parse(dto.getEndTime(), FinalValue.DAYTIME_FORMATTER);
-        this.crop = repository.findById(dto.getCrop()).orElseThrow(()->new IllegalArgumentException("작물 정보를 찾을 수 없습니다."));
+        this.crop = repository.findById(dto.getCropId()).orElseThrow(()->new IllegalArgumentException("작물 정보를 찾을 수 없습니다."));
         this.toDo = dto.getToDo();
     }
 }

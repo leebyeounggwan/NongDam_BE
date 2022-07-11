@@ -58,6 +58,10 @@ dependencies {
     implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.8'
     implementation 'org.springdoc:springdoc-openapi-security:1.6.8'
 
+//    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//    implementation 'io.micrometer:micrometer-registry-prometheus:1.9.1'
+//    implementation 'io.micrometer:micrometer-core:1.9.1'
+    implementation 'de.codecentric:spring-boot-admin-starter-server:2.7.2'
 }
 
 tasks.named('test') {
