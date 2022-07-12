@@ -20,7 +20,7 @@ public class PriceInfoRequestDto {
     private int category;
     private int type;
     private String kind;
-    private int countryCode;
+    private String countryCode;
     private int year = new LocalDateTime().getYear();
     private int month = new LocalDateTime().getMonthOfYear();
     private int day = new LocalDateTime().getDayOfMonth();
@@ -33,7 +33,7 @@ public class PriceInfoRequestDto {
         this.category = crop.getCategory();
         this.type = crop.getType();
         this.kind = crop.getKind();
-        this.countryCode = memberdetail.getMember().getCountryCode();
+        this.countryCode = memberdetail.getMember().getCountryCode()+"";
     }
 }
 

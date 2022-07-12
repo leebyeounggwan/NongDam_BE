@@ -14,11 +14,11 @@ import java.util.Optional;
 
 @Repository
 public interface WorkLogRepository extends JpaRepository<WorkLog,Long> {
-    @Query("Select year(this_.endTime),month(this_.endTime),this_.crop.name,sum(this_.harvest) from WorkLog this_ where this_.member.id=:memberId and this_.crop.id=:cropId and this_.harvest > 0 group by year(this_.endTime),month(this_.endTime)")
-    List<Object[]> selectHarvest(@Param("memberId") int memberId,@Param("cropId") int cropId);
+    @Query("Select year(this_.date),month(this_.date),this_.crop.name,sum(this_.harvest) from WorkLog this_ where this_.member.id=:memberId and this_.crop.id=:cropId and this_.harvest > 0 group by year(this_.date),month(this_.date)")
+    public List<Object[]> selectHarvest(@Param("memberId") int memberId,@Param("cropId") int cropId);
 
-    @Query("Select max(this_.endTime),min(this_.endTime) from WorkLog this_ where this_.member.id=:memberId and this_.harvest > 0")
-    LocalDateTime[] findTimesOfHarvest(@Param("memberId") int memberId);
+    @Query("Select max(this_.date),min(this_.date) from WorkLog this_ where this_.member.id=:memberId and this_.harvest > 0")
+    public LocalDateTime[] findTimesOfHarvest(@Param("memberId") int memberId);
 
     List<WorkLog> findAllByOrderByStartTimeDesc(String userEmail);
 }

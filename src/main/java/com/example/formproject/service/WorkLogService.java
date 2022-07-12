@@ -22,7 +22,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Getter
 public class WorkLogService {
-    private final WorkLog workLog
+    private final WorkLog workLog;
     private final WorkLogRepository workLogRepository;
     private final CropRepository cropRepository;
     private final AwsS3Service s3Service;

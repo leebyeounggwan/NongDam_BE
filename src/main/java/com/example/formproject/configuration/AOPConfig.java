@@ -18,8 +18,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Aspect
@@ -50,17 +53,19 @@ public class AOPConfig {
         String keyArg =  annotation.cacheKey();
         String cacheKey = signature.getMethod().getReturnType().getName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
         if(template.hasKey(cacheKey)){
+            log.info("get From Cache");
             return mapper.readValue(template.opsForValue().get(cacheKey).toString(),signature.getMethod().getReturnType());
         }else{
             Object o = joinPoint.proceed();
             BoundValueOperations<String,Object> saveObject = template.boundValueOps(cacheKey);
-            if(annotation.ttlHour() != 0L)
-                saveObject.expire(Duration.ofHours(annotation.ttlHour()));
-            else {
-                LocalDateTime expireTime = LocalDate.now().atTime(LocalDateTime.now().getHour()+1,0,0);
-                saveObject.expire(Duration.between(LocalDateTime.now(), expireTime));
-            }
             saveObject.set(mapper.writer().writeValueAsString(o));
+            if(annotation.ttlHour() != 0L)
+                template.expire(cacheKey,annotation.ttlHour(),TimeUnit.HOURS);
+            else{
+                LocalDateTime expireTime = LocalDate.now().atTime(LocalDateTime.now().getHour()+1,0,0);
+                long minute = Duration.between(LocalDateTime.now(),expireTime).toMinutes();
+                template.expire(cacheKey,minute,TimeUnit.MINUTES);
+            }
             return o;
         }
     }

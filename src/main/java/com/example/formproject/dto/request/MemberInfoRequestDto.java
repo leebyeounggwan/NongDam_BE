@@ -1,5 +1,6 @@
 package com.example.formproject.dto.request;
 
+import com.example.formproject.dto.response.CropDto;
 import com.example.formproject.entity.Crop;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

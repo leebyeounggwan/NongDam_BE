@@ -19,11 +19,15 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.jackson2.CoreJackson2Module;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Configuration
@@ -37,19 +41,29 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
+
+    @Override
+    public void configureContentNegotiation(
+            ContentNegotiationConfigurer configurer) {
+        final Map<String, String> parameterMap = new HashMap<>();
+        parameterMap.put("charset", "utf-8");
+
+        configurer.defaultContentType(new MediaType(
+                MediaType.APPLICATION_JSON, parameterMap));
+    }
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+        Charset utf8 = Charset.forName("UTF-8");
         List<MediaType> mediaTypes = new ArrayList<>();
-        mediaTypes.add(MediaType.APPLICATION_JSON);
-        mediaTypes.add(MediaType.TEXT_HTML);
-        mediaTypes.add(MediaType.APPLICATION_XML);
-        mediaTypes.add(MediaType.TEXT_XML);
-        mediaTypes.add(new MediaType("application","xml"));
-        mediaTypes.add(new MediaType("text","xml"));
-        mediaTypes.add(new MediaType("application", "*+xml"));
+        mediaTypes.add(new MediaType("application","json",utf8));
+        mediaTypes.add(new MediaType("text","html",utf8));
+        mediaTypes.add(new MediaType("application","xml",utf8));
+        mediaTypes.add(new MediaType("text","xml",utf8));
+        mediaTypes.add(new MediaType("application", "*+xml",utf8));
         mediaTypes.add(MediaType.ALL);
         jackson2HttpMessageConverter.setSupportedMediaTypes(mediaTypes);
+
         ObjectMapper objectMapper = jackson2HttpMessageConverter.getObjectMapper();
 //        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
