@@ -61,7 +61,6 @@ public class PriceInfoService {
                 priceInfoResponseDto.setLatestDatePrice(priceInfoResponseDto.getPriceList().get(0));
             }
         }*/
-
         return priceInfoResponseDto;
     }
 
@@ -79,10 +78,8 @@ public class PriceInfoService {
         String p_itemcategorycode = priceInfoRequestDto.getCategory() + "";
         String p_itemcode = priceInfoRequestDto.getType() + "";
         String p_kindcode = priceInfoRequestDto.getKind();
-//        String p_productrankcode = "04";
         String p_productrankcode = (priceInfoRequestDto.getGradeRank().equals("상품")) ? "04" : "05";
-        String p_countrycode = priceInfoRequestDto.getCountryCode()+"";
-//        String p_countrycode = "1101";
+        String p_countrycode = (priceInfoRequestDto.getCountryCode().equals("0")) ? "1101" : priceInfoRequestDto.getCountryCode();
         String p_productclscode = (priceInfoRequestDto.getProductClsCode().equals("소매")) ? "01" : "02";
         //</editor-fold>
 
@@ -109,24 +106,20 @@ public class PriceInfoService {
     public MonthlyPriceInfoDto monthlyPrice(PriceInfoRequestDto priceInfoRequestDto) throws IOException, ParseException {
         MonthlyPriceInfoDto monthlyPriceInfoDto = new MonthlyPriceInfoDto();
         List<String> priceList = new ArrayList<>();
+        int month = priceInfoRequestDto.getMonth();
 
         //<editor-fold desc="요청 변수">
         String productclscode = (priceInfoRequestDto.getProductClsCode().equals("소매")) ? "01" : "02";
         String categoryCode = priceInfoRequestDto.getCategory() + "";
         String itemCode = priceInfoRequestDto.getType() + "";
         String kindCode = priceInfoRequestDto.getKind();
-//        String gradeRank = "1";
         String gradeRank = (priceInfoRequestDto.getGradeRank().equals("상품")) ? "1" : "2";
-        String countyCode = priceInfoRequestDto.getCountryCode()+"";
-//        String countyCode = "1101";
-        int month = priceInfoRequestDto.getMonth();
+        String countyCode = (priceInfoRequestDto.getCountryCode().equals("0")) ? "1101" : priceInfoRequestDto.getCountryCode();
         String nowYear = priceInfoRequestDto.getYear() + "";
         //</editor-fold>
 
         StringBuilder apiURL = new StringBuilder("https://www.kamis.or.kr/service/price/xml.do?action=monthlySalesList&p_yyyy=" + nowYear + "&p_period=3&p_itemcategorycode=" + categoryCode + "&p_itemcode=" + itemCode + "&p_kindcode=" + kindCode + "&p_graderank=" + gradeRank + "&p_countycode=" + countyCode + "&p_convert_kg_yn=Y&p_cert_key=" + apiKey + "&p_cert_id=" + certId + "&p_returntype=json"); //URL
-
         JSONObject obj = openApiService.ApiCall(apiURL);
-
         JSONArray parse_price = (JSONArray) obj.get("price");
 
         for (int i = 0; i < parse_price.size(); i++) {
@@ -147,6 +140,7 @@ public class PriceInfoService {
                 priceList = monthlyPriceList(monthPriceOfThreeYear, month);
             }
         }
+
         Collections.reverse(priceList);
         String select = "month";
         monthlyPriceInfoDto.setDateList(makeDateList(select));

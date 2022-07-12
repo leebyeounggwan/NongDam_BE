@@ -33,12 +33,16 @@ public class PriceInfoResponseDto {
             this.latestDate = dailyPrice.getYear();
             this.latestDatePrice = dailyPrice.getPrice();
         } else {
-            if (!priceList.isEmpty()) {
-                this.latestDate = this.dateList.get(dateList.size()-1);
-                this.latestDatePrice = this.priceList.get(priceList.size()-1);
+            if (priceList != null) {
+                if (!priceList.isEmpty()) {
+                    this.latestDate = this.dateList.get(dateList.size()-1);
+                    this.latestDatePrice = this.priceList.get(priceList.size()-1);
+                }
+            } else {
+                this.latestDate = "조사된 데이터가 없습니다.";
+                this.latestDatePrice = "조사된 데이터가 없습니다.";
             }
         }
     }
 }
-//    DailyPriceInfoDto dailyPrice = dailyPrice(priceInfoRequestDto);
-//    MonthlyPriceInfoDto monthlyPriceInfoDto = monthlyPrice(priceInfoRequestDto);
+
