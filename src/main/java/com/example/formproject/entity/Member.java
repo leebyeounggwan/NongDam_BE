@@ -45,6 +45,10 @@ public class Member extends TimeStamp {
     @Column
     private String nickname;
 
+    @Column(columnDefinition = "boolean default true")
+    @Builder.Default
+    private boolean isLock = true;
+
     @OneToMany(fetch = FetchType.EAGER)
     @Builder.Default
     private List<Crop> crops = new ArrayList<>();
@@ -62,5 +66,9 @@ public class Member extends TimeStamp {
         this.crops.clear();
         List<Crop> cr = repository.findAllIds(requestDto.getCrops());
         this.crops.addAll(cr);
+    }
+    public void enableId(){
+        if(isLock)
+            this.isLock = false;
     }
 }

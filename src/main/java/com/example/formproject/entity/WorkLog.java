@@ -22,10 +22,7 @@ public class WorkLog {
     private long id;
 
     @Column
-    private LocalDateTime startTime;
-
-    @Column
-    private LocalDateTime endTime;
+    private LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
@@ -57,8 +54,8 @@ public class WorkLog {
     private int quarter;
 
     public void setQuarter(){
-        if(endTime != null){
-            int month = endTime.getMonthValue();
+        if(date != null){
+            int month = date.getMonthValue();
             if(month >= 1 && month <= 3)
                 this.quarter = 1;
             else if(month >= 4 && month <= 6)

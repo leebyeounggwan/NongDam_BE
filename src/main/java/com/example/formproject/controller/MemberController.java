@@ -10,6 +10,7 @@ import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.exception.AuthenticationException;
+import com.example.formproject.exception.EmailConfirmException;
 import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.EmailService;
@@ -39,13 +40,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Member Api", description = "회원 정보 관련 API(백규현/이경동)")
 public class MemberController {
     private final MemberService memberService;
-    private final EmailService emailService;
 
     private final OAuthService oAuthService;
 
@@ -60,12 +61,12 @@ public class MemberController {
                             schema = @Schema(implementation = String.class,example = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpZCIsImlkIjo2NywiZXhwIjoxNjU3MDk4Mjg5LCJpYXQiOjE2NTcwODc0ODl9._J-jgRNaqMS2_X9aZV0Cj9SgKK_R-VJzzxlexVcj_Gs"))}),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "로그인 필요",content=@Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
-    public String loginMember(@RequestBody  LoginDto dto, HttpServletResponse response) throws AuthenticationException {
+    public String loginMember(@RequestBody  LoginDto dto, HttpServletResponse response) throws AuthenticationException, EmailConfirmException {
         JwtResponseDto token = memberService.login(dto,response);
         return "Bearer "+token.getToken();
     }
-    @PostMapping("/member/email")
-    @Operation(summary = "이메일 인증메일 보내기 (백규현)")
+    @GetMapping("/member/email")
+    @Operation(summary = "이메일 인증완료 (백규현)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료 (payload: {key : abcdefg...})",
                     content = {@Content(mediaType = "application/json",
@@ -74,9 +75,9 @@ public class MemberController {
             ),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)
     })
-    public String emailToken(MailDto dto) throws MessagingException {
-        String randomChars = RandomString.make(6);
-        return emailService.sendHtmlEmail(dto,randomChars);
+    public void emailToken(@RequestParam("id") Integer id,HttpServletResponse response) throws Exception {
+        memberService.enableMember(id);
+        response.sendRedirect(FinalValue.FRONT_URL);
     }
     @PostMapping("/member/auth")
     @Operation(summary = "Oauth Code를 이용하여 로그인/회원가입 (백규현)")
@@ -99,7 +100,7 @@ public class MemberController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료"),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청 데이터 오류",content=@Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
-    public void joinMember(@RequestBody MemberRequestDto dto) throws IOException {
+    public void joinMember(@RequestBody MemberRequestDto dto) throws IOException, MessagingException {
         memberService.save(dto);
     }
 
@@ -130,5 +131,10 @@ public class MemberController {
                                           @AuthenticationPrincipal MemberDetail memberDetails) throws JsonProcessingException {
         MemberInfoRequestDto requestDto = mapper.readValue(data,MemberInfoRequestDto.class);
         return memberService.updateMember(memberid, profileImage, requestDto, memberDetails.getUsername());
+    }
+
+    @ExceptionHandler(EmailConfirmException.class)
+    public ResponseEntity handlingAuthExp(EmailConfirmException e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 }

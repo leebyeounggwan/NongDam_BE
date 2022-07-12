@@ -20,7 +20,7 @@ import java.util.*;
 public class OpenWeatherApiService {
     private final OpenApiService openApiService;
     private final GeoService geoService;
-    @UseCache(ttlHour = 2L,cacheKey = "cacheKey")
+    @UseCache(ttlHour = 0L,cacheKey = "cacheKey")
     public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
         WeatherResponse weatherResponse = new WeatherResponse();
         String address;
