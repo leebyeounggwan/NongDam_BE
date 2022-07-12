@@ -2,6 +2,7 @@ package com.example.formproject.service;
 
 import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.MailDto;
+import com.example.formproject.entity.Member;
 import com.example.formproject.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,13 +19,22 @@ public class EmailService {
 
     private final JwtProvider provider;
 
-    public String sendHtmlEmail(MailDto dto,String randomChars) throws MessagingException {
+//    public String sendHtmlEmail(MailDto dto,String randomChars) throws MessagingException {
+//        MimeMessage message = mailSender.createMimeMessage();
+//        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+//        helper.setSubject(FinalValue.APPLICATION_TITLE);
+//        helper.setTo(dto.getEmail());
+//        message.setContent(dto.buildContent(randomChars), "text/html; charset=utf-8");
+//        mailSender.send(message);
+//        return provider.generateToken(randomChars);
+//    }
+    public void sendHtmlEmail(MailDto dto, Member member) throws MessagingException {
+        String href = FinalValue.BACK_URL+"/member/email?id="+member.getId();
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setSubject(FinalValue.APPLICATION_TITLE);
         helper.setTo(dto.getEmail());
-        message.setContent(dto.buildContent(randomChars), "text/html; charset=utf-8");
+        message.setContent(dto.buildContent(href), "text/html; charset=utf-8");
         mailSender.send(message);
-        return provider.generateToken(randomChars);
     }
 }
