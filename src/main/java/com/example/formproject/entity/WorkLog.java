@@ -56,23 +56,21 @@ public class WorkLog {
     @Column
     private int quarter;
 
-    public void setQuarter(){
-        if(endTime != null){
+    public void setQuarter() {
+        if (endTime != null) {
             int month = endTime.getMonthValue();
-            if(month >= 1 && month <= 3)
-                this.quarter = 1;
-            else if(month >= 4 && month <= 6)
-                this.quarter = 2;
-            else if(month >= 7 && month <= 9)
-                this.quarter = 3;
-            else
-                this.quarter = 4;
+            if (month >= 1 && month <= 3) this.quarter = 1;
+            else if (month >= 4 && month <= 6) this.quarter = 2;
+            else if (month >= 7 && month <= 9) this.quarter = 3;
+            else this.quarter = 4;
         }
     }
-    public void addSubMaterial(SubMaterial material){
+
+    public void addSubMaterial(SubMaterial material) {
         this.subMaterials.add(material);
     }
-    public void addPicture(String url){
+
+    public void addPicture(String url) {
         this.pictures.add(url);
     }
 }

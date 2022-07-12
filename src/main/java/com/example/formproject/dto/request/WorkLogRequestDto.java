@@ -30,7 +30,9 @@ public class WorkLogRequestDto {
     private int harvest;
     private List<SubMaterialRequestDto> subMaterial;
 
-    public WorkLog build(Member member, CropRepository repository){
+    private List<String> pictures;
+
+    public WorkLog build(List<String> pictureList, Member member, CropRepository repository){
         WorkLog workLog = WorkLog.builder()
                 .startTime(LocalDateTime.parse(this.startTime, FinalValue.DAYTIME_FORMATTER))
                 .endTime(LocalDateTime.parse(this.endTime, FinalValue.DAYTIME_FORMATTER))
@@ -38,6 +40,7 @@ public class WorkLogRequestDto {
                 .crop(repository.findById(crop).orElseThrow(()->new IllegalArgumentException("작물 정보를 찾을 수 없습니다.")))
                 .harvest(this.harvest)
                 .member(member)
+                .pictures(pictureList)
                 .build();
         workLog.setQuarter();
         subMaterial.stream().forEach(e->{workLog.addSubMaterial(e.build());});

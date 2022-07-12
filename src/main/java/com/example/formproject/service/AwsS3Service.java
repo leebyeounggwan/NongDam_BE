@@ -16,9 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +26,7 @@ public class AwsS3Service {
     private String bucket;
 
     private final AmazonS3 amazonS3;
-    
+
     @Transactional
     public Map<String, String> uploadFile(MultipartFile multipartFile) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -75,4 +73,13 @@ public class AwsS3Service {
 //        }
         return fileName.substring(fileName.lastIndexOf("."));
     }
+
+
+//    private List<String> getFileListExtension(List<String> fileList) {
+//        List<String> list = new ArrayList<>();
+//        for (String file : fileList) {
+//            list.add(file.substring(file.lastIndexOf(".")));
+//        }
+//        return list;
+//    }
 }
