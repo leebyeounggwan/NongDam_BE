@@ -39,16 +39,17 @@ public class MemberService {
 
     @Transactional
     public JwtResponseDto login(LoginDto login, HttpServletResponse response) throws AuthenticationException {
-        Member member = repository.findByEmail(login.getEmail()).orElseThrow(()->new AuthenticationException("계정을 찾을수 없습니다."));
-        if(encoder.matches(login.getPassword(),member.getPassword())){
+        Member member = repository.findByEmail(login.getEmail()).orElseThrow(() -> new AuthenticationException("계정을 찾을수 없습니다."));
+        if (encoder.matches(login.getPassword(), member.getPassword())) {
             JwtResponseDto jwtResponseDto = provider.generateToken(member, response);
 
             return jwtResponseDto;
-        }else{
+        } else {
             throw new AuthenticationException("계정 또는 비밀번호가 틀렸습니다.");
         }
     }
-    public void save(MemberRequestDto dto){
+
+    public void save(MemberRequestDto dto) {
         repository.save(dto.build(encoder));
     }
 
@@ -58,14 +59,18 @@ public class MemberService {
                 () -> new IllegalArgumentException("존재하지 않습니다."));
         String memberEmail = member.getEmail();
         if (Objects.equals(memberEmail, username)) {
-            if(profileImage != null)
-                member.updateMember(requestDto, s3Service.uploadFile(profileImage),cropRepository);
+            if (profileImage != null)
+                member.updateMember(requestDto, s3Service.uploadFile(profileImage), cropRepository);
+            else {
+                s3Service.deleteFile(member.getProfileImage());
+                member.updateMember(requestDto, cropRepository);
+            }
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
-        }
-        else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);
+        } else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);
     }
+
     @Transactional(readOnly = true)
-    public MemberResponseDto makeMemberResponseDto(Member member){
+    public MemberResponseDto makeMemberResponseDto(Member member) {
         return new MemberResponseDto(member);
     }
 
