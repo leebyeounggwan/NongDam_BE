@@ -2,6 +2,9 @@ package com.example.formproject.enums;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 @Getter
 public enum CountryCode {
     서울(1101),부산(2101),대구(2202),인천(2300),광주(2401),대전(2501),울산(2601),수원(3111),춘천(3211),
@@ -9,5 +12,9 @@ public enum CountryCode {
     private int type;
     CountryCode(int type){
         this.type = type;
+    }
+
+    public static CountryCode findByCountryCode(int code){
+        return Arrays.stream(values()).filter(e->e.getType() == code).collect(Collectors.toList()).get(0);
     }
 }

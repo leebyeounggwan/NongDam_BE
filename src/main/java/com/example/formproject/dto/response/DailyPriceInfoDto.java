@@ -8,7 +8,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DailyPriceInfoDto {
-    private String Countyname;
-    private String Year;
-    private String Price;
+    private String crop;
+    private String type;
+    private String unit;
+    private String country;
+    private String wholeSale;
+    private String latestDate;
+    private String latestDatePrice;
 }
