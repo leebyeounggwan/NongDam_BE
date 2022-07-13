@@ -12,6 +12,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -19,7 +20,7 @@ import java.util.*;
 public class OpenWeatherApiService {
     private final OpenApiService openApiService;
     private final GeoService geoService;
-    @UseCache(ttlHour = 0L,cacheKey = "cacheKey")
+    @UseCache(ttl = 0L,cacheKey = "cacheKey",unit = TimeUnit.MINUTES,timeData = false)
     public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
         WeatherResponse weatherResponse = new WeatherResponse();
 

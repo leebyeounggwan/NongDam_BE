@@ -3,9 +3,7 @@ package com.example.formproject.security;
 import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.entity.Member;
-import com.example.formproject.entity.RefreshToken;
 import com.example.formproject.repository.MemberRepository;
-import com.example.formproject.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
@@ -23,6 +20,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -121,7 +119,7 @@ public class JwtProvider {
         Member member = getMember(id);
         return new MemberDetail(member);
     }
-    @UseCache(cacheKey = "id",ttlHour = 2L)
+    @UseCache(cacheKey = "id", ttl = 2L,unit = TimeUnit.HOURS,timeData = true)
     public Member getMember(int id){
         return repo.findById(id).get();
     }
