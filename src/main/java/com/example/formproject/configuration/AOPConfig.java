@@ -20,10 +20,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -44,7 +42,7 @@ public class AOPConfig {
         String ip = request.getHeader("X-FORWARDED-FOR");
         if (ip == null)
             ip = request.getRemoteAddr();
-        log.info("["+ip+"] " + requestUri);
+        log.info("["+ip+"] "+request.getMethod()+" " + requestUri);
     }
     @Around("@annotation(com.example.formproject.annotation.UseCache)")
     public Object useCache(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -56,17 +54,23 @@ public class AOPConfig {
         String cacheKey = signature.getMethod().getReturnType().getName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
         if(template.hasKey(cacheKey)){
             log.info("get From Cache");
-            return mapper.readValue(template.opsForValue().get(cacheKey).toString(),signature.getMethod().getReturnType());
+            if(annotation.timeData())
+                return mapper.readValue(template.opsForValue().get(cacheKey).toString(),signature.getMethod().getReturnType());
+            else
+                return template.opsForValue().get(cacheKey);
         }else{
             Object o = joinPoint.proceed();
             BoundValueOperations<String,Object> saveObject = template.boundValueOps(cacheKey);
-            saveObject.set(mapper.writer().writeValueAsString(o));
-            if(annotation.ttlHour() != 0L)
-                template.expire(cacheKey,annotation.ttlHour(),TimeUnit.HOURS);
+            if(annotation.timeData())
+                saveObject.set(mapper.writer().writeValueAsString(o));
+            else
+                saveObject.set(o);
+            if(annotation.ttl() != 0L)
+                template.expire(cacheKey,annotation.ttl(),annotation.unit());
             else{
                 LocalDateTime expireTime = LocalDate.now().atTime(LocalDateTime.now().getHour()+1,0,0);
                 long minute = Duration.between(LocalDateTime.now(),expireTime).toMinutes();
-                template.expire(cacheKey,minute,TimeUnit.MINUTES);
+                template.expire(cacheKey,minute,annotation.unit());
             }
             return o;
         }
