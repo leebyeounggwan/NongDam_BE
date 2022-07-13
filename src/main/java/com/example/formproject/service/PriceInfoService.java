@@ -80,8 +80,8 @@ public class PriceInfoService {
             dailyPriceInfoDto.setUnit("kg");
             dailyPriceInfoDto.setCountry(findCountryName(p_countrycode));
             dailyPriceInfoDto.setWholeSale(priceInfoRequestDto.getProductClsCode());
-            dailyPriceInfoDto.setLatestDate("null");
-            dailyPriceInfoDto.setLatestDatePrice("null");
+            dailyPriceInfoDto.setLatestDate("");
+            dailyPriceInfoDto.setLatestDatePrice("");
             return dailyPriceInfoDto;
         }
     }
