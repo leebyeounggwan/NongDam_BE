@@ -42,7 +42,7 @@ public class WorkLogController {
 
     @GetMapping("/worklog")
     public List<WorkLog> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) {
-        return workLogRepository.findAllByOrderByStartTimeDesc(detail.getUsername());
+        return workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
     }
 
     @DeleteMapping("/worklog/{worklogid}")
