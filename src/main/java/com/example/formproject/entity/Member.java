@@ -1,5 +1,6 @@
 package com.example.formproject.entity;
 
+import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.MemberInfoRequestDto;
 import com.example.formproject.repository.CropRepository;
 import com.example.formproject.security.OAuthAttributes;
@@ -53,15 +54,15 @@ public class Member extends TimeStamp {
     @Builder.Default
     private List<Crop> crops = new ArrayList<>();
 
-    public void updateMember(OAuthAttributes attributes){
+    public void updateMember(OAuthAttributes attributes) {
         this.name = attributes.getName();
         this.profileImage = attributes.getPicture();
     }
 
-    public void updateMember(MemberInfoRequestDto requestDto, Map<String, String> profileImage, CropRepository repository){
-        this.nickname = requestDto.getNickname();
-        this.address = requestDto.getAddress();
-        this.countryCode = requestDto.getCountryCode();
+    public void updateMember(MemberInfoRequestDto requestDto, Map<String, String> profileImage, CropRepository repository) {
+        this.nickname = requestDto.getNickname() == null ? nickname : requestDto.getNickname();
+        this.address = requestDto.getAddress() == null ? address : requestDto.getAddress();
+        this.countryCode = requestDto.getCountryCode() == 0 ? countryCode : requestDto.getCountryCode();
         this.profileImage = profileImage.get("url");
         this.crops.clear();
         List<Crop> cr = repository.findAllIds(requestDto.getCrops());
@@ -70,19 +71,17 @@ public class Member extends TimeStamp {
 
     public void updateMember(MemberInfoRequestDto requestDto, CropRepository repository) {
         // 프로필 사진 없이 업데이트
-        this.nickname = requestDto.getNickname()==null?nickname:requestDto.getNickname();
-        this.address = requestDto.getAddress()==null?address:requestDto.getAddress();
-        this.countryCode = requestDto.getCountryCode()==0?countryCode:requestDto.getCountryCode();
-        this.profileImage = null;
+        this.nickname = requestDto.getNickname() == null ? nickname : requestDto.getNickname();
+        this.address = requestDto.getAddress() == null ? address : requestDto.getAddress();
+        this.countryCode = requestDto.getCountryCode() == 0 ? countryCode : requestDto.getCountryCode();
+        this.profileImage = FinalValue.BACK_URL + "/static/default.png"; //기본 프로필 이미지
         this.crops.clear();
         List<Crop> cr = repository.findAllIds(requestDto.getCrops());
         this.crops.addAll(cr);
     }
-    public void updateProfile(String profileImage){
-        this.profileImage = profileImage;
-    }
-    public void enableId(){
-        if(isLock)
+
+    public void enableId() {
+        if (isLock)
             this.isLock = false;
     }
 }
