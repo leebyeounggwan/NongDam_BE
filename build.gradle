@@ -62,6 +62,8 @@ dependencies {
 //    implementation 'io.micrometer:micrometer-registry-prometheus:1.9.1'
 //    implementation 'io.micrometer:micrometer-core:1.9.1'
     implementation 'de.codecentric:spring-boot-admin-starter-server:2.7.2'
+    implementation 'org.jsoup:jsoup:1.15.2'
+
 }
 
 tasks.named('test') {
