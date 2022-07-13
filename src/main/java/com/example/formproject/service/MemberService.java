@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.example.formproject.annotation.DeleteMemberCache;
 import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MailDto;
@@ -51,10 +52,11 @@ public class MemberService {
             if(member.isLock())
                 throw new EmailConfirmException("이메일 인증이 필요한 계정입니다.");
             return jwtResponseDto;
-        }else{
+        } else {
             throw new AuthenticationException("계정 또는 비밀번호가 틀렸습니다.");
         }
     }
+
     @Transactional
     public void enableMember(int id) throws Exception {
         Member member = repository.findById(id).orElseThrow(()->new Exception("계정을 찾을 수 없습니다."));
@@ -62,25 +64,31 @@ public class MemberService {
         repository.save(member);
         System.out.println("member is Enable :" + member.getEmail());
     }
+
     public void save(MemberRequestDto dto) throws MessagingException {
         Member member = repository.save(dto.build(encoder));
         emailService.sendHtmlEmail(MailDto.builder().email(dto.getEmail()).build(),member);
     }
 
     @Transactional
+    @DeleteMemberCache(memberIdArg = "memberid")
     public ResponseEntity<?> updateMember(int memberid, MultipartFile profileImage, MemberInfoRequestDto requestDto, String username) {
         Member member = repository.findById(memberid).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않습니다."));
         String memberEmail = member.getEmail();
         if (Objects.equals(memberEmail, username)) {
-            if(profileImage != null)
-                member.updateMember(requestDto, s3Service.uploadFile(profileImage),cropRepository);
+            if (profileImage != null)
+                member.updateMember(requestDto, s3Service.uploadFile(profileImage), cropRepository);
+            else {
+                s3Service.deleteFile(member.getProfileImage());
+                member.updateMember(requestDto, cropRepository);
+            }
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
-        }
-        else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);
+        } else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);
     }
+
     @Transactional(readOnly = true)
-    public MemberResponseDto makeMemberResponseDto(Member member){
+    public MemberResponseDto makeMemberResponseDto(Member member) {
         return new MemberResponseDto(member);
     }
 

@@ -1,7 +1,9 @@
 package com.example.formproject.configuration;
 
 
+import com.example.formproject.annotation.DeleteMemberCache;
 import com.example.formproject.annotation.UseCache;
+import com.example.formproject.entity.Member;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +71,19 @@ public class AOPConfig {
             return o;
         }
     }
-
+    @AfterReturning("@annotation(com.example.formproject.annotation.DeleteMemberCache)")
+    public void deleteMember(JoinPoint joinPoint) throws Throwable {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        MethodSignature signature = (MethodSignature) joinPoint.getStaticPart().getSignature();
+        DeleteMemberCache annotation = signature.getMethod().getAnnotation(DeleteMemberCache.class);
+        String keyArg =  annotation.memberIdArg();
+        String cacheKey = Member.class.getName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
+        if(template.hasKey(cacheKey)){
+            log.info("member Delete");
+            template.delete(cacheKey);
+        }
+    }
     public Object getCacheKeyArg(String keyArg,JoinPoint joinPoint,MethodSignature signature){
         String[] argNames = signature.getParameterNames();
         int idx = -1;

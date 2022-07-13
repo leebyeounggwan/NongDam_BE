@@ -66,10 +66,12 @@ public class WorkLog {
                 this.quarter = 4;
         }
     }
-    public void addSubMaterial(SubMaterial material){
+
+    public void addSubMaterial(SubMaterial material) {
         this.subMaterials.add(material);
     }
-    public void addPicture(String url){
+
+    public void addPicture(String url) {
         this.pictures.add(url);
     }
 }

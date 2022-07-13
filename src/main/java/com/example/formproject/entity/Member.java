@@ -67,6 +67,18 @@ public class Member extends TimeStamp {
         List<Crop> cr = repository.findAllIds(requestDto.getCrops());
         this.crops.addAll(cr);
     }
+
+    public void updateMember(MemberInfoRequestDto requestDto, CropRepository repository) {
+        // 프로필 사진 없이 업데이트
+        this.nickname = requestDto.getNickname();
+        this.address = requestDto.getAddress();
+        this.countryCode = requestDto.getCountryCode();
+        this.profileImage = null;
+        this.crops.clear();
+        List<Crop> cr = repository.findAllIds(requestDto.getCrops());
+        this.crops.addAll(cr);
+    }
+
     public void enableId(){
         if(isLock)
             this.isLock = false;

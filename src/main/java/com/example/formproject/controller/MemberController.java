@@ -116,7 +116,7 @@ public class MemberController {
         return memberService.makeMemberResponseDto(memberDetail.getMember());
     }
 
-    @PutMapping(value="/member/{memberid}",produces = "application/json; charset=utf-8")
+    @PutMapping(value="/member")
     @Operation(summary = "개인정보 수정 (이경동)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
@@ -125,12 +125,11 @@ public class MemberController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content=@Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
     @Parameter(in = ParameterIn.PATH,name = "memberid",description = "사용자 id(database id)",example = "1",required = true)
-    public ResponseEntity<?> updateMember(@PathVariable int memberid,
-                                          @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+    public ResponseEntity<?> updateMember(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
                                           @RequestPart String data,
                                           @AuthenticationPrincipal MemberDetail memberDetails) throws JsonProcessingException {
         MemberInfoRequestDto requestDto = mapper.readValue(data,MemberInfoRequestDto.class);
-        return memberService.updateMember(memberid, profileImage, requestDto, memberDetails.getUsername());
+        return memberService.updateMember(memberDetails.getMember().getId(),profileImage, requestDto,memberDetails.getUsername());
     }
 
     @ExceptionHandler(EmailConfirmException.class)

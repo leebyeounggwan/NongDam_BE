@@ -38,10 +38,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (token != null && reToken != null) {
             String jwtToken = token.replaceAll("Bearer ", "");
             String refreshToken = reToken.replace("Bearer ", "");
-            log.info("valid refresh :" + provider.validateToken(refreshToken));
-            log.info("check cache :" + provider.checkRefreshToken(refreshToken,jwtToken));
             if (provider.validateToken(refreshToken) && provider.checkRefreshToken(refreshToken,jwtToken)){
-                log.info("valid token");
                 if (provider.validateToken(jwtToken)) {
                     // 토큰값과 refresh 토큰으로 유저 정보를 받아옴
                     MemberDetail detail = provider.getMemberDetail(jwtToken);
@@ -57,6 +54,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     provider.setAuthHeader(response, newToken);
                     MemberDetail detail = new MemberDetail(m);
                     Authentication authentication = provider.getAuthentication(detail);
+                    log.info("set User Info");
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     provider.setAuthHeader(response,newToken);
                 }
