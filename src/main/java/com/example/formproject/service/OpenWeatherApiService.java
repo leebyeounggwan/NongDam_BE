@@ -2,8 +2,7 @@ package com.example.formproject.service;
 
 
 import com.example.formproject.annotation.UseCache;
-import com.example.formproject.dto.response.DailyWeatherDto;
-import com.example.formproject.dto.response.HourlyWeatherDto;
+import com.example.formproject.dto.response.WeatherDto;
 import com.example.formproject.dto.response.WeatherResponse;
 import com.example.formproject.security.MemberDetail;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +22,10 @@ public class OpenWeatherApiService {
     @UseCache(ttlHour = 0L,cacheKey = "cacheKey")
     public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
         WeatherResponse weatherResponse = new WeatherResponse();
-        String address;
 
-        if (memberdetail.getMember().getAddress() == null) {
-            address = "서울 송파구 양재대로 932";
-        } else {
-            address = memberdetail.getMember().getAddress();
-        }
-
+        String address = (memberdetail.getMember().getAddress() == null) ? "서울 송파구 양재대로 932" : memberdetail.getMember().getAddress();
         String[] coords = geoService.getGeoPoint(address);
+
         StringBuilder apiURL = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat=" + coords[1] + "&lon=" + coords[0] + "&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr");
 
         // API 호출
@@ -44,7 +38,7 @@ public class OpenWeatherApiService {
         hourlyTempParse(obj, weatherResponse);
 
         // 일별 기온을 위한 데이터 파싱
-        daillyTempParse(obj, weatherResponse);
+        dailyTempParse(obj, weatherResponse);
 
         return weatherResponse;
     }
@@ -87,7 +81,7 @@ public class OpenWeatherApiService {
         List<Long> hTimeList = new ArrayList<>();
         List<String> hTempList = new ArrayList<>();
         List<String> hPopList = new ArrayList<>();
-        HourlyWeatherDto hour = new HourlyWeatherDto();
+        WeatherDto hour = new WeatherDto();
 
         for(int i=1; i<17; i+=3) {
             JSONObject hourObj = (JSONObject)hourlyArr.get(i);
@@ -113,13 +107,13 @@ public class OpenWeatherApiService {
         weatherResponse.setHour(hour);
     }
 
-    public void daillyTempParse (JSONObject obj, WeatherResponse weatherResponse) {
+    public void dailyTempParse (JSONObject obj, WeatherResponse weatherResponse) {
         JSONArray dailyArr = (JSONArray) obj.get("daily");
 
         List<Long> dTimeList = new ArrayList<>();
         List<String> dTempList = new ArrayList<>();
         List<String> dPopList = new ArrayList<>();
-        DailyWeatherDto day = new DailyWeatherDto();
+        WeatherDto day = new WeatherDto();
         for(int i=1; i<7; i++) {
             JSONObject dayObj = (JSONObject) dailyArr.get(i);
             Long time = (Long) dayObj.get("dt");
@@ -136,7 +130,7 @@ public class OpenWeatherApiService {
                 int iPop = (int) dPop;
                 dPopList.add(Integer.toString(iPop));
             }
-            day.setDay(dTimeList);
+            day.setTime(dTimeList);
             day.setTemp(dTempList);
             day.setPop(dPopList);
         }

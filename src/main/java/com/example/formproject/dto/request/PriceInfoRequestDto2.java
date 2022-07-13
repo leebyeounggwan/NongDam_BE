@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PriceInfoRequestDto2 {
+    private int cropId;
     private String productClsCode;
     private String gradeRank;
-    private int cropId;
+    private String data;
 }

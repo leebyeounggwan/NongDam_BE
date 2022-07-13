@@ -9,8 +9,12 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MonthlyPriceInfoDto {
+public class PriceInfoDto {
+    private String crop;
+    private String type;
     private String unit;
+    private String country;
+    private String wholeSale;
     private List<String> dateList;
     private List<String> priceList;
 }
