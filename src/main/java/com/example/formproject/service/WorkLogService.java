@@ -22,7 +22,6 @@ import java.util.*;
 @RequiredArgsConstructor
 @Getter
 public class WorkLogService {
-    private final WorkLog workLog;
     private final WorkLogRepository workLogRepository;
     private final CropRepository cropRepository;
     private final AwsS3Service s3Service;
@@ -51,11 +50,12 @@ public class WorkLogService {
     @Transactional
     public void createWorkLog(Member member, WorkLogRequestDto dto, List<MultipartFile> files) {
         List<String> fileList = new ArrayList<>();
+        WorkLog workLog = dto.build(fileList, member, cropRepository);
         for (MultipartFile file : files) {
-            fileList.add("" + s3Service.uploadFile(file).values());
-            workLog.addPicture("" + s3Service.uploadFile(file).values());
+            fileList.add(s3Service.uploadFile(file).values().toString());
+            workLog.addPicture(s3Service.uploadFile(file).values().toString());
         }
-        workLogRepository.save(dto.build(fileList, member, cropRepository));
+        workLogRepository.save(workLog);
     }
 
     @Transactional
