@@ -5,7 +5,6 @@ import com.example.formproject.dto.response.DailyPriceInfoDto;
 import com.example.formproject.dto.response.PriceInfoDto;
 import com.example.formproject.enums.CountryCode;
 import com.example.formproject.enums.CropTypeCode;
-import com.example.formproject.repository.CropRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,7 +23,6 @@ import static com.example.formproject.enums.CropTypeCode.findByCode;
 @RequiredArgsConstructor
 public class PriceInfoService {
 
-    private final CropRepository cropRepository;
     private final OpenApiService openApiService;
     @Value("e038dee1-a1d5-426d-ba4c-6bcd8c7100cb")
     private static String apiKey;
@@ -51,30 +49,43 @@ public class PriceInfoService {
         //</editor-fold>
 
         StringBuilder apiURL = new StringBuilder("https://www.kamis.or.kr/service/price/xml.do?action=periodProductList&p_productclscode=" + p_productclscode + "&p_startday=" + p_startday + "&p_endday=" + p_endday + "&p_itemcategorycode=" + p_itemcategorycode + "&p_itemcode=" + p_itemcode + "&p_kindcode=" + p_kindcode + "&p_productrankcode=" + p_productrankcode + "&p_countrycode=" + p_countrycode + "&p_convert_kg_yn=Y&p_cert_key=e038dee1-a1d5-426d-ba4c-6bcd8c7100cb&p_cert_id=lbk0622&p_returntype=json"); /*URL*/
-        JSONObject obj = openApiService.ApiCall(apiURL);
 
-        if (obj.get("data").getClass().getSimpleName().equals("JSONObject")) {
-            JSONObject parse_data = (JSONObject) obj.get("data");
-            JSONArray parse_item = (JSONArray) parse_data.get("item");
+        try {
+            JSONObject obj = openApiService.ApiCall(apiURL);
 
-            JSONObject parse_latestDate = (JSONObject) parse_item.get(parse_item.size() - 1);
-            String unit = parse_latestDate.get("kindname").toString().split("\\(")[1].replaceAll("\\)","");
-            if (!unit.contains("kg")) {
-                unit = "kg";
+            if (obj.get("data").getClass().getSimpleName().equals("JSONObject")) {
+                JSONObject parse_data = (JSONObject) obj.get("data");
+                JSONArray parse_item = (JSONArray) parse_data.get("item");
+
+                JSONObject parse_latestDate = (JSONObject) parse_item.get(parse_item.size() - 1);
+                String unit = parse_latestDate.get("kindname").toString().split("\\(")[1].replaceAll("\\)", "");
+                if (!unit.contains("kg")) {
+                    unit = "kg";
+                }
+                if (unit.replaceAll("[^\\d]", "").equals("1")) {
+                    unit = unit.substring(1);
+                }
+                dailyPriceInfoDto.setCrop(parse_latestDate.get("itemname").toString());
+                dailyPriceInfoDto.setType(priceInfoRequestDto.getName());
+                dailyPriceInfoDto.setUnit(unit);
+                dailyPriceInfoDto.setCountry(parse_latestDate.get("countyname").toString());
+                dailyPriceInfoDto.setWholeSale(priceInfoRequestDto.getProductClsCode());
+                dailyPriceInfoDto.setLatestDate(parse_latestDate.get("yyyy").toString() + "-" + parse_latestDate.get("regday").toString().replace("/", "-"));
+                dailyPriceInfoDto.setLatestDatePrice(parse_latestDate.get("price").toString());
+
+                return dailyPriceInfoDto;
+            } else {
+                dailyPriceInfoDto.setCrop(findCropName(p_itemcode));
+                dailyPriceInfoDto.setType(priceInfoRequestDto.getName());
+                dailyPriceInfoDto.setUnit("kg");
+                dailyPriceInfoDto.setCountry(findCountryName(p_countrycode));
+                dailyPriceInfoDto.setWholeSale(priceInfoRequestDto.getProductClsCode());
+                dailyPriceInfoDto.setLatestDate("");
+                dailyPriceInfoDto.setLatestDatePrice("");
+                return dailyPriceInfoDto;
             }
-            if (unit.replaceAll("[^\\d]", "").equals("1")) {
-                unit = unit.substring(1);
-            }
-            dailyPriceInfoDto.setCrop(parse_latestDate.get("itemname").toString());
-            dailyPriceInfoDto.setType(priceInfoRequestDto.getName());
-            dailyPriceInfoDto.setUnit(unit);
-            dailyPriceInfoDto.setCountry(parse_latestDate.get("countyname").toString());
-            dailyPriceInfoDto.setWholeSale(priceInfoRequestDto.getProductClsCode());
-            dailyPriceInfoDto.setLatestDate(parse_latestDate.get("yyyy").toString() + "-" + parse_latestDate.get("regday").toString().replace("/", "-"));
-            dailyPriceInfoDto.setLatestDatePrice(parse_latestDate.get("price").toString());
-
-            return dailyPriceInfoDto;
-        } else {
+        }
+        catch (IOException e) {
             dailyPriceInfoDto.setCrop(findCropName(p_itemcode));
             dailyPriceInfoDto.setType(priceInfoRequestDto.getName());
             dailyPriceInfoDto.setUnit("kg");
@@ -107,7 +118,7 @@ public class PriceInfoService {
         StringBuilder apiURL = new StringBuilder("https://www.kamis.or.kr/service/price/xml.do?action=monthlySalesList&p_yyyy=" + nowYear + "&p_period=3&p_itemcategorycode=" + categoryCode + "&p_itemcode=" + itemCode + "&p_kindcode=" + kindCode + "&p_graderank=" + gradeRank + "&p_countycode=" + countyCode + "&p_convert_kg_yn=Y&p_cert_key=" + apiKey + "&p_cert_id=" + certId + "&p_returntype=json"); //URL
         JSONObject obj = openApiService.ApiCall(apiURL);
         JSONArray parse_price = (JSONArray) obj.get("price");
-
+// 월별 -> 도소매 다 조회되는데 없을 경우 아예 빈리스트가 넘어감
         for (int i = 0; i < parse_price.size(); i++) {
             PriceInfoDto monthPriceInfoDto = new PriceInfoDto();
             JSONObject parse_date = (JSONObject) parse_price.get(i);
@@ -126,14 +137,18 @@ public class PriceInfoService {
             monthPriceInfoDto.setWholeSale(clsCode);
             JSONArray monthPriceOfThreeYear = (JSONArray) parse_date.get("item");
             if (monthPriceOfThreeYear == null) {
-                return monthlyPriceList;
-            }
-            List<String> priceList = monthlyPriceList(monthPriceOfThreeYear, month);
-            Collections.reverse(priceList);
-            monthPriceInfoDto.setDateList(makeDateList("month"));
-            monthPriceInfoDto.setPriceList(priceList);
+                List<String> list = Collections.emptyList();
+                monthPriceInfoDto.setDateList(list);
+                monthPriceInfoDto.setPriceList(list);
+                monthlyPriceList.add(monthPriceInfoDto);
+            } else {
+                List<String> priceList = monthlyPriceList(monthPriceOfThreeYear, month);
+                Collections.reverse(priceList);
+                monthPriceInfoDto.setDateList(makeDateList("month"));
+                monthPriceInfoDto.setPriceList(priceList);
 
-            monthlyPriceList.add(monthPriceInfoDto);
+                monthlyPriceList.add(monthPriceInfoDto);
+            }
         }
 
         return monthlyPriceList;
@@ -161,7 +176,7 @@ public class PriceInfoService {
         JSONObject obj = openApiService.ApiCall(apiURL);
         JSONArray parse_price = (JSONArray) obj.get("price");
 
-
+// 연도별 -> 도소매 다 조회되는데 없을경우 classcastexection이 뜬다.
         List<String> dateList = makeDateList("year");
         for (int i = 0; i < parse_price.size(); i++) {
             PriceInfoDto yearPriceInfoDto = new PriceInfoDto();
@@ -182,34 +197,40 @@ public class PriceInfoService {
             yearPriceInfoDto.setCountry(findCountryName(countyCode));
             yearPriceInfoDto.setWholeSale(clsCode);
 
-            JSONArray yearlyPrice = (JSONArray) parse_date.get("item");
-            for (int j = 0; j < yearlyPrice.size(); j++) {
-                JSONObject year = (JSONObject) yearlyPrice.get(j);
-                if (!year.get("div").equals("평년")){
-                    String[] dataList = new String[2];
-                    dataList[0] = year.get("div").toString();
-                    dataList[1] = year.get("avg_data").toString();
-                    sumDataList.add(dataList);
-                }
-            }
-            for (int k = 0; k < dateList.size(); k++) {
-                boolean ok = true;
-                for (int j = 0; j < sumDataList.size(); j++) {
-
-                    if (dateList.get(k).equals(sumDataList.get(j)[0])) {
-                        yearpriceList.add(sumDataList.get(j)[1]);
-                        ok = false;
+            if (parse_date.get("item").getClass().getSimpleName().equals("JSONArray")) {
+                JSONArray yearlyPrice = (JSONArray) parse_date.get("item");
+                for (int j = 0; j < yearlyPrice.size(); j++) {
+                    JSONObject year = (JSONObject) yearlyPrice.get(j);
+                    if (!year.get("div").equals("평년")){
+                        String[] dataList = new String[2];
+                        dataList[0] = year.get("div").toString();
+                        dataList[1] = year.get("avg_data").toString();
+                        sumDataList.add(dataList);
                     }
                 }
-                if (ok) {
-                    yearpriceList.add("0");
+                for (int k = 0; k < dateList.size(); k++) {
+                    boolean ok = true;
+                    for (int j = 0; j < sumDataList.size(); j++) {
+
+                        if (dateList.get(k).equals(sumDataList.get(j)[0])) {
+                            yearpriceList.add(sumDataList.get(j)[1]);
+                            ok = false;
+                        }
+                    }
+                    if (ok) {
+                        yearpriceList.add("0");
+                    }
                 }
+                yearPriceInfoDto.setDateList(makeDateList("year"));
+                yearPriceInfoDto.setPriceList(yearpriceList);
+
+                yearlyPriceList.add(yearPriceInfoDto);
+            } else {
+                List<String> list = Collections.emptyList();
+                yearPriceInfoDto.setDateList(list);
+                yearPriceInfoDto.setPriceList(list);
+                yearlyPriceList.add(yearPriceInfoDto);
             }
-            yearPriceInfoDto.setDateList(makeDateList("year"));
-            yearPriceInfoDto.setPriceList(yearpriceList);
-
-            yearlyPriceList.add(yearPriceInfoDto);
-
         }
         return yearlyPriceList;
     }
