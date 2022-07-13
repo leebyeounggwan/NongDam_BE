@@ -70,15 +70,17 @@ public class Member extends TimeStamp {
 
     public void updateMember(MemberInfoRequestDto requestDto, CropRepository repository) {
         // 프로필 사진 없이 업데이트
-        this.nickname = requestDto.getNickname();
-        this.address = requestDto.getAddress();
-        this.countryCode = requestDto.getCountryCode();
+        this.nickname = requestDto.getNickname()==null?nickname:requestDto.getNickname();
+        this.address = requestDto.getAddress()==null?address:requestDto.getAddress();
+        this.countryCode = requestDto.getCountryCode()==0?countryCode:requestDto.getCountryCode();
         this.profileImage = null;
         this.crops.clear();
         List<Crop> cr = repository.findAllIds(requestDto.getCrops());
         this.crops.addAll(cr);
     }
-
+    public void updateProfile(String profileImage){
+        this.profileImage = profileImage;
+    }
     public void enableId(){
         if(isLock)
             this.isLock = false;
