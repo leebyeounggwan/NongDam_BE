@@ -91,5 +91,4 @@ public class MemberService {
     public MemberResponseDto makeMemberResponseDto(Member member) {
         return new MemberResponseDto(member);
     }
-
 }
