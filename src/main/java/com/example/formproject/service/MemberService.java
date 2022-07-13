@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.example.formproject.annotation.DeleteMemberCache;
 import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MailDto;
@@ -70,6 +71,7 @@ public class MemberService {
     }
 
     @Transactional
+    @DeleteMemberCache(memberIdArg = "memberid")
     public ResponseEntity<?> updateMember(int memberid, MultipartFile profileImage, MemberInfoRequestDto requestDto, String username) {
         Member member = repository.findById(memberid).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않습니다."));
