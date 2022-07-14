@@ -57,7 +57,6 @@ public class CommonInfoController {
     @Operation(summary = "뉴스 조회")
     public List<NewsResponseDto> getNews() throws IOException, ParseException, org.json.simple.parser.ParseException {
         List<NewsResponseDto> ret = newsService.getNewsInfo("");
-        System.out.println(ret.get(0).getTitle());
         for(NewsResponseDto r: ret)
             r.setTime();
         return ret;

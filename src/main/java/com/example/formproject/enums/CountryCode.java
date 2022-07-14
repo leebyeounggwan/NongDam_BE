@@ -15,6 +15,6 @@ public enum CountryCode {
     }
 
     public static CountryCode findByCountryCode(int code){
-        return Arrays.stream(values()).filter(e->e.getType() == code).collect(Collectors.toList()).get(0);
+        return Arrays.stream(values()).filter(e->e.getType() == code).findFirst().orElse(CountryCode.서울);
     }
 }

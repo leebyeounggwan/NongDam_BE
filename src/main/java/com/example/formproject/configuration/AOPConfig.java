@@ -53,7 +53,6 @@ public class AOPConfig {
         String keyArg =  annotation.cacheKey();
         String cacheKey = signature.getMethod().getReturnType().getName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
         if(template.hasKey(cacheKey)){
-            log.info("get From Cache");
             if(annotation.timeData())
                 return mapper.readValue(template.opsForValue().get(cacheKey).toString(),signature.getMethod().getReturnType());
             else
