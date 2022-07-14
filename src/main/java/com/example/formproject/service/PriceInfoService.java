@@ -115,10 +115,12 @@ public class PriceInfoService {
         String nowYear = priceInfoRequestDto.getYear() + "";
         //</editor-fold>
 
+
         StringBuilder apiURL = new StringBuilder("https://www.kamis.or.kr/service/price/xml.do?action=monthlySalesList&p_yyyy=" + nowYear + "&p_period=3&p_itemcategorycode=" + categoryCode + "&p_itemcode=" + itemCode + "&p_kindcode=" + kindCode + "&p_graderank=" + gradeRank + "&p_countycode=" + countyCode + "&p_convert_kg_yn=Y&p_cert_key=" + apiKey + "&p_cert_id=" + certId + "&p_returntype=json"); //URL
-        JSONObject obj = openApiService.ApiCall(apiURL);
-        JSONArray parse_price = (JSONArray) obj.get("price");
+
         try {
+            JSONObject obj = openApiService.ApiCall(apiURL);
+            JSONArray parse_price = (JSONArray) obj.get("price");
             for (int i = 0; i < parse_price.size(); i++) {
                 PriceInfoDto monthPriceInfoDto = new PriceInfoDto();
                 JSONObject parse_date = (JSONObject) parse_price.get(i);
@@ -164,6 +166,20 @@ public class PriceInfoService {
                 monthPriceInfoDto.setPriceList(list);
                 monthlyPriceList.add(monthPriceInfoDto);
             }
+        } catch (ClassCastException e) {
+            for (int i = 0; i < 2; i++) {
+                List<String> list = Collections.emptyList();
+                PriceInfoDto monthPriceInfoDto = new PriceInfoDto();
+                monthPriceInfoDto.setCrop(findCropName(itemCode));
+                monthPriceInfoDto.setType(priceInfoRequestDto.getName());
+                monthPriceInfoDto.setUnit("kg");
+                monthPriceInfoDto.setCountry(findCountryName(countyCode));
+                String clsCode = (i==0) ? "도매" : "소매";
+                monthPriceInfoDto.setWholeSale(clsCode);
+                monthPriceInfoDto.setDateList(list);
+                monthPriceInfoDto.setPriceList(list);
+                monthlyPriceList.add(monthPriceInfoDto);
+            }
         }
 
         return monthlyPriceList;
@@ -187,11 +203,12 @@ public class PriceInfoService {
 
         StringBuilder apiURL = new StringBuilder("https://www.kamis.or.kr/service/price/xml.do?action=yearlySalesList&p_yyyy="+nowYear+"&p_itemcategorycode="+categoryCode+"&p_itemcode="+itemCode+"&p_kindcode="+kindCode+"&p_graderank="+gradeRank+"&p_countycode="+countyCode+"&p_convert_kg_yn=Y&p_cert_key="+apiKey+"&p_cert_id="+certId+"&p_returntype=json"); //URL
 
-        JSONObject obj = openApiService.ApiCall(apiURL);
-        JSONArray parse_price = (JSONArray) obj.get("price");
-        List<String> dateList = makeDateList("year");
+
 
         try {
+            JSONObject obj = openApiService.ApiCall(apiURL);
+            JSONArray parse_price = (JSONArray) obj.get("price");
+            List<String> dateList = makeDateList("year");
             for (int i = 0; i < parse_price.size(); i++) {
                 PriceInfoDto yearPriceInfoDto = new PriceInfoDto();
                 List<String[]> sumDataList = new ArrayList<>();
@@ -260,7 +277,21 @@ public class PriceInfoService {
                 yearPriceInfoDto.setPriceList(list);
                 yearlyPriceList.add(yearPriceInfoDto);
             }
-       }
+       } catch (ClassCastException e) {
+            for (int i = 0; i < 2; i++) {
+                List<String> list = Collections.emptyList();
+                PriceInfoDto yearPriceInfoDto = new PriceInfoDto();
+                yearPriceInfoDto.setCrop(findCropName(itemCode));
+                yearPriceInfoDto.setType(priceInfoRequestDto.getName());
+                yearPriceInfoDto.setUnit("kg");
+                yearPriceInfoDto.setCountry(findCountryName(countyCode));
+                String clsCode = (i==0) ? "도매" : "소매";
+                yearPriceInfoDto.setWholeSale(clsCode);
+                yearPriceInfoDto.setDateList(list);
+                yearPriceInfoDto.setPriceList(list);
+                yearlyPriceList.add(yearPriceInfoDto);
+            }
+        }
         return yearlyPriceList;
     }
 
