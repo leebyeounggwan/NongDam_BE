@@ -57,14 +57,15 @@ public class MemberController {
     @Operation(summary = "로그인 (백규현)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class,example = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpZCIsImlkIjo2NywiZXhwIjoxNjU3MDk4Mjg5LCJpYXQiOjE2NTcwODc0ODl9._J-jgRNaqMS2_X9aZV0Cj9SgKK_R-VJzzxlexVcj_Gs"))}),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "로그인 필요",content=@Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
-    public String loginMember(@RequestBody  LoginDto dto, HttpServletResponse response) throws AuthenticationException, EmailConfirmException {
-        JwtResponseDto token = memberService.login(dto,response);
-        return "Bearer "+token.getToken();
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpZCIsImlkIjo2NywiZXhwIjoxNjU3MDk4Mjg5LCJpYXQiOjE2NTcwODc0ODl9._J-jgRNaqMS2_X9aZV0Cj9SgKK_R-VJzzxlexVcj_Gs"))}),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "로그인 필요", content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
+    public String loginMember(@RequestBody LoginDto dto, HttpServletResponse response) throws AuthenticationException, EmailConfirmException {
+        JwtResponseDto token = memberService.login(dto, response);
+        return "Bearer " + token.getToken();
     }
+
     @GetMapping("/member/email")
     @Operation(summary = "이메일 인증완료 (백규현)")
     @ApiResponses(value = {
@@ -73,12 +74,13 @@ public class MemberController {
                             schema = @Schema(implementation = String.class, example = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpZCIsImlkIjo2NywiZXhwIjoxNjU3MDk4Mjg5LCJpYXQiOjE2NTcwODc0ODl9._J-jgRNaqMS2_X9aZV0Cj9SgKK_R-VJzzxlexVcj_Gs")
                     )}
             ),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)
     })
-    public void emailToken(@RequestParam("id") Integer id,HttpServletResponse response) throws Exception {
+    public void emailToken(@RequestParam("id") Integer id, HttpServletResponse response) throws Exception {
         memberService.enableMember(id);
         response.sendRedirect(FinalValue.FRONT_URL);
     }
+
     @PostMapping("/member/auth")
     @Operation(summary = "Oauth Code를 이용하여 로그인/회원가입 (백규현)")
     @ApiResponses(value = {
@@ -87,19 +89,20 @@ public class MemberController {
                             schema = @Schema(implementation = String.class, example = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpZCIsImlkIjo2NywiZXhwIjoxNjU3MDk4Mjg5LCJpYXQiOjE2NTcwODc0ODl9._J-jgRNaqMS2_X9aZV0Cj9SgKK_R-VJzzxlexVcj_Gs")
                     )}
             ),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)
     })
-    public String accessTokenToMember(@RequestBody  String t,HttpServletResponse response){
-        JwtResponseDto dto = oAuthService.kakaoLogin(t,response);
+    public String accessTokenToMember(@RequestBody String t, HttpServletResponse response) {
+        JwtResponseDto dto = oAuthService.kakaoLogin(t, response);
 
         return dto.getToken();
     }
+
     @PostMapping("/member")
     @Operation(summary = "회원가입 (백규현)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료"),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청 데이터 오류",content=@Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청 데이터 오류", content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
     public void joinMember(@RequestBody MemberRequestDto dto) throws IOException, MessagingException {
         memberService.save(dto);
     }
@@ -108,32 +111,32 @@ public class MemberController {
     @Operation(summary = "로그인 정보 조회 (백규현)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
-                    content = { @Content(mediaType = "application/json",
+                    content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = MemberResponseDto.class))}),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content=@Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
     public MemberResponseDto getMember(@AuthenticationPrincipal MemberDetail memberDetail) {
         return memberService.makeMemberResponseDto(memberDetail.getMember());
     }
 
-    @PutMapping(value="/member")
+    @PutMapping(value = "/member")
     @Operation(summary = "개인정보 수정 (이경동)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class,example = "회원정보가 수정되었습니다."))}),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content=@Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
-    @Parameter(in = ParameterIn.PATH,name = "memberid",description = "사용자 id(database id)",example = "1",required = true)
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "회원정보가 수정되었습니다."))}),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
+    @Parameter(in = ParameterIn.PATH, name = "memberid", description = "사용자 id(database id)", example = "1", required = true)
     public ResponseEntity<?> updateMember(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
                                           @RequestPart String data,
                                           @AuthenticationPrincipal MemberDetail memberDetails) throws JsonProcessingException {
-        MemberInfoRequestDto requestDto = mapper.readValue(data,MemberInfoRequestDto.class);
-        return memberService.updateMember(memberDetails.getMember().getId(),profileImage, requestDto,memberDetails.getUsername());
+        MemberInfoRequestDto requestDto = mapper.readValue(data, MemberInfoRequestDto.class);
+        return memberService.updateMember(memberDetails.getMember().getId(), profileImage, requestDto, memberDetails.getUsername());
     }
 
     @ExceptionHandler(EmailConfirmException.class)
-    public ResponseEntity handlingAuthExp(EmailConfirmException e){
+    public ResponseEntity handlingAuthExp(EmailConfirmException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 }

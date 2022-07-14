@@ -9,12 +9,12 @@ import java.util.List;
 
 @Getter
 public class MemberInfoRequestDto {
-    @Schema(type = "String",example = "example nickname")
+    @Schema(type = "String", example = "example nickname")
     private String nickname;
-    @Schema(type = "String",example = "example address")
+    @Schema(type = "String", example = "example address")
     private String address;
-    @Schema(type = "int",example = "1101")
+    @Schema(type = "int", example = "1101")
     private int countryCode;
-    @Schema(type = "List",example = "[1,2,3,4]")
+    @Schema(type = "List", example = "[1,2,3,4]")
     private List<Integer> crops;
 }

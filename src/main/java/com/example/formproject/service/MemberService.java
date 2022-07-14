@@ -46,10 +46,10 @@ public class MemberService {
 
     @Transactional
     public JwtResponseDto login(LoginDto login, HttpServletResponse response) throws AuthenticationException, EmailConfirmException {
-        Member member = repository.findByEmail(login.getEmail()).orElseThrow(()->new AuthenticationException("계정을 찾을수 없습니다."));
-        if(encoder.matches(login.getPassword(),member.getPassword())){
+        Member member = repository.findByEmail(login.getEmail()).orElseThrow(() -> new AuthenticationException("계정을 찾을수 없습니다."));
+        if (encoder.matches(login.getPassword(), member.getPassword())) {
             JwtResponseDto jwtResponseDto = provider.generateToken(member, response);
-            if(member.isLock())
+            if (member.isLock())
                 throw new EmailConfirmException("이메일 인증이 필요한 계정입니다.");
             return jwtResponseDto;
         } else {
@@ -59,7 +59,7 @@ public class MemberService {
 
     @Transactional
     public void enableMember(int id) throws Exception {
-        Member member = repository.findById(id).orElseThrow(()->new Exception("계정을 찾을 수 없습니다."));
+        Member member = repository.findById(id).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
         member.enableId();
         repository.save(member);
         System.out.println("member is Enable :" + member.getEmail());
@@ -67,7 +67,7 @@ public class MemberService {
 
     public void save(MemberRequestDto dto) throws MessagingException {
         Member member = repository.save(dto.build(encoder));
-        emailService.sendHtmlEmail(MailDto.builder().email(dto.getEmail()).build(),member);
+        emailService.sendHtmlEmail(MailDto.builder().email(dto.getEmail()).build(), member);
     }
 
     @Transactional
@@ -91,5 +91,4 @@ public class MemberService {
     public MemberResponseDto makeMemberResponseDto(Member member) {
         return new MemberResponseDto(member);
     }
-
 }
