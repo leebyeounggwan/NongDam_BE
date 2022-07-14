@@ -111,6 +111,8 @@ public class PriceInfoController {
     @Parameter(in = ParameterIn.PATH,name = "cropId",description = "작물 정보",example = "21",required = true)
     @Parameter(in = ParameterIn.PATH,name = "data",description = "월별/연도별 선택",example = "month",required = true)
     public List<List<PriceInfoDto>> myPriceInfo(@AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
+
+        
         List<List<PriceInfoDto>> responseDtoList = new ArrayList<>();
         List<Crop> crops = memberdetail.getMember().getCrops();
 
