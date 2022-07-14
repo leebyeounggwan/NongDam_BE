@@ -108,10 +108,8 @@ public class JwtProvider {
     }
     public boolean checkRefreshToken(String refreshToken,String jwtToken){
         if(template.hasKey(refreshToken)){
-            log.info("check Key");
             return template.opsForValue().get(refreshToken).equals(jwtToken);
         }
-        log.info("no cache Key");
         return false;
     }
     public MemberDetail getMemberDetail(String token) {

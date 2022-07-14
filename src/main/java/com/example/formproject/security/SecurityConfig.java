@@ -51,7 +51,18 @@ public class SecurityConfig {
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .anyRequest().permitAll()
+                .antMatchers("/assert/**",
+                        "/actuator/**",
+                        "/member/**",
+                        "/member",
+                        "/news",
+                        "/crops",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/instances/**",
+                        "/h2-console/**",
+                        "/static/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
                 .userInfoEndpoint()
