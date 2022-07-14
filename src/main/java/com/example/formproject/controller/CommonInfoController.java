@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Common Info Api",description = "기준정보 관련 API(이경동)")
+@Slf4j
 public class CommonInfoController {
     private final CropService cropService;
     private final NewsService newsService;
@@ -38,7 +40,7 @@ public class CommonInfoController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)
     })
     public List<CropDto> getAllCrops(){
-        System.out.println("test");
+        log.info("testLog");
         return cropService.findAllData();
     }
 
