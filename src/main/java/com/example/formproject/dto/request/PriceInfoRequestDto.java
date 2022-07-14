@@ -2,41 +2,49 @@ package com.example.formproject.dto.request;
 
 import com.example.formproject.entity.Crop;
 import com.example.formproject.security.MemberDetail;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.joda.time.LocalDateTime;
-
-import javax.persistence.Column;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PriceInfoRequestDto {
+    @Schema(type = "String",example = "소매")
     private String productClsCode;
+    @Schema(type = "String",example = "상품")
     private String gradeRank;
-    private int category;
+    @Schema(type = "String",example = "month")
     private String data;
+    @Schema(type = "int",example = "100")
+    private int category;
+    @Schema(type = "int",example = "111")
     private int type;
+    @Schema(type = "String",example = "01")
     private String kind;
+    @Schema(type = "String",example = "양배추")
     private String name;
+    @Schema(type = "String",example = "1101")
     private String countryCode;
-    private int year = new LocalDateTime().getYear();
-    private int month = new LocalDateTime().getMonthOfYear();
-    private int day = new LocalDateTime().getDayOfMonth();
 
-    public PriceInfoRequestDto(Crop crop, PriceInfoRequestDto2 priceInfoRequestDto2, MemberDetail memberdetail) {
+    LocalDateTime dateTime = new LocalDateTime();
 
-        this.productClsCode = priceInfoRequestDto2.getProductClsCode();
-        this.gradeRank = priceInfoRequestDto2.getGradeRank();
+    private int year = dateTime.getYear();
+    private int month = dateTime.getMonthOfYear();
+    private int day = dateTime.getDayOfMonth();
+
+    public PriceInfoRequestDto(Crop crop, PriceRequestDto priceRequestDto, MemberDetail memberdetail) {
+
+        this.productClsCode = priceRequestDto.getProductClsCode();
+        this.gradeRank = priceRequestDto.getGradeRank();
         this.category = crop.getCategory();
         this.type = crop.getType();
         this.kind = crop.getKind();
         this.name = crop.getName();
         this.countryCode = memberdetail.getMember().getCountryCode()+"";
-        this.data = priceInfoRequestDto2.getData();
+        this.data = priceRequestDto.getData();
     }
 }
 
