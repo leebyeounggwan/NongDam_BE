@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -19,10 +18,10 @@ import java.util.List;
 @Builder
 @Getter
 public class WorkLogRequestDto {
-    @Schema(type = "String",example = "2022-07-06 10:00")
-    private String startTime;
-    @Schema(type = "String",example = "2022-07-06 10:00")
-    private String endTime;
+    @Schema(type = "String",example = "제목1")
+    private String title;
+    @Schema(type = "String",example = "2022-07-06")
+    private String date;
     @Schema(type = "int",example = "1")
     private int crop;
     @Schema(type = "String",example = "오늘은 000을 했다.")
@@ -35,7 +34,8 @@ public class WorkLogRequestDto {
 
     public WorkLog build(List<String> pictureList, Member member, CropRepository repository){
         WorkLog workLog = WorkLog.builder()
-                .date(LocalDate.parse(this.startTime, FinalValue.DAY_FORMATTER))
+                .title(this.title)
+                .date(LocalDate.parse(this.date, FinalValue.DAY_FORMATTER))
                 .memo(this.memo)
                 .crop(repository.findById(crop).orElseThrow(()->new IllegalArgumentException("작물 정보를 찾을 수 없습니다.")))
                 .harvest(this.harvest)
