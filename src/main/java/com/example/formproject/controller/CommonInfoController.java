@@ -38,6 +38,7 @@ public class CommonInfoController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)
     })
     public List<CropDto> getAllCrops(){
+        System.out.println("test");
         return cropService.findAllData();
     }
 
