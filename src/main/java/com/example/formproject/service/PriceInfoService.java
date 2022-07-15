@@ -1,11 +1,15 @@
 package com.example.formproject.service;
 
+import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.PriceInfoRequestDto;
 import com.example.formproject.dto.response.DailyPriceResponseDto;
 import com.example.formproject.dto.response.PriceInfoDto;
 import com.example.formproject.enums.CountryCode;
 import com.example.formproject.enums.CropTypeCode;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -20,6 +24,7 @@ import static com.example.formproject.enums.CountryCode.findByCountryCode;
 import static com.example.formproject.enums.CropTypeCode.findByCode;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PriceInfoService {
 
@@ -274,22 +279,24 @@ public class PriceInfoService {
         return dailyPriceResponseDto;
     }
 
-    //월별 시세에서 파싱한 데이터 리스트화
-    public static List<String> makeList(JSONArray a) {
-        List<String> totalList = new ArrayList<>();
+    public List<PriceInfo> makeListV2(JSONArray a){
+        List<PriceInfo> ret = new ArrayList<>();
         for (int i = 0; i < a.size(); i++) {
             JSONObject o = (JSONObject) a.get(i);
+            int year = Integer.parseInt(o.get("yyyy").toString());
             for (int j = 1; j < o.size() - 1; j++) {
-                String mData = o.get("m" + j).toString();
-                totalList.add(mData);
+                String tmp =  o.get("m"+j).toString();
+                String price = tmp.equals("-")?"0":tmp;
+                ret.add(new PriceInfo(year,j,price));
             }
         }
-        return totalList;
+        return ret;
     }
 
     //월별 시세에서 비어있는 데이터 채워넣고 2개월 단위로 추출
-    public static List<String> monthlyPriceList(JSONArray monthPriceOfThreeYear, int month) {
-        List<String> sumList = new ArrayList<>();
+    public List<String> monthlyPriceList(JSONArray monthPriceOfThreeYear, int month) {
+//        List<String> sumList = new ArrayList<>();
+        List<PriceInfo> sumList = new ArrayList<>();
         List<String> mPriceList = new ArrayList<>();
         List<String> finalList = new ArrayList<>();
 
@@ -298,22 +305,20 @@ public class PriceInfoService {
             threeYears.add(monthPriceOfThreeYear.get(j));
         }
 
-        sumList = makeList(threeYears);
-        System.out.println("");
-        for (int j = sumList.size() - 1; j > 0; j--) {
-            if (j != 1 && sumList.get(j).equals("-")) {
-                for (int k = j - 1; k > 0; k--) {
-                    if (!sumList.get(k).equals("-")) {
-                        sumList.set(j, sumList.get(k));
-                        break;
-                    }
-                }
-            }
-        }
-        for (int l = 12; l < 36; l++) {
-            finalList.add(sumList.get(l));
+        sumList = makeListV2(threeYears);
+        Collections.sort(sumList, FinalValue.PRICE_INFO_COMPARABLE);
+        Collections.reverse(sumList);
+
+        for(PriceInfo info : sumList){
+            log.info(info.getYear()+"/"+info.getMonth());
+
         }
 
+        for(int l = 0; l < sumList.size();l++){
+            finalList.add(sumList.get(l).getPrice());
+            if(finalList.size() == 24)
+                break;
+        }
         for (int j = month + 11; j + 12 >= month + 11; j -= 2) {
             mPriceList.add(finalList.get(j));
         }
@@ -385,6 +390,14 @@ public class PriceInfoService {
             unit = unit.substring(1);
         }
         return unit;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public class PriceInfo{
+        private int year;
+        private int month;
+        private String price;
     }
 
 }

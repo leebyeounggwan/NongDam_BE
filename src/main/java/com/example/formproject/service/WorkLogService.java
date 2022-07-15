@@ -58,16 +58,16 @@ public class WorkLogService {
         workLogRepository.save(workLog);
     }
 
-    @Transactional
-    public void deleteWorkLog(Long worklogid, String userEmail) {
-        WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-        if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
-            List<String> list = workLog.getPictures();
-            for (String picture : list) s3Service.deleteFile(picture);
-            workLogRepository.deleteById(worklogid);
-        } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
-    }
+//    @Transactional
+//    public void deleteWorkLog(Long worklogid, String userEmail) {
+//        WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
+//                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+//        if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
+//            List<String> list = workLog.getPictures();
+//            for (String picture : list) s3Service.deleteFile(picture);
+//            workLogRepository.deleteById(worklogid);
+//        } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
+//    }
 
 //    @Transactional
 //    public List<WorkLogResponseDto> updateWorkLog(Long worklogid, String userEmail) {
