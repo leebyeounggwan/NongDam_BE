@@ -22,6 +22,8 @@ public class WorkLogRequestDto {
     private String title;
     @Schema(type = "String",example = "2022-07-06")
     private String date;
+    @Schema(type = "int", example = "1")
+    private int workTime;
     @Schema(type = "int",example = "1")
     private int crop;
     @Schema(type = "String",example = "오늘은 000을 했다.")
@@ -36,11 +38,12 @@ public class WorkLogRequestDto {
         WorkLog workLog = WorkLog.builder()
                 .title(this.title)
                 .date(LocalDate.parse(this.date, FinalValue.DAY_FORMATTER))
+                .workTime(this.workTime)
                 .memo(this.memo)
                 .crop(repository.findById(crop).orElseThrow(()->new IllegalArgumentException("작물 정보를 찾을 수 없습니다.")))
                 .harvest(this.harvest)
                 .member(member)
-                .pictures(pictureList)
+                .images(pictureList)
                 .build();
         workLog.setQuarter();
         subMaterial.stream().forEach(e->{workLog.addSubMaterial(e.build());});
