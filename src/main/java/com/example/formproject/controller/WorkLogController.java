@@ -21,7 +21,7 @@ import java.util.Optional;
 @Tag(name = "WorkLog Api", description = "작업 결과 관련 Api(설계 진행중,이경동)")
 public class WorkLogController {
 
-    private final WorkLogRepository workLogRepository;
+//    private final WorkLogRepository workLogRepository;
     private final WorkLogService workLogService;
 
 //    private final WorkLogResponseDto workLogResponseDto;
@@ -35,21 +35,21 @@ public class WorkLogController {
         workLogService.createWorkLog(detail.getMember(), dto, images);
     }
 
-    @GetMapping("/worklog/{worklogid}")
-    public Optional<WorkLog> getWorkLog(@PathVariable Long worklogid) {
-        return workLogRepository.findById(worklogid);
-    }
+//    @GetMapping("/worklog/{worklogid}")
+//    public Optional<WorkLog> getWorkLog(@PathVariable Long worklogid) {
+//        return workLogRepository.findById(worklogid);
+//    }
 
-    @GetMapping("/worklog")
-    public List<WorkLog> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) {
-        return workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
-    }
+//    @GetMapping("/worklog")
+//    public List<WorkLog> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) {
+//        return workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
+//    }
 
-    @DeleteMapping("/worklog/{worklogid}")
-    public void deleteWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {
-        String userEmail = detail.getUsername();
-        workLogService.deleteWorkLog(worklogid, userEmail);
-    }
+//    @DeleteMapping("/worklog/{worklogid}")
+//    public void deleteWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {
+//        String userEmail = detail.getUsername();
+//        workLogService.deleteWorkLog(worklogid, userEmail);
+//    }
 
 //    @PatchMapping(value = "/worklog/{worklogid}", consumes = {"multipart/form-data"})
 //    public List<WorkLogResponseDto> updateWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {

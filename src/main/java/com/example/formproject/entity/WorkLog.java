@@ -22,6 +22,9 @@ public class WorkLog {
     private long id;
 
     @Column
+    private String title;
+
+    @Column
     private LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
