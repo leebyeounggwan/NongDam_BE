@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/assert/**",
                         "/actuator/**",
+                        "/profile",
                         "/member/**",
                         "/member",
                         "/news",
