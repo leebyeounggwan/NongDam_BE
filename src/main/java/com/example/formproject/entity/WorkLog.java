@@ -40,7 +40,7 @@ public class WorkLog {
     @Column
     private String memo;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     private List<SubMaterial> subMaterials = new ArrayList<>();
 
@@ -58,14 +58,14 @@ public class WorkLog {
     @Column
     private int quarter;
 
-    public void setQuarter(){
-        if(date != null){
+    public void setQuarter() {
+        if (date != null) {
             int month = date.getMonthValue();
-            if(month >= 1 && month <= 3)
+            if (month >= 1 && month <= 3)
                 this.quarter = 1;
-            else if(month >= 4 && month <= 6)
+            else if (month >= 4 && month <= 6)
                 this.quarter = 2;
-            else if(month >= 7 && month <= 9)
+            else if (month >= 7 && month <= 9)
                 this.quarter = 3;
             else
                 this.quarter = 4;
