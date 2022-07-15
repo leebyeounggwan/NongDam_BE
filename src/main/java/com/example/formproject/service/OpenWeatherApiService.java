@@ -24,10 +24,12 @@ public class OpenWeatherApiService {
     public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
         WeatherResponse weatherResponse = new WeatherResponse();
 
-        String address = (memberdetail.getMember().getAddress().equals("")) ? "서울 송파구 양재대로 932" : memberdetail.getMember().getAddress();
-        String[] coords = geoService.getGeoPoint(address);
+//        String address = (memberdetail.getMember().getAddress().equals("")) ? "서울 송파구 양재대로 932" : memberdetail.getMember().getAddress();
+        String address = (!memberdetail.getMember().getAddress().isEmpty()) ? memberdetail.getMember().getAddress() : "서울 송파구 양재대로 932";
+//        String[] coords = geoService.getGeoPoint(address);
 
-        StringBuilder apiURL = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat=" + coords[1] + "&lon=" + coords[0] + "&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr");
+//        StringBuilder apiURL = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat=" + coords[1] + "&lon=" + coords[0] + "&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr");
+        StringBuilder apiURL = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat=35.8451&lon=128.6881&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr");
 
         // API 호출
         JSONObject obj = openApiService.ApiCall(apiURL);
@@ -67,7 +69,6 @@ public class OpenWeatherApiService {
         JSONObject value = (JSONObject) parse_weather.get(0);
         weatherResponse.setWeather(value.get("description").toString());
         String icon = value.get("icon").toString();
-//        weatherResponse.setIconURL("http://openweathermap.org/img/wn/"+icon+"@2x.png");
         weatherResponse.setIconURL("http://idontcare.shop/static/weathericon/"+icon+".png");
 
         String[] strAddr = address.split(" ");
