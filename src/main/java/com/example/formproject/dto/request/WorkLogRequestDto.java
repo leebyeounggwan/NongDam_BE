@@ -30,7 +30,7 @@ public class WorkLogRequestDto {
     private int harvest;
     private List<SubMaterialRequestDto> subMaterial;
 
-    private List<String> pictures;
+    private List<String> images;
 
     public WorkLog build(List<String> pictureList, Member member, CropRepository repository){
         WorkLog workLog = WorkLog.builder()
