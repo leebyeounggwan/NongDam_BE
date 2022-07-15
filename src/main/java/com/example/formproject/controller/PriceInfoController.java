@@ -88,10 +88,10 @@ public class PriceInfoController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
     @Parameter(in = ParameterIn.PATH,name = "cropId",description = "작물 정보",example = "21",required = true)
     @Parameter(in = ParameterIn.PATH,name = "data",description = "월별/연도별 선택",example = "month",required = true)
-    public List<List<PriceInfoDto>> myPriceInfo(@PathVariable("data")String data,
+    public List<List<PriceInfoDto>> myPriceInfo(@PathVariable("data") String data,
                                                 @AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
 
-        
+
         List<List<PriceInfoDto>> responseDtoList = new ArrayList<>();
         List<Crop> crops = memberdetail.getMember().getCrops();
 
@@ -99,7 +99,7 @@ public class PriceInfoController {
             for (Crop crop : crops) {
                 PriceRequestDto priceRequestDto = new PriceRequestDto();
                 priceRequestDto.setCropId(crop.getId());
-                priceRequestDto.setData("data");
+                priceRequestDto.setData(data);
 
                 PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
                 List<PriceInfoDto> reponseDto = (priceInfoRequestDto.getData().equals("month")) ? priceInfoService.monthlyPrice(priceInfoRequestDto) : priceInfoService.yearlyPrice(priceInfoRequestDto);
