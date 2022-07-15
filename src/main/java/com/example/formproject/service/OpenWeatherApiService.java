@@ -24,7 +24,7 @@ public class OpenWeatherApiService {
     public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
         WeatherResponse weatherResponse = new WeatherResponse();
 
-        String address = (memberdetail.getMember().getAddress() == null) ? "서울 송파구 양재대로 932" : memberdetail.getMember().getAddress();
+        String address = (memberdetail.getMember().getAddress().equals("")) ? "서울 송파구 양재대로 932" : memberdetail.getMember().getAddress();
         String[] coords = geoService.getGeoPoint(address);
 
         StringBuilder apiURL = new StringBuilder("https://api.openweathermap.org/data/2.5/onecall?lat=" + coords[1] + "&lon=" + coords[0] + "&appid=1393bfc76e8aafc98311d5fedf3f59bf&units=metric&lang=kr");
