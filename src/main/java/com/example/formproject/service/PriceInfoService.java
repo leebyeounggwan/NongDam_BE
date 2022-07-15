@@ -80,27 +80,15 @@ public class PriceInfoService {
 
                 return dailyPriceResponseDto;
             } else {
-                dailyPriceResponseDto.setCrop(findCropName(p_itemcode));
-                dailyPriceResponseDto.setType(priceInfoRequestDto.getName());
-                dailyPriceResponseDto.setUnit("kg");
-                dailyPriceResponseDto.setCountry(findCountryName(p_countrycode));
-                dailyPriceResponseDto.setWholeSale(priceInfoRequestDto.getProductClsCode());
-                dailyPriceResponseDto.setLatestDate("");
-                dailyPriceResponseDto.setLatestDatePrice("");
-                return dailyPriceResponseDto;
+                return getDailyPriceResponseDto(priceInfoRequestDto, dailyPriceResponseDto, p_itemcode, p_countrycode);
             }
         }
-        catch (IOException e) {
-            dailyPriceResponseDto.setCrop(findCropName(p_itemcode));
-            dailyPriceResponseDto.setType(priceInfoRequestDto.getName());
-            dailyPriceResponseDto.setUnit("kg");
-            dailyPriceResponseDto.setCountry(findCountryName(p_countrycode));
-            dailyPriceResponseDto.setWholeSale(priceInfoRequestDto.getProductClsCode());
-            dailyPriceResponseDto.setLatestDate("");
-            dailyPriceResponseDto.setLatestDatePrice("");
-            return dailyPriceResponseDto;
+        catch (IOException | NullPointerException | ClassCastException e) {
+            return getDailyPriceResponseDto(priceInfoRequestDto, dailyPriceResponseDto, p_itemcode, p_countrycode);
         }
     }
+
+
 
     //월별 시세
     public List<PriceInfoDto> monthlyPrice(PriceInfoRequestDto priceInfoRequestDto) throws IOException, ParseException {
@@ -157,38 +145,14 @@ public class PriceInfoService {
                     monthlyPriceList.add(monthPriceInfoDto);
                 }
             }
-        } catch (NullPointerException e) {
-            for (int i = 0; i < 2; i++) {
-                List<String> list = Collections.emptyList();
-                PriceInfoDto monthPriceInfoDto = new PriceInfoDto();
-                monthPriceInfoDto.setCrop(findCropName(itemCode));
-                monthPriceInfoDto.setType(priceInfoRequestDto.getName());
-                monthPriceInfoDto.setUnit("kg");
-                monthPriceInfoDto.setCountry(findCountryName(countyCode));
-                String clsCode = (i==0) ? "도매" : "소매";
-                monthPriceInfoDto.setWholeSale(clsCode);
-                monthPriceInfoDto.setDateList(list);
-                monthPriceInfoDto.setPriceList(list);
-                monthlyPriceList.add(monthPriceInfoDto);
-            }
-        } catch (ClassCastException e) {
-            for (int i = 0; i < 2; i++) {
-                List<String> list = Collections.emptyList();
-                PriceInfoDto monthPriceInfoDto = new PriceInfoDto();
-                monthPriceInfoDto.setCrop(findCropName(itemCode));
-                monthPriceInfoDto.setType(priceInfoRequestDto.getName());
-                monthPriceInfoDto.setUnit("kg");
-                monthPriceInfoDto.setCountry(findCountryName(countyCode));
-                String clsCode = (i==0) ? "도매" : "소매";
-                monthPriceInfoDto.setWholeSale(clsCode);
-                monthPriceInfoDto.setDateList(list);
-                monthPriceInfoDto.setPriceList(list);
-                monthlyPriceList.add(monthPriceInfoDto);
-            }
+        } catch (NullPointerException | ClassCastException e) {
+            monthExtracted(priceInfoRequestDto, monthlyPriceList, itemCode, countyCode);
         }
 
         return monthlyPriceList;
     }
+
+
 
     //연도별 시세
     public List<PriceInfoDto> yearlyPrice(PriceInfoRequestDto priceInfoRequestDto) throws IOException, ParseException {
@@ -268,51 +232,53 @@ public class PriceInfoService {
                     yearlyPriceList.add(yearPriceInfoDto);
                 }
             }
-        } catch (NullPointerException e) {
-            for (int i = 0; i < 2; i++) {
-                List<String> list = Collections.emptyList();
-                PriceInfoDto yearPriceInfoDto = new PriceInfoDto();
-                yearPriceInfoDto.setCrop(findCropName(itemCode));
-                yearPriceInfoDto.setType(priceInfoRequestDto.getName());
-                yearPriceInfoDto.setUnit("kg");
-                yearPriceInfoDto.setCountry(findCountryName(countyCode));
-                String clsCode = (i==0) ? "도매" : "소매";
-                yearPriceInfoDto.setWholeSale(clsCode);
-                yearPriceInfoDto.setDateList(list);
-                yearPriceInfoDto.setPriceList(list);
-                yearlyPriceList.add(yearPriceInfoDto);
-            }
-       } catch (ClassCastException e) {
-            for (int i = 0; i < 2; i++) {
-                List<String> list = Collections.emptyList();
-                PriceInfoDto yearPriceInfoDto = new PriceInfoDto();
-                yearPriceInfoDto.setCrop(findCropName(itemCode));
-                yearPriceInfoDto.setType(priceInfoRequestDto.getName());
-                yearPriceInfoDto.setUnit("kg");
-                yearPriceInfoDto.setCountry(findCountryName(countyCode));
-                String clsCode = (i==0) ? "도매" : "소매";
-                yearPriceInfoDto.setWholeSale(clsCode);
-                yearPriceInfoDto.setDateList(list);
-                yearPriceInfoDto.setPriceList(list);
-                yearlyPriceList.add(yearPriceInfoDto);
-            }
+        } catch (NullPointerException | ClassCastException e) {
+            yearExtracted(priceInfoRequestDto, yearlyPriceList, itemCode, countyCode);
         }
         return yearlyPriceList;
     }
 
-
-    //월별 시세에서 파싱한 데이터 리스트화
-    public static List<String> makeList(JSONArray a) {
-        List<String> totalList = new ArrayList<>();
-        for (int i = 0; i < a.size(); i++) {
-            JSONObject o = (JSONObject) a.get(i);
-            for (int j = 1; j < o.size() - 1; j++) {
-                String mData = o.get("m" + j).toString();
-                totalList.add(mData);
-            }
+    private void yearExtracted(PriceInfoRequestDto priceInfoRequestDto, List<PriceInfoDto> yearlyPriceList, String itemCode, String countyCode) {
+        for (int i = 0; i < 2; i++) {
+            List<String> list = Collections.emptyList();
+            PriceInfoDto yearPriceInfoDto = new PriceInfoDto();
+            yearPriceInfoDto.setCrop(findCropName(itemCode));
+            yearPriceInfoDto.setType(priceInfoRequestDto.getName());
+            yearPriceInfoDto.setUnit("kg");
+            yearPriceInfoDto.setCountry(findCountryName(countyCode));
+            String clsCode = (i==0) ? "도매" : "소매";
+            yearPriceInfoDto.setWholeSale(clsCode);
+            yearPriceInfoDto.setDateList(list);
+            yearPriceInfoDto.setPriceList(list);
+            yearlyPriceList.add(yearPriceInfoDto);
         }
-        return totalList;
     }
+    private void monthExtracted(PriceInfoRequestDto priceInfoRequestDto, List<PriceInfoDto> monthlyPriceList, String itemCode, String countyCode) {
+        for (int i = 0; i < 2; i++) {
+            List<String> list = Collections.emptyList();
+            PriceInfoDto monthPriceInfoDto = new PriceInfoDto();
+            monthPriceInfoDto.setCrop(findCropName(itemCode));
+            monthPriceInfoDto.setType(priceInfoRequestDto.getName());
+            monthPriceInfoDto.setUnit("kg");
+            monthPriceInfoDto.setCountry(findCountryName(countyCode));
+            String clsCode = (i==0) ? "도매" : "소매";
+            monthPriceInfoDto.setWholeSale(clsCode);
+            monthPriceInfoDto.setDateList(list);
+            monthPriceInfoDto.setPriceList(list);
+            monthlyPriceList.add(monthPriceInfoDto);
+        }
+    }
+    private DailyPriceResponseDto getDailyPriceResponseDto(PriceInfoRequestDto priceInfoRequestDto, DailyPriceResponseDto dailyPriceResponseDto, String p_itemcode, String p_countrycode) {
+        dailyPriceResponseDto.setCrop(findCropName(p_itemcode));
+        dailyPriceResponseDto.setType(priceInfoRequestDto.getName());
+        dailyPriceResponseDto.setUnit("kg");
+        dailyPriceResponseDto.setCountry(findCountryName(p_countrycode));
+        dailyPriceResponseDto.setWholeSale(priceInfoRequestDto.getProductClsCode());
+        dailyPriceResponseDto.setLatestDate("");
+        dailyPriceResponseDto.setLatestDatePrice("");
+        return dailyPriceResponseDto;
+    }
+
     public List<PriceInfo> makeListV2(JSONArray a){
         List<PriceInfo> ret = new ArrayList<>();
         for (int i = 0; i < a.size(); i++) {
@@ -338,25 +304,14 @@ public class PriceInfoService {
         for (int j = 1; j < monthPriceOfThreeYear.size(); j++) {
             threeYears.add(monthPriceOfThreeYear.get(j));
         }
-//        sumList = makeList(threeYears);
+
         sumList = makeListV2(threeYears);
         Collections.sort(sumList, FinalValue.PRICE_INFO_COMPARABLE);
         Collections.reverse(sumList);
-//        for (int j = sumList.size() - 1; j > 0; j--) {
-//            if (j != 1 && sumList.get(j).equals("-")) {
-//                for (int k = j - 1; k > 0; k--) {
-//                    if (!sumList.get(k).equals("-")) {
-//                        sumList.set(j, sumList.get(k));
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        for (int l = 12; l < 36; l++) {
-//            finalList.add(sumList.get(l));
-//        }
+
         for(PriceInfo info : sumList){
             log.info(info.getYear()+"/"+info.getMonth());
+
         }
 
         for(int l = 0; l < sumList.size();l++){
@@ -412,19 +367,31 @@ public class PriceInfoService {
         return dateList;
     }
 
-    // 1101(countryCode) -> 서울
+    // 지역코드 to 지역명
     public static String findCountryName(String countryCode) {
         int num = Integer.parseInt(countryCode);
         CountryCode byCode = findByCountryCode(num);
 
         return byCode.name();
     }
-
+    //작물코드 to 작물명
     public static String findCropName(String cropCode) {
         int num = Integer.parseInt(cropCode);
         CropTypeCode byCode = findByCode(num);
         return byCode.toString();
     }
+
+    public static String getUnit(JSONObject parse_date) {
+        String[] stringa = parse_date.get("caption").toString().split(" > ");
+
+        String unit = stringa[5];
+
+        if (unit.replaceAll("[^\\d]", "").equals("1")) {
+            unit = unit.substring(1);
+        }
+        return unit;
+    }
+
     @AllArgsConstructor
     @Getter
     public class PriceInfo{
@@ -432,4 +399,5 @@ public class PriceInfoService {
         private int month;
         private String price;
     }
+
 }

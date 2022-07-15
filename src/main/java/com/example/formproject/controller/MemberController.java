@@ -78,7 +78,7 @@ public class MemberController {
     })
     public void emailToken(@RequestParam("id") Integer id, HttpServletResponse response) throws Exception {
         memberService.enableMember(id);
-        response.sendRedirect(FinalValue.FRONT_URL);
+        response.sendRedirect(FinalValue.FRONT_URL+"/login");
     }
 
     @PostMapping("/member/auth")
