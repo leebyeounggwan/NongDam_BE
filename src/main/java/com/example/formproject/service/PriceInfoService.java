@@ -83,7 +83,7 @@ public class PriceInfoService {
                 return getDailyPriceResponseDto(priceInfoRequestDto, dailyPriceResponseDto, p_itemcode, p_countrycode);
             }
         }
-        catch (IOException | NullPointerException | ClassCastException e) {
+        catch (IOException | NullPointerException | ClassCastException | IndexOutOfBoundsException e) {
             return getDailyPriceResponseDto(priceInfoRequestDto, dailyPriceResponseDto, p_itemcode, p_countrycode);
         }
     }
@@ -145,7 +145,7 @@ public class PriceInfoService {
                     monthlyPriceList.add(monthPriceInfoDto);
                 }
             }
-        } catch (NullPointerException | ClassCastException e) {
+        } catch (IOException | NullPointerException | ClassCastException | IndexOutOfBoundsException e) {
             monthExtracted(priceInfoRequestDto, monthlyPriceList, itemCode, countyCode);
         }
 
@@ -232,7 +232,7 @@ public class PriceInfoService {
                     yearlyPriceList.add(yearPriceInfoDto);
                 }
             }
-        } catch (NullPointerException | ClassCastException e) {
+        } catch (IOException | NullPointerException | ClassCastException | IndexOutOfBoundsException e) {
             yearExtracted(priceInfoRequestDto, yearlyPriceList, itemCode, countyCode);
         }
         return yearlyPriceList;
