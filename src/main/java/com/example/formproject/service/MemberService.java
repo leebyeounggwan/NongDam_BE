@@ -80,7 +80,7 @@ public class MemberService {
             if (profileImage != null)
                 member.updateMember(requestDto, s3Service.uploadFile(profileImage), cropRepository);
             else {
-                s3Service.deleteFile(member.getProfileImage());
+//                s3Service.deleteFile(member.getProfileImage());
                 member.updateMember(requestDto, cropRepository);
             }
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);

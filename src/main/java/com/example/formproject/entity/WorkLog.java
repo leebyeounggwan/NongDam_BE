@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +19,9 @@ public class WorkLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column
+    private String title;
 
     @Column
     private LocalDate date;
@@ -43,7 +45,7 @@ public class WorkLog {
     @CollectionTable(name = "worklog_pictures", joinColumns = {@JoinColumn(name = "work_log_id", referencedColumnName = "id")})
     @Column
     @Builder.Default
-    private List<String> pictures = new ArrayList<>();
+    private List<String> images = new ArrayList<>();
 
     @Column
     @Builder.Default
@@ -72,6 +74,6 @@ public class WorkLog {
     }
 
     public void addPicture(String url) {
-        this.pictures.add(url);
+        this.images.add(url);
     }
 }
