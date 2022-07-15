@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Common Info Api",description = "기준정보 관련 API(이경동)")
+@Slf4j
 public class CommonInfoController {
     private final CropService cropService;
     private final NewsService newsService;
@@ -38,6 +40,7 @@ public class CommonInfoController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)
     })
     public List<CropDto> getAllCrops(){
+        log.info("testLog");
         return cropService.findAllData();
     }
 
@@ -57,7 +60,6 @@ public class CommonInfoController {
     @Operation(summary = "뉴스 조회")
     public List<NewsResponseDto> getNews() throws IOException, ParseException, org.json.simple.parser.ParseException {
         List<NewsResponseDto> ret = newsService.getNewsInfo("");
-        System.out.println(ret.get(0).getTitle());
         for(NewsResponseDto r: ret)
             r.setTime();
         return ret;

@@ -19,11 +19,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class PriceInfoController {
@@ -40,7 +43,7 @@ public class PriceInfoController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
     @Parameter(in = ParameterIn.PATH,name = "cropId",description = "작물 정보",example = "21",required = true)
     @Parameter(in = ParameterIn.PATH,name = "productClsCode",description = "도/소매",example = "소매",required = true)
-    public DailyPriceResponseDto todayPriceInfo(@PathVariable("cropId")int cropId, @PathVariable("productClsCode")String productClsCode,
+    public DailyPriceResponseDto todayPriceInfo(@PathVariable("cropId") int cropId, @PathVariable("productClsCode")String productClsCode,
                                                 @AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
         PriceRequestDto priceRequestDto = new PriceRequestDto();
         priceRequestDto.setCropId(cropId);
@@ -75,7 +78,7 @@ public class PriceInfoController {
     }
 
     @GetMapping("/marketprice/{cropId}/{data}")
-    @Operation(summary = "내가 등록한 작물의 월별/연도별 시세 조회")
+    @Operation(summary = "내가 등록한 각 작물의 월별/연도별 시세 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
                     content = { @Content(mediaType = "application/json",
@@ -95,5 +98,35 @@ public class PriceInfoController {
         List<PriceInfoDto> reponseDto = (priceInfoRequestDto.getData().equals("month")) ? priceInfoService.monthlyPrice(priceInfoRequestDto) : priceInfoService.yearlyPrice(priceInfoRequestDto);
 
         return reponseDto;
+    }
+
+    @GetMapping("/marketprices")
+    @Operation(summary = "내가 등록한 모든 작물의 월별/연도별 시세 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PriceInfoDto.class)) }),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
+    @Parameter(in = ParameterIn.PATH,name = "cropId",description = "작물 정보",example = "21",required = true)
+    @Parameter(in = ParameterIn.PATH,name = "data",description = "월별/연도별 선택",example = "month",required = true)
+    public List<List<PriceInfoDto>> myPriceInfo(@AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
+
+        
+        List<List<PriceInfoDto>> responseDtoList = new ArrayList<>();
+        List<Crop> crops = memberdetail.getMember().getCrops();
+
+        if (crops.size() != 0) {
+            for (Crop crop : crops) {
+                PriceRequestDto priceRequestDto = new PriceRequestDto();
+                priceRequestDto.setCropId(crop.getId());
+                priceRequestDto.setData("month");
+
+                PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
+                List<PriceInfoDto> reponseDto = (priceInfoRequestDto.getData().equals("month")) ? priceInfoService.monthlyPrice(priceInfoRequestDto) : priceInfoService.yearlyPrice(priceInfoRequestDto);
+                responseDtoList.add(reponseDto);
+            }
+        }
+        return responseDtoList;
     }
 }
