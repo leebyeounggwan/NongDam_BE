@@ -26,6 +26,9 @@ public class WorkLog {
     @Column
     private LocalDate date;
 
+    @Column
+    private int workTime;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Member member;
