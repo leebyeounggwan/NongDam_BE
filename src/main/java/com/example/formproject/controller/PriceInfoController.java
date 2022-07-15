@@ -70,7 +70,8 @@ public class PriceInfoController {
         priceRequestDto.setCropId(cropId);
         priceRequestDto.setData(data);
         Crop crop = cropRepository.findById(priceRequestDto.getCropId()).orElseThrow();
-
+        System.out.println(crop.getType());
+        System.out.println(crop.getKind());
         PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
         List<PriceInfoDto> reponseDto = (priceInfoRequestDto.getData().equals("month")) ? priceInfoService.monthlyPrice(priceInfoRequestDto) : priceInfoService.yearlyPrice(priceInfoRequestDto);
 
@@ -93,7 +94,8 @@ public class PriceInfoController {
         priceRequestDto.setCropId(cropId);
         priceRequestDto.setData(data);
         Crop crop = cropRepository.findById(priceRequestDto.getCropId()).orElseThrow();
-
+        System.out.println(crop.getType());
+        System.out.println(crop.getKind());
         PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
         List<PriceInfoDto> reponseDto = (priceInfoRequestDto.getData().equals("month")) ? priceInfoService.monthlyPrice(priceInfoRequestDto) : priceInfoService.yearlyPrice(priceInfoRequestDto);
 
