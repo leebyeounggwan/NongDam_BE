@@ -29,7 +29,7 @@ public class WorkLogRequestDto {
     @Schema(type = "String", example = "오늘은 000을 했다.")
     private String memo;
     @Schema(type = "int", example = "100")
-    private int harvest;
+    private Long harvest;
     private List<SubMaterialRequestDto> subMaterial;
 
     private List<String> images;

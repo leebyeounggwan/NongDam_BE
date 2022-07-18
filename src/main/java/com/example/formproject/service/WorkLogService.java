@@ -3,11 +3,13 @@ package com.example.formproject.service;
 import com.example.formproject.dto.request.WorkLogRequestDto;
 import com.example.formproject.dto.response.LineChartDataDto;
 import com.example.formproject.dto.response.LineChartDto;
+import com.example.formproject.dto.response.WorkLogResponseDto;
 import com.example.formproject.entity.Crop;
 import com.example.formproject.entity.Member;
 import com.example.formproject.entity.WorkLog;
 import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.WorkLogRepository;
+import com.example.formproject.security.MemberDetail;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,6 +59,14 @@ public class WorkLogService {
         }
         workLogRepository.save(workLog);
     }
+
+//    @Transactional(readOnly = true)
+//    public List<WorkLogResponseDto> getWorkLogList(MemberDetail detail) {
+//        List<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
+//        List<WorkLogResponseDto> responseDtoList = new ArrayList<>();
+//
+//
+//    }
 
 //    @Transactional
 //    public void deleteWorkLog(Long worklogid, String userEmail) {
