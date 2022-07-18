@@ -41,9 +41,9 @@ public class Member extends TimeStamp {
     @Column
     private int countryCode;
 
-    @Column
-    private String profileImage;
-
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn
+    private Images profileImage;
     @Column
     private String nickname;
 
@@ -57,14 +57,14 @@ public class Member extends TimeStamp {
 
     public void updateMember(OAuthAttributes attributes) {
         this.name = attributes.getName();
-        this.profileImage = attributes.getPicture();
+        this.profileImage = Images.builder().url(attributes.getPicture()).fileName("kakaoProfile").build();
     }
 
     public void updateMember(MemberInfoRequestDto requestDto, Map<String, String> profileImage, CropRepository repository) {
         this.nickname = requestDto.getNickname() == null ? nickname : requestDto.getNickname();
         this.address = requestDto.getAddress() == null ? address : requestDto.getAddress();
         this.countryCode = requestDto.getCountryCode() == 0 ? countryCode : requestDto.getCountryCode();
-        this.profileImage = profileImage.get("url");
+        this.profileImage = Images.builder().url(profileImage.get("url")).fileName(profileImage.get("fileName")).build();
         this.crops.clear();
         List<Crop> cr = repository.findAllIds(requestDto.getCrops());
         this.crops.addAll(cr);
@@ -75,7 +75,7 @@ public class Member extends TimeStamp {
         this.nickname = requestDto.getNickname() == null ? nickname : requestDto.getNickname();
         this.address = requestDto.getAddress() == null ? address : requestDto.getAddress();
         this.countryCode = requestDto.getCountryCode() == 0 ? countryCode : requestDto.getCountryCode();
-        this.profileImage = FinalValue.BACK_URL + "/static/default.png"; //기본 프로필 이미지
+        this.profileImage = Images.builder().fileName("default").url(FinalValue.BACK_URL + "/static/default.png").build(); //기본 프로필 이미지
         this.crops.clear();
         List<Crop> cr = repository.findAllIds(requestDto.getCrops());
         this.crops.addAll(cr);

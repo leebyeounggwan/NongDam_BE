@@ -1,6 +1,7 @@
 package com.example.formproject.dto.request;
 
 import com.example.formproject.FinalValue;
+import com.example.formproject.entity.Images;
 import com.example.formproject.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class MemberRequestDto {
                 .email(email)
                 .password(encoder.encode(password))
                 .nickname(nickname)
-                .profileImage(FinalValue.BACK_URL + "/static/default.png")
+                .profileImage(Images.builder().fileName("default").url(FinalValue.BACK_URL + "/static/default.png").build())
                 .name(name)
                 .build();
     }
