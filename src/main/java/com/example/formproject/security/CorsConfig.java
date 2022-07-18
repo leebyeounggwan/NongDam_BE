@@ -35,7 +35,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000","http://nongdamproject.s3-website.ap-northeast-2.amazonaws.com/")
+                .allowedOrigins("http://localhost:3000","http://nongdamproject.s3-website.ap-northeast-2.amazonaws.com/","https://www.nongdam.site/","https://nongdam.site/")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization","RefreshToken")
                 .allowCredentials(true)

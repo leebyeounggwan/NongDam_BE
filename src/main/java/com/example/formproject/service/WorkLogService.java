@@ -49,6 +49,32 @@ public class WorkLogService {
         }
         return ret;
     }
+    public LineChartDto getWorkTimeData(Member m){
+        LineChartDto ret = new LineChartDto();
+        int year = LocalDate.now().getYear();
+        List<Object[]> datas = workLogRepository.selectWorkTimeofYear(m.getId(),year,year-1);
+        int i = 0;
+        while(i < datas.size()){
+            if(ret.hasLabel(datas.get(i)[0].toString())){
+                ret.addLabel(datas.get(i)[0].toString());
+            }
+            LineChartDataDto data = LineChartDataDto.builder()
+                    .name(datas.get(i)[1]+"분기").build();
+            data.addData(Long.parseLong(datas.get(i)[2].toString()));
+            if((int)datas.get(i)[2] == (int)datas.get(i+1)[2]) {
+                data.addData(Long.parseLong(datas.get(i)[2].toString()));
+                data.addData(Long.parseLong(datas.get(i+1)[2].toString()));
+                i += 2;
+            }else {
+                data.addData(Long.parseLong(datas.get(i)[2].toString()));
+                data.addData(0L);
+                i += 1;
+            }
+            ret.addData(data);
+        }
+        return ret;
+    }
+
 
     @Transactional
     public void createWorkLog(Member member, WorkLogRequestDto dto, List<MultipartFile> files) {
