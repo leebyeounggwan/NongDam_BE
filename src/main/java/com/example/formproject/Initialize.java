@@ -128,15 +128,14 @@ public class Initialize {
                     Crop.builder().category(CropCategoryCode.과일류.getCategory()).type(CropTypeCode.참다래.getType()).kind("01").name("참다래").build(),
             });
     
-    @PostConstruct
-    public void initializeData(){
-        for(Crop c : cropsData){
-            try{
-                cropRepository.save(c);
-            }catch (Exception e){
-
-            }
-        }
-
-    }
+//    @PostConstruct
+//    public void initializeData(){
+//        for(Crop c : cropsData){
+//            try{
+//                cropRepository.save(c);
+//            }catch (Exception e){
+//
+//            }
+//        }
+//    }
 }
