@@ -31,7 +31,7 @@ public class MemberResponseDto {
         this.email = member.getEmail();
         this.address = member.getAddress();
         this.nickname = member.getNickname();
-        this.profileImage = member.getProfileImage();
+        this.profileImage = member.getProfileImage().getUrl();
         this.countryCode = member.getCountryCode();
         member.getCrops().stream().forEach(e -> this.crops.add(new CropDto(e)));
     }
