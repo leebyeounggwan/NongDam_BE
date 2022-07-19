@@ -63,13 +63,20 @@ public class WorkLogService {
     }
 
     @Transactional(readOnly = true)
-    public List<WorkLogResponseDto> getWorkLogList(MemberDetail detail) {
+    public List<WorkLogResponseDto> getWorkLogList(MemberDetail detail) throws IllegalArgumentException {
         List<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
         List<WorkLogResponseDto> responseDtoList = new ArrayList<>();
-        for(WorkLog log : workLogList){
-            responseDtoList.add(new WorkLogResponseDto(log));
-        }
+        for(WorkLog log : workLogList) responseDtoList.add(new WorkLogResponseDto(log));
         return responseDtoList;
+    }
+
+    @Transactional
+    public WorkLogResponseDto getWorkLogDetails(Long worklogid, String userEmail) {
+        WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
+            return new WorkLogResponseDto(workLog);
+        } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
     }
 
     @Transactional
@@ -85,5 +92,6 @@ public class WorkLogService {
 
 //    @Transactional
 //    public List<WorkLogResponseDto> updateWorkLog(Long worklogid, String userEmail) {
+//
 //    }
 }
