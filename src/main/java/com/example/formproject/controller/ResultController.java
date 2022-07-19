@@ -81,7 +81,7 @@ public class ResultController {
         return accountBookService.getExpenseResult(detail.getMember());
     }
     @GetMapping("/worktime")
-    @Operation(summary = "분기별 작업 시간 데이터(막대그래프,작년,금년)")
+    @Operation(summary = "분기별 작업 시간 데이터(막대그래프, 금년, 작년)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
                     content = { @Content(mediaType = "application/json",
