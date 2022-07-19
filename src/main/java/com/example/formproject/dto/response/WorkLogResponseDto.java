@@ -41,16 +41,6 @@ public class WorkLogResponseDto {
         this.memo = workLog.getMemo();
         this.harvest = workLog.getHarvest();
         this.subMaterial.addAll(workLog.getSubMaterials());
-        for(Images image : workLog.getImages()){
-            this.images.add(image.getUrl());
-        }
-    }
-
-    public void addSubMaterial(SubMaterial subMaterial) {
-        this.subMaterial.add(subMaterial);
-    }
-
-    public void addImage(String url) {
-        this.images.add(url);
+        for (Images image : workLog.getImages()) this.images.add(image.getUrl());
     }
 }
