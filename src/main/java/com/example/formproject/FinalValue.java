@@ -15,7 +15,7 @@ public class FinalValue {
 
     public final static String FRONT_URL = "https://www.nongdam.site";
 
-    public final static String BACK_URL= "http://idontcare.shop";
+    public final static String BACK_URL= "https://idontcare.shop";
 
     public final static String APPLICATION_TITLE = "농담 : 농사를 한눈에 담다.";
 

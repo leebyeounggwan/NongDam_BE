@@ -41,7 +41,7 @@ public class Member extends TimeStamp {
     @Column
     private int countryCode;
 
-    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn
     private Images profileImage;
     @Column
@@ -51,7 +51,7 @@ public class Member extends TimeStamp {
     @Builder.Default
     private boolean isLock = true;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @Builder.Default
     private List<Crop> crops = new ArrayList<>();
 
@@ -84,5 +84,8 @@ public class Member extends TimeStamp {
     public void enableId() {
         if (isLock)
             this.isLock = false;
+    }
+    public void updateProfile(Images images){
+        this.profileImage = images;
     }
 }

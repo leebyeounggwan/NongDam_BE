@@ -8,14 +8,13 @@ import com.example.formproject.dto.response.LineChartDataDto;
 import com.example.formproject.entity.AccountBook;
 import com.example.formproject.entity.Member;
 import com.example.formproject.enums.AccountType;
-import com.example.formproject.repository.AccountBookQueryDsl;
+import com.example.formproject.repository.QueryDslRepository;
 import com.example.formproject.repository.AccountBookRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountBookService {
     private final AccountBookRepository accountBookRepository;
-    private final AccountBookQueryDsl accountBookQueryDsl;
+    private final QueryDslRepository queryDslRepository;
 
     public LineChartDto getResults(Member m){
         List<Object[]> incomes = accountBookRepository.incomeOfYear(m.getId());
@@ -85,7 +84,7 @@ public class AccountBookService {
     }
 
     public List<AccountResponseDto> findByLimits(Member member,int maxResult){
-        List<AccountBook> books = accountBookQueryDsl.findByMaxResult(member,maxResult);
+        List<AccountBook> books = queryDslRepository.selectAccountBookByMaxResult(member,maxResult);
         return convertResponse(books);
     }
     public List<AccountResponseDto> findByMonth(Member member,int year,int month){
