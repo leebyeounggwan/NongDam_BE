@@ -52,11 +52,11 @@ public class AwsS3Service {
         return result;
     }
 
-//    public String deleteFile(String fileName) {
-//        DeleteObjectRequest request = new DeleteObjectRequest(bucket, fileName);
-//        amazonS3.deleteObject(request);
-//        return "삭제완료";
-//    }
+    public String deleteFile(String fileName) {
+        DeleteObjectRequest request = new DeleteObjectRequest(bucket, fileName);
+        amazonS3.deleteObject(request);
+        return "삭제완료";
+    }
 
     private String createFileName(String fileName) { // 먼저 파일 업로드 시, 파일명을 난수화하기 위해 random으로 돌립니다.
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));

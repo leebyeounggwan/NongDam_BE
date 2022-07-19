@@ -1,6 +1,7 @@
 package com.example.formproject.controller;
 
 import com.example.formproject.dto.request.WorkLogRequestDto;
+import com.example.formproject.dto.response.WorkLogResponseDto;
 import com.example.formproject.entity.WorkLog;
 import com.example.formproject.repository.WorkLogRepository;
 import com.example.formproject.security.MemberDetail;
@@ -20,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Tag(name = "WorkLog Api", description = "작업 결과 관련 Api(설계 진행중,이경동)")
 public class WorkLogController {
-//    private final WorkLogRepository workLogRepository;
+    private final WorkLogRepository workLogRepository;
     private final WorkLogService workLogService;
 //    private final WorkLogResponseDto workLogResponseDto;
 
@@ -38,10 +39,10 @@ public class WorkLogController {
 //        return workLogRepository.findById(worklogid);
 //    }
 
-//    @GetMapping("/worklog")
-//    public List<WorkLog> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) {
-//        return workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
-//    }
+    @GetMapping("/worklog")
+    public List<WorkLogResponseDto> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) {
+        return workLogService.getWorkLogList(detail);
+    }
 
 //    @DeleteMapping("/worklog/{worklogid}")
 //    public void deleteWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {

@@ -44,15 +44,12 @@ public class WorkLog {
     @Builder.Default
     private List<SubMaterial> subMaterials = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "worklog_pictures", joinColumns = {@JoinColumn(name = "work_log_id", referencedColumnName = "id")})
-    @Column
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @Builder.Default
-    private List<String> images = new ArrayList<>();
+    private List<Images> images = new ArrayList<>();
 
     @Column
     @Builder.Default
-
     private long harvest = 0L;
 
     @Column
@@ -76,7 +73,7 @@ public class WorkLog {
         this.subMaterials.add(material);
     }
 
-    public void addPicture(String url) {
-        this.images.add(url);
+    public void addPicture(String url,String filename) {
+        this.images.add(Images.builder().url(url).fileName(filename).build());
     }
 }

@@ -3,11 +3,14 @@ package com.example.formproject.service;
 import com.example.formproject.dto.request.WorkLogRequestDto;
 import com.example.formproject.dto.response.LineChartDataDto;
 import com.example.formproject.dto.response.LineChartDto;
+import com.example.formproject.dto.response.WorkLogResponseDto;
 import com.example.formproject.entity.Crop;
+import com.example.formproject.entity.Images;
 import com.example.formproject.entity.Member;
 import com.example.formproject.entity.WorkLog;
 import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.WorkLogRepository;
+import com.example.formproject.security.MemberDetail;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -76,24 +79,35 @@ public class WorkLogService {
     @Transactional
     public void createWorkLog(Member member, WorkLogRequestDto dto, List<MultipartFile> files) {
         List<String> fileList = new ArrayList<>();
-        WorkLog workLog = dto.build(fileList, member, cropRepository);
+        WorkLog workLog = dto.build(member, cropRepository);
         for (MultipartFile file : files) {
-            fileList.add(s3Service.uploadFile(file).values().toString());
-            workLog.addPicture(s3Service.uploadFile(file).values().toString());
+            Map<String,String> result = s3Service.uploadFile(file);
+            fileList.add(result.get("url"));
+            workLog.addPicture(result.get("url"),result.get("fileName"));
         }
         workLogRepository.save(workLog);
     }
 
-//    @Transactional
-//    public void deleteWorkLog(Long worklogid, String userEmail) {
-//        WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
-//                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-//        if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
-//            List<String> list = workLog.getPictures();
-//            for (String picture : list) s3Service.deleteFile(picture);
-//            workLogRepository.deleteById(worklogid);
-//        } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
-//    }
+    @Transactional(readOnly = true)
+    public List<WorkLogResponseDto> getWorkLogList(MemberDetail detail) {
+        List<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
+        List<WorkLogResponseDto> responseDtoList = new ArrayList<>();
+        for(WorkLog log : workLogList){
+            responseDtoList.add(new WorkLogResponseDto(log));
+        }
+        return responseDtoList;
+    }
+
+    @Transactional
+    public void deleteWorkLog(Long worklogid, String userEmail) {
+        WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
+            List<Images> list = workLog.getImages();
+            for (Images picture : list) s3Service.deleteFile(picture.getFileName());
+            workLogRepository.deleteById(worklogid);
+        } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
+    }
 
 //    @Transactional
 //    public List<WorkLogResponseDto> updateWorkLog(Long worklogid, String userEmail) {
