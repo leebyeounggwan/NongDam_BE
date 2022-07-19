@@ -5,7 +5,6 @@ import com.example.formproject.dto.request.PriceApiRequestVariableDto;
 import com.example.formproject.dto.request.PriceInfoRequestDto;
 import com.example.formproject.dto.response.DailyPriceResponseDto;
 import com.example.formproject.dto.response.PriceInfoDto;
-import com.example.formproject.entity.Price;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -159,11 +158,13 @@ public class PriceInfoService {
         }
         return yearlyPriceList;
     }
+
     // 월별 연도별
     public List<PriceInfo> makeListV2(JSONArray a){
         List<PriceInfo> ret = new ArrayList<>();
         for (int i = 0; i < a.size(); i++) {
             JSONObject o = (JSONObject) a.get(i);
+
             int year = Integer.parseInt(o.get("yyyy").toString());
             for (int j = 1; j < o.size() - 1; j++) {
                 String tmp =  o.get("m"+j).toString();
@@ -176,8 +177,7 @@ public class PriceInfoService {
 
     //월별 시세에서 비어있는 데이터 채워넣고 2개월 단위로 추출
     public List<String> monthlyPriceList(JSONArray monthPriceOfThreeYear, int month) {
-//        List<String> sumList = new ArrayList<>();
-        List<PriceInfo> sumList = new ArrayList<>();
+        List<PriceInfo> sumList;
         List<String> mPriceList = new ArrayList<>();
         List<String> finalList = new ArrayList<>();
 
@@ -187,8 +187,21 @@ public class PriceInfoService {
         }
 
         sumList = makeListV2(threeYears);
+
         Collections.sort(sumList, FinalValue.PRICE_INFO_COMPARABLE);
+
         Collections.reverse(sumList);
+
+        for (int j = sumList.size() - 1; j > 0; j--) {
+            if (j != 1 && sumList.get(j).equals("-")) {
+                for (int k = j - 1; k > 0; k--) {
+                    if (!sumList.get(k).equals("-")) {
+                        sumList.set(j, sumList.get(k));
+                        break;
+                    }
+                }
+            }
+        }
 
         for(int l = 0; l < sumList.size();l++){
             finalList.add(sumList.get(l).getPrice());
@@ -203,9 +216,10 @@ public class PriceInfoService {
 
     @AllArgsConstructor
     @Getter
-    public class PriceInfo{
+    public static class PriceInfo{
         private int year;
         private int month;
         private String price;
     }
+
 }

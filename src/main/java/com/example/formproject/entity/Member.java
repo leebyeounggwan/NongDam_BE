@@ -51,7 +51,7 @@ public class Member extends TimeStamp {
     @Builder.Default
     private boolean isLock = true;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @Builder.Default
     private List<Crop> crops = new ArrayList<>();
 

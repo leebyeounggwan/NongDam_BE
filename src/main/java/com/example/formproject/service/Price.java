@@ -1,5 +1,7 @@
-package com.example.formproject.entity;
+package com.example.formproject.service;
 
+import com.example.formproject.FinalValue;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
