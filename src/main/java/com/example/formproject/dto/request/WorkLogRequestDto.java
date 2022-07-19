@@ -29,12 +29,12 @@ public class WorkLogRequestDto {
     @Schema(type = "String", example = "오늘은 000을 했다.")
     private String memo;
     @Schema(type = "int", example = "100")
-    private int harvest;
+    private Long harvest;
     private List<SubMaterialRequestDto> subMaterial;
 
     private List<String> images;
 
-    public WorkLog build(List<String> pictureList, Member member, CropRepository repository) {
+    public WorkLog build(Member member, CropRepository repository) {
         WorkLog workLog = WorkLog.builder()
                 .title(this.title)
                 .date(LocalDate.parse(this.date, FinalValue.DAY_FORMATTER))
@@ -43,7 +43,6 @@ public class WorkLogRequestDto {
                 .crop(repository.findById(crop).orElseThrow(() -> new IllegalArgumentException("작물 정보를 찾을 수 없습니다.")))
                 .harvest(this.harvest)
                 .member(member)
-                .images(pictureList)
                 .build();
         workLog.setQuarter();
         subMaterial.stream().forEach(e -> {
