@@ -41,7 +41,7 @@ public class Member extends TimeStamp {
     @Column
     private int countryCode;
 
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn
     private Images profileImage;
     @Column

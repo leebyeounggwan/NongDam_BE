@@ -13,7 +13,7 @@ public class FinalValue {
     public static final String LOGIN_URL = "/member/login";
     public final static String REDIRECT_URL = "http://localhost:3000/code/auth";
 
-    public final static String FRONT_URL = "http://nongdamproject.s3-website.ap-northeast-2.amazonaws.com";
+    public final static String FRONT_URL = "https://www.nongdam.site";
 
     public final static String BACK_URL= "http://idontcare.shop";
 
