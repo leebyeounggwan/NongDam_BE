@@ -31,12 +31,12 @@ public class WorkLogService {
 
     public LineChartDto getHarvestData(Member m) {
         LineChartDto ret = new LineChartDto();
-        LocalDate[] times = workLogRepository.findTimesOfHarvest(m.getId());
+        List<LocalDate[]> times = workLogRepository.findTimesOfHarvest(m.getId());
         for (Crop c : m.getCrops()) {
             List<Object[]> datas = workLogRepository.selectHarvest(m.getId(), c.getId());
             LineChartDataDto dto = LineChartDataDto.builder().name(c.getName()).build();
-            LocalDate startTime = times[1];
-            LocalDate endTime = times[0];
+            LocalDate startTime = times.get(0)[1];
+            LocalDate endTime = times.get(0)[0];
             while (startTime.isBefore(endTime) || (startTime.getYear() == endTime.getYear() && startTime.getMonthValue() == endTime.getMonthValue())) {
                 int year = startTime.getYear();
                 int month = startTime.getMonthValue();
