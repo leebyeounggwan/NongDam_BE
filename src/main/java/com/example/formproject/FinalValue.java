@@ -5,6 +5,7 @@ import org.apache.http.HttpStatus;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Locale;
@@ -39,4 +40,10 @@ public class FinalValue {
             return 0;
         }
     };
+    public static int getBackDayOfWeekValue(DayOfWeek fromDay){
+        return Math.abs(fromDay.getValue()-DayOfWeek.SATURDAY.getValue()+7)%7;
+    }
+    public static int getForwardDayOfWeekValue(DayOfWeek fromDay){
+        return Math.abs((fromDay.getValue()==7?0:fromDay.getValue())-DayOfWeek.SATURDAY.getValue());
+    }
 }

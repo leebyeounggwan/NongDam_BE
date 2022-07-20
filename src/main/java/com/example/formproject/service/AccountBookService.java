@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.AccountRequestDto;
 import com.example.formproject.dto.response.AccountResponseDto;
 import com.example.formproject.dto.response.CircleChartDto;
@@ -15,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +91,12 @@ public class AccountBookService {
         return convertResponse(books);
     }
     public List<AccountResponseDto> findByMonth(Member member,int year,int month){
-        List<AccountBook> books = accountBookRepository.findAccountBookByMonth(member.getId(),year,month);
+        YearMonth yearMonth = YearMonth.of(year,month);
+        LocalDateTime startTime = LocalDateTime.of(year,month,1,0,0,0);
+        LocalDateTime endTime = yearMonth.atEndOfMonth().atTime(23,59,59);
+        startTime = startTime.minusDays(FinalValue.getBackDayOfWeekValue(startTime.getDayOfWeek()));
+        endTime = endTime.plusDays(FinalValue.getForwardDayOfWeekValue(endTime.getDayOfWeek()));
+        List<AccountBook> books = accountBookRepository.findAccountBookByMonth(member.getId(),startTime,endTime);
         return convertResponse(books);
     }
     private List<AccountResponseDto> convertResponse(List<AccountBook> list){
