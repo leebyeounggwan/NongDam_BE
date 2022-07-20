@@ -40,8 +40,8 @@ public class WorkLogService {
             while (startTime.isBefore(endTime) || (startTime.getYear() == endTime.getYear() && startTime.getMonthValue() == endTime.getMonthValue())) {
                 int year = startTime.getYear();
                 int month = startTime.getMonthValue();
-                ret.addLabel(startTime.getYear() + "-" + startTime.getMonthValue() + "01");
-                int data = Integer.parseInt(datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == year && Integer.parseInt(e[1].toString()) == month).findFirst().orElse(new Object[]{startTime.getYear(), startTime.getMonthValue(), 0})[2].toString());
+                ret.addLabel(startTime.getYear() + "-" + startTime.getMonthValue());
+                int data = Integer.parseInt(datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == year && Integer.parseInt(e[1].toString()) == month).findFirst().orElse(new Object[]{startTime.getYear(), startTime.getMonthValue(), 0})[3].toString());
                 dto.addData(data);
                 startTime = startTime.plusMonths(1L);
             }
