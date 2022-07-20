@@ -52,29 +52,23 @@ public class WorkLogService {
     public LineChartDto getWorkTimeData(Member m){
         LineChartDto ret = new LineChartDto();
         int year = LocalDate.now().getYear();
-        List<Object[]> datas = workLogRepository.selectWorkTimeofYear(m.getId(),year,year-1);
-        int i = 0;
-        while(i < datas.size()){
-            if(ret.hasLabel(datas.get(i)[0].toString())){
-                ret.addLabel(datas.get(i)[0].toString());
-            }
-            LineChartDataDto data = LineChartDataDto.builder()
-                    .name(datas.get(i)[1]+"분기").build();
-            data.addData(Long.parseLong(datas.get(i)[2].toString()));
-            if((long)datas.get(i)[2] == (long)datas.get(i+1)[2]) {
-                data.addData(Long.parseLong(datas.get(i)[2].toString()));
-                data.addData(Long.parseLong(datas.get(i+1)[2].toString()));
-                i += 2;
-            }else {
-                data.addData(Long.parseLong(datas.get(i)[2].toString()));
-                data.addData(0L);
-                i += 1;
-            }
+        List<Object[]> thisYear = workLogRepository.selectWorkTimeofYear(m.getId(),year);
+        List<Object[]> preYear = workLogRepository.selectWorkTimeofYear(m.getId(),year-1);
+        ret.addLabel(Integer.toString(year-1));
+        ret.addLabel(Integer.toString(year));
+        for(int idx = 1; idx < 5;idx++){
+            int finalIdx = idx;
+            LineChartDataDto data = LineChartDataDto.builder().name(idx+"분기").build();
+            Object[] preYearData = preYear.stream().filter(e->Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
+            long number1 = preYearData ==null?0L:Long.parseLong(preYearData[2].toString());
+            data.addData(number1);
+            Object[] thisYearData = thisYear.stream().filter(e->Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
+            long number2 = thisYearData ==null?0L:Long.parseLong(thisYearData[2].toString());
+            data.addData(number2);
             ret.addData(data);
         }
         return ret;
     }
-
 
     @Transactional
     public void createWorkLog(Member member, WorkLogRequestDto dto, List<MultipartFile> files) {
