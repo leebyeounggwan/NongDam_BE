@@ -92,8 +92,8 @@ public class AccountBookService {
     }
     public List<AccountResponseDto> findByMonth(Member member,int year,int month){
         YearMonth yearMonth = YearMonth.of(year,month);
-        LocalDateTime startTime = LocalDateTime.of(year,month,1,0,0,0);
-        LocalDateTime endTime = yearMonth.atEndOfMonth().atTime(23,59,59);
+        LocalDate startTime = LocalDate.of(year,month,1);
+        LocalDate endTime = yearMonth.atEndOfMonth();
         startTime = startTime.minusDays(FinalValue.getBackDayOfWeekValue(startTime.getDayOfWeek()));
         endTime = endTime.plusDays(FinalValue.getForwardDayOfWeekValue(endTime.getDayOfWeek()));
         List<AccountBook> books = accountBookRepository.findAccountBookByMonth(member.getId(),startTime,endTime);

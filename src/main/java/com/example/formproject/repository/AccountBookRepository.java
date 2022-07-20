@@ -31,5 +31,5 @@ public interface AccountBookRepository extends JpaRepository<AccountBook,Long> {
     @Query("Select this_ from AccountBook this_ where this_.member.id=:memberId and year(this_.date)=:year and month(this_.date)=:month order by this_.date desc")
     public List<AccountBook> findAccountBookByMonth(@Param("memberId")int memberId,@Param("year")int year,@Param("month")int month);
     @Query("Select this_ from AccountBook this_ where this_.member.id=:memberId and this_.date between :startTime and :endTime order by this_.date desc")
-    public List<AccountBook> findAccountBookByMonth(@Param("memberId")int memberId,@Param("startTime") LocalDateTime startTime,@Param("endTime")LocalDateTime endTime);
+    public List<AccountBook> findAccountBookByMonth(@Param("memberId")int memberId,@Param("startTime") LocalDate startTime,@Param("endTime")LocalDate endTime);
 }

@@ -3,6 +3,7 @@ package com.example.formproject;
 import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MemberRequestDto;
 import com.example.formproject.dto.response.MemberResponseDto;
+import com.example.formproject.dto.response.WeatherResponse;
 import com.example.formproject.entity.Images;
 import com.example.formproject.entity.Member;
 import com.example.formproject.repository.AccountBookRepository;
@@ -61,51 +62,52 @@ class FormProjectApplicationTests {
         ResponseEntity<String> response = restTemplate.exchange("/actuator/health",HttpMethod.GET,request,String.class);
         String body = response.getBody();
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
         Assertions.assertThat(body).contains("UP");
     }
-//    @Test
-//    @Order(1)
-//    void 회원가입() {
-//        MemberRequestDto dto = MemberRequestDto.builder()
-//                .email("qweasd3996@naver.com")
-//                .name("백규현")
-//                .nickname("nickname")
-//                .password("test")
-//                .build();
-//        HttpEntity request = new HttpEntity(dto,headers);
-//        ResponseEntity response = restTemplate.postForEntity("/member",request,String.class);
-//        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        this.email = dto.getEmail();
-//    }
-//
-//    @Test
-//    @Order(2)
-//    void 회원가입확인(){
-//        ResponseEntity response = restTemplate.getForEntity("/member/email?id=1",String.class);
-//        Assertions.assertThat(response.getStatusCodeValue()).isEqualTo(302);
-//    }
-//    @Test
-//    @Order(3)
-//    void 로그인(){
-//        LoginDto dto = new LoginDto(email,"test");
-//        HttpEntity request = new HttpEntity(dto,headers);
-//        ResponseEntity<String> response = restTemplate.postForEntity("/member/login",request,String.class);
-//        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        Assertions.assertThat(response.getHeaders().get("Authorization").get(0)).isNotNull();
-//        Assertions.assertThat(response.getHeaders().get("RefreshToken").get(0)).isNotNull();
-//        this.jwtToken = "Bearer "+response.getHeaders().get("Authorization").get(0);
-//        this.refreshToken = "Bearer "+response.getHeaders().get("RefreshToken").get(0);
-//    }
-//    @Test
-//    @Order(4)
-//    void 사용자정보_조회(){
-//        HttpEntity request = new HttpEntity(headers);
-//        ResponseEntity<MemberResponseDto> response = restTemplate.exchange("/member",HttpMethod.GET,request, MemberResponseDto.class);
-//        MemberResponseDto dto = response.getBody();
-//        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        Assertions.assertThat(dto.getProfileImage()).isEqualTo("https://idontcare.shop/static/default.png");
-//        Assertions.assertThat(dto.getEmail()).isEqualTo(email);
-//        Assertions.assertThat(dto.getId()).isNotNull();
-//        this.userId = dto.getId();
-//    }
+    @Test
+    @Order(1)
+    void 회원가입() {
+        MemberRequestDto dto = MemberRequestDto.builder()
+                .email("qweasd3996@naver.com")
+                .name("백규현")
+                .nickname("nickname")
+                .password("test")
+                .build();
+        HttpEntity request = new HttpEntity(dto,headers);
+        ResponseEntity response = restTemplate.postForEntity("/member",request,String.class);
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        this.email = dto.getEmail();
+    }
+
+    @Test
+    @Order(2)
+    void 회원가입확인(){
+        ResponseEntity response = restTemplate.getForEntity("/member/email?id=1",String.class);
+        Assertions.assertThat(response.getStatusCodeValue()).isEqualTo(302);
+    }
+    @Test
+    @Order(3)
+    void 로그인(){
+        LoginDto dto = new LoginDto(email,"test");
+        HttpEntity request = new HttpEntity(dto,headers);
+        ResponseEntity<String> response = restTemplate.postForEntity("/member/login",request,String.class);
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(response.getHeaders().get("Authorization").get(0)).isNotNull();
+        Assertions.assertThat(response.getHeaders().get("RefreshToken").get(0)).isNotNull();
+        this.jwtToken = "Bearer "+response.getHeaders().get("Authorization").get(0);
+        this.refreshToken = "Bearer "+response.getHeaders().get("RefreshToken").get(0);
+    }
+    @Test
+    @Order(4)
+    void 사용자정보_조회(){
+        HttpEntity request = new HttpEntity(headers);
+        ResponseEntity<MemberResponseDto> response = restTemplate.exchange("/member",HttpMethod.GET,request, MemberResponseDto.class);
+        MemberResponseDto dto = response.getBody();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(dto.getProfileImage()).isEqualTo("https://idontcare.shop/static/default.png");
+        Assertions.assertThat(dto.getEmail()).isEqualTo(email);
+        Assertions.assertThat(dto.getId()).isNotNull();
+        this.userId = dto.getId();
+    }
 }
