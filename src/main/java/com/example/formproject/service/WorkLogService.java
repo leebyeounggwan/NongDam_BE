@@ -61,7 +61,7 @@ public class WorkLogService {
             LineChartDataDto data = LineChartDataDto.builder()
                     .name(datas.get(i)[1]+"분기").build();
             data.addData(Long.parseLong(datas.get(i)[2].toString()));
-            if((int)datas.get(i)[2] == (int)datas.get(i+1)[2]) {
+            if((long)datas.get(i)[2] == (long)datas.get(i+1)[2]) {
                 data.addData(Long.parseLong(datas.get(i)[2].toString()));
                 data.addData(Long.parseLong(datas.get(i+1)[2].toString()));
                 i += 2;
