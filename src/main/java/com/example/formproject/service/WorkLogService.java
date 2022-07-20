@@ -41,7 +41,7 @@ public class WorkLogService {
                 int year = startTime.getYear();
                 int month = startTime.getMonthValue();
                 ret.addLabel(startTime.getYear() + "-" + startTime.getMonthValue() + "01");
-                int data = (int) datas.stream().filter(e -> (int) e[0] == year && (int) e[1] == month).findFirst().orElse(new Object[]{startTime.getYear(), startTime.getMonthValue(), 0})[2];
+                int data = (int) datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == year && Integer.parseInt(e[1].toString()) == month).findFirst().orElse(new Object[]{startTime.getYear(), startTime.getMonthValue(), 0})[2];
                 dto.addData(data);
                 startTime = startTime.plusMonths(1L);
             }
