@@ -32,17 +32,17 @@ public class WorkLogService {
 
     public LineChartDto getHarvestData(Member m) {
         LineChartDto ret = new LineChartDto();
-        LocalDateTime[] times = workLogRepository.findTimesOfHarvest(m.getId());
+        List<LocalDate[]> times = workLogRepository.findTimesOfHarvest(m.getId());
         for (Crop c : m.getCrops()) {
             List<Object[]> datas = workLogRepository.selectHarvest(m.getId(), c.getId());
             LineChartDataDto dto = LineChartDataDto.builder().name(c.getName()).build();
-            LocalDate startTime = times[1].toLocalDate();
-            LocalDate endTime = times[0].toLocalDate();
+            LocalDate startTime = times.get(0)[1];
+            LocalDate endTime = times.get(0)[0];
             while (startTime.isBefore(endTime) || (startTime.getYear() == endTime.getYear() && startTime.getMonthValue() == endTime.getMonthValue())) {
                 int year = startTime.getYear();
                 int month = startTime.getMonthValue();
-                ret.addLabel(startTime.getYear() + "-" + startTime.getMonthValue() + "01");
-                int data = (int) datas.stream().filter(e -> (int) e[0] == year && (int) e[1] == month).findFirst().orElse(new Object[]{startTime.getYear(), startTime.getMonthValue(), 0})[2];
+                ret.addLabel(startTime.getYear() + "-" + startTime.getMonthValue());
+                int data = Integer.parseInt(datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == year && Integer.parseInt(e[1].toString()) == month).findFirst().orElse(new Object[]{startTime.getYear(), startTime.getMonthValue(), "",0})[3].toString());
                 dto.addData(data);
                 startTime = startTime.plusMonths(1L);
             }
@@ -54,6 +54,7 @@ public class WorkLogService {
     public LineChartDto getWorkTimeData(Member m) {
         LineChartDto ret = new LineChartDto();
         int year = LocalDate.now().getYear();
+<<<<<<< HEAD
         List<Object[]> datas = workLogRepository.selectWorkTimeofYear(m.getId(), year, year - 1);
         int i = 0;
         while (i < datas.size()) {
@@ -72,11 +73,25 @@ public class WorkLogService {
                 data.addData(0L);
                 i += 1;
             }
+=======
+        List<Object[]> thisYear = workLogRepository.selectWorkTimeofYear(m.getId(),year);
+        List<Object[]> preYear = workLogRepository.selectWorkTimeofYear(m.getId(),year-1);
+        ret.addLabel(Integer.toString(year-1));
+        ret.addLabel(Integer.toString(year));
+        for(int idx = 1; idx < 5;idx++){
+            int finalIdx = idx;
+            LineChartDataDto data = LineChartDataDto.builder().name(idx+"분기").build();
+            Object[] preYearData = preYear.stream().filter(e->Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
+            int number1 = preYearData ==null?0:Integer.parseInt(preYearData[2].toString());
+            data.addData(number1);
+            Object[] thisYearData = thisYear.stream().filter(e->Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
+            int number2 = thisYearData ==null?0:Integer.parseInt(thisYearData[2].toString());
+            data.addData(number2);
+>>>>>>> 1edaaf1934cf460b9e229418018ade2528a6cab3
             ret.addData(data);
         }
         return ret;
     }
-
 
     @Transactional
     public void createWorkLog(Member member, WorkLogRequestDto dto, List<MultipartFile> files) {

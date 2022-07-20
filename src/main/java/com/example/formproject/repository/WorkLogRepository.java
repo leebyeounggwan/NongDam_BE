@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,10 +19,16 @@ public interface WorkLogRepository extends JpaRepository<WorkLog, Long> {
     public List<Object[]> selectHarvest(@Param("memberId") int memberId, @Param("cropId") int cropId);
 
     @Query("Select max(this_.date),min(this_.date) from WorkLog this_ where this_.member.id=:memberId and this_.harvest > 0")
-    public LocalDateTime[] findTimesOfHarvest(@Param("memberId") int memberId);
+    public List<LocalDate[]> findTimesOfHarvest(@Param("memberId") int memberId);
 
+<<<<<<< HEAD
     @Query("Select year(this_.date),this_.quarter,sum(this_.workTime) from WorkLog this_ where this_.member.id=:memberId and (year(this_.date) = :year1 or year(this_.date) = :year2) group by year(this_.date),this_.quarter order by this_.quarter,year(this_.date)")
     public List<Object[]> selectWorkTimeofYear(@Param("memberId") int memberId, @Param("year1") int year1, @Param("year2") int year2);
+=======
+    @Query("Select year(this_.date),this_.quarter,sum(this_.workTime) from WorkLog this_ where this_.member.id=:memberId and year(this_.date) = :year group by year(this_.date),this_.quarter order by this_.quarter,year(this_.date)")
+    public List<Object[]> selectWorkTimeofYear(@Param("memberId") int memberId, @Param("year")int year);
+
+>>>>>>> 1edaaf1934cf460b9e229418018ade2528a6cab3
 
     List<WorkLog> findAllByMemberOrderByDateDesc(Member member);
 }
