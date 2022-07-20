@@ -20,7 +20,7 @@ public interface WorkLogRepository extends JpaRepository<WorkLog, Long> {
     public LocalDateTime[] findTimesOfHarvest(@Param("memberId") int memberId);
 
     @Query("Select year(this_.date),this_.quarter,sum(this_.workTime) from WorkLog this_ where this_.member.id=:memberId and year(this_.date) = :year group by year(this_.date),this_.quarter order by this_.quarter,year(this_.date)")
-    public List<Object[]> selectWorkTimeofYear(@Param("memberId") int memberId, @Param("year1")int year);
+    public List<Object[]> selectWorkTimeofYear(@Param("memberId") int memberId, @Param("year")int year);
 
 
     List<WorkLog> findAllByMemberOrderByDateDesc(Member member);
