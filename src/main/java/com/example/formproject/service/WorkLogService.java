@@ -31,12 +31,12 @@ public class WorkLogService {
 
     public LineChartDto getHarvestData(Member m) {
         LineChartDto ret = new LineChartDto();
-        LocalDateTime[] times = workLogRepository.findTimesOfHarvest(m.getId());
+        LocalDate[] times = workLogRepository.findTimesOfHarvest(m.getId());
         for (Crop c : m.getCrops()) {
             List<Object[]> datas = workLogRepository.selectHarvest(m.getId(), c.getId());
             LineChartDataDto dto = LineChartDataDto.builder().name(c.getName()).build();
-            LocalDate startTime = times[1].toLocalDate();
-            LocalDate endTime = times[0].toLocalDate();
+            LocalDate startTime = times[1];
+            LocalDate endTime = times[0];
             while (startTime.isBefore(endTime) || (startTime.getYear() == endTime.getYear() && startTime.getMonthValue() == endTime.getMonthValue())) {
                 int year = startTime.getYear();
                 int month = startTime.getMonthValue();
@@ -60,10 +60,10 @@ public class WorkLogService {
             int finalIdx = idx;
             LineChartDataDto data = LineChartDataDto.builder().name(idx+"분기").build();
             Object[] preYearData = preYear.stream().filter(e->Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
-            long number1 = preYearData ==null?0L:Long.parseLong(preYearData[2].toString());
+            int number1 = preYearData ==null?0:Integer.parseInt(preYearData[2].toString());
             data.addData(number1);
             Object[] thisYearData = thisYear.stream().filter(e->Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
-            long number2 = thisYearData ==null?0L:Long.parseLong(thisYearData[2].toString());
+            int number2 = thisYearData ==null?0:Integer.parseInt(thisYearData[2].toString());
             data.addData(number2);
             ret.addData(data);
         }

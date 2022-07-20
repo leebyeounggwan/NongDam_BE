@@ -49,9 +49,9 @@ public class AccountBookService {
             Object[] spandData = spands.stream().filter(e ->(int) e[0] == year && (int) e[1] == month)
                     .findFirst().orElse(new Object[]{startTime.getYear(),startTime.getMonthValue(),0});
             ret.addLabel(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-01")));
-            income.addData((long)incomeData[2]);
-            spand.addData((long) spandData[2]);
-            rawIncome.addData((long) incomeData[2]- (long) spandData[2]);
+            income.addData((int)incomeData[2]);
+            spand.addData((int) spandData[2]);
+            rawIncome.addData((int) incomeData[2]- (int) spandData[2]);
             startTime = startTime.plusMonths(1L);
         }
         ret.addData(income);
