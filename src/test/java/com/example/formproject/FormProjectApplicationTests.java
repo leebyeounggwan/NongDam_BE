@@ -3,27 +3,17 @@ package com.example.formproject;
 import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MemberRequestDto;
 import com.example.formproject.dto.response.MemberResponseDto;
-import com.example.formproject.dto.response.WeatherResponse;
-import com.example.formproject.entity.Images;
-import com.example.formproject.entity.Member;
-import com.example.formproject.repository.AccountBookRepository;
 import com.example.formproject.repository.ImagesRepository;
 import com.example.formproject.repository.MemberRepository;
-import com.example.formproject.repository.WorkLogRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.*;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
