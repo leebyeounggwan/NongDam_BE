@@ -94,6 +94,3 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 }
-test {
-    forkEvery = 1
-}
