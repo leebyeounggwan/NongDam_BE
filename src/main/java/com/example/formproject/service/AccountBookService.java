@@ -72,7 +72,7 @@ public class AccountBookService {
         CircleChartDto dto = new CircleChartDto();
         for(Object[] data : datas){
             dto.addLabel(AccountType.values()[(int)data[0]].name());
-            dto.addData((long) data[1]);
+            dto.addData(Long.parseLong(data[1].toString()));
         }
         return dto;
     }
