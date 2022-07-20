@@ -1,6 +1,7 @@
 package com.example.formproject.service;
 
 import com.example.formproject.dto.request.WorkLogRequestDto;
+import com.example.formproject.dto.response.CropDto;
 import com.example.formproject.dto.response.LineChartDataDto;
 import com.example.formproject.dto.response.LineChartDto;
 import com.example.formproject.dto.response.WorkLogResponseDto;
@@ -49,23 +50,24 @@ public class WorkLogService {
         }
         return ret;
     }
-    public LineChartDto getWorkTimeData(Member m){
+
+    public LineChartDto getWorkTimeData(Member m) {
         LineChartDto ret = new LineChartDto();
         int year = LocalDate.now().getYear();
-        List<Object[]> datas = workLogRepository.selectWorkTimeofYear(m.getId(),year,year-1);
+        List<Object[]> datas = workLogRepository.selectWorkTimeofYear(m.getId(), year, year - 1);
         int i = 0;
-        while(i < datas.size()){
-            if(ret.hasLabel(datas.get(i)[0].toString())){
+        while (i < datas.size()) {
+            if (ret.hasLabel(datas.get(i)[0].toString())) {
                 ret.addLabel(datas.get(i)[0].toString());
             }
             LineChartDataDto data = LineChartDataDto.builder()
-                    .name(datas.get(i)[1]+"분기").build();
+                    .name(datas.get(i)[1] + "분기").build();
             data.addData(Long.parseLong(datas.get(i)[2].toString()));
-            if((int)datas.get(i)[2] == (int)datas.get(i+1)[2]) {
+            if ((int) datas.get(i)[2] == (int) datas.get(i + 1)[2]) {
                 data.addData(Long.parseLong(datas.get(i)[2].toString()));
-                data.addData(Long.parseLong(datas.get(i+1)[2].toString()));
+                data.addData(Long.parseLong(datas.get(i + 1)[2].toString()));
                 i += 2;
-            }else {
+            } else {
                 data.addData(Long.parseLong(datas.get(i)[2].toString()));
                 data.addData(0L);
                 i += 1;
@@ -81,27 +83,29 @@ public class WorkLogService {
         List<String> fileList = new ArrayList<>();
         WorkLog workLog = dto.build(member, cropRepository);
         for (MultipartFile file : files) {
-            Map<String,String> result = s3Service.uploadFile(file);
+            Map<String, String> result = s3Service.uploadFile(file);
             fileList.add(result.get("url"));
-            workLog.addPicture(result.get("url"),result.get("fileName"));
+            workLog.addPicture(result.get("url"), result.get("fileName"));
         }
         workLogRepository.save(workLog);
     }
 
     @Transactional(readOnly = true)
     public List<WorkLogResponseDto> getWorkLogList(MemberDetail detail) throws IllegalArgumentException {
-        List<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
         List<WorkLogResponseDto> responseDtoList = new ArrayList<>();
-        for(WorkLog log : workLogList) responseDtoList.add(new WorkLogResponseDto(log));
-        return responseDtoList;
+        List<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
+        if (workLogList.get(0) != null) {
+            for (WorkLog log : workLogList) responseDtoList.add(new WorkLogResponseDto(log, new CropDto(log.getCrop())));
+            return responseDtoList;
+        } else throw new NullPointerException("작성된 게시글이 없습니다.");
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public WorkLogResponseDto getWorkLogDetails(Long worklogid, String userEmail) {
         WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
-            return new WorkLogResponseDto(workLog);
+            return new WorkLogResponseDto(workLog, new CropDto(workLog.getCrop()));
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
     }
 

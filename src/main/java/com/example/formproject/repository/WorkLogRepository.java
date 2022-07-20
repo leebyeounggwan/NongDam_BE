@@ -1,5 +1,6 @@
 package com.example.formproject.repository;
 
+import com.example.formproject.entity.Crop;
 import com.example.formproject.entity.Member;
 import com.example.formproject.entity.WorkLog;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,8 +21,7 @@ public interface WorkLogRepository extends JpaRepository<WorkLog, Long> {
     public LocalDateTime[] findTimesOfHarvest(@Param("memberId") int memberId);
 
     @Query("Select year(this_.date),this_.quarter,sum(this_.workTime) from WorkLog this_ where this_.member.id=:memberId and (year(this_.date) = :year1 or year(this_.date) = :year2) group by year(this_.date),this_.quarter order by this_.quarter,year(this_.date)")
-    public List<Object[]> selectWorkTimeofYear(@Param("memberId") int memberId, @Param("year1")int year1,@Param("year2")int year2);
-
+    public List<Object[]> selectWorkTimeofYear(@Param("memberId") int memberId, @Param("year1") int year1, @Param("year2") int year2);
 
     List<WorkLog> findAllByMemberOrderByDateDesc(Member member);
 }
