@@ -3,9 +3,15 @@ package com.example.formproject.dto.response;
 import com.example.formproject.FinalValue;
 import com.example.formproject.entity.Schedule;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ScheduleResponseDto {
     @Schema(type = "long",example = "1")
     private long id;

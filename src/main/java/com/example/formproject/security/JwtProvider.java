@@ -96,8 +96,8 @@ public class JwtProvider {
         refreshToken = refreshToken.replaceAll("Bearer ","");
         jwtToken = jwtToken.replaceAll("Bearer ","");
         BoundValueOperations<String,Object> saveObject = template.boundValueOps(refreshToken);
-        saveObject.expire(Duration.ofMillis(refreshValidTime));
         saveObject.set(jwtToken);
+        template.expire(refreshToken,refreshValidTime,TimeUnit.MILLISECONDS);
     }
 
 
