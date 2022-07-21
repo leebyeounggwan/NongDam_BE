@@ -1,24 +1,36 @@
 package com.example.formproject;
 
 import com.example.formproject.entity.Crop;
+import com.example.formproject.entity.Member;
+import com.example.formproject.entity.SubMaterial;
+import com.example.formproject.entity.WorkLog;
 import com.example.formproject.enums.CropCategoryCode;
 import com.example.formproject.enums.CropTypeCode;
 import com.example.formproject.repository.CropRepository;
+import com.example.formproject.repository.MemberRepository;
+import com.example.formproject.repository.WorkLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 @Component
 public class Initialize {
     private CropRepository cropRepository;
+    private MemberRepository memberRepository;
+    private WorkLogRepository workLogRepository;
     @Autowired
-    public Initialize(CropRepository cropRepository){
+    public Initialize(CropRepository cropRepository,MemberRepository memberRepository,WorkLogRepository workLogRepository){
         this.cropRepository = cropRepository;
+        this.memberRepository = memberRepository;
+        this.workLogRepository = workLogRepository;
     }
 
     List<Crop> cropsData = Arrays.asList(
@@ -127,15 +139,43 @@ public class Initialize {
                     Crop.builder().category(CropCategoryCode.과일류.getCategory()).type(CropTypeCode.단감.getType()).kind("00").name("단감").build(),
                     Crop.builder().category(CropCategoryCode.과일류.getCategory()).type(CropTypeCode.참다래.getType()).kind("01").name("참다래").build(),
             });
-    
 //    @PostConstruct
-//    public void initializeData(){
-//        for(Crop c : cropsData){
-//            try{
-//                cropRepository.save(c);
-//            }catch (Exception e){
-//
-//            }
+//    @Transactional
+//    public void testCode() throws Exception {
+//        Member member = memberRepository.findByEmail("thsdbswn8@naver.com").orElseThrow(()->new Exception("사용자 찾을 수 없음"));
+//        LocalDate date = LocalDate.of(2022,2,1);
+//        Random random = new Random();
+//        int i = 1;
+//        List<Crop> crops = memberRepository.findAllByMember(member.getId());
+//        System.out.println("데이터 만들기 시작");
+//        while(date.isBefore(LocalDate.now())){
+//            Crop crop = crops.get(random.nextInt(crops.size()));
+//            WorkLog log = WorkLog.builder()
+//                    .member(member)
+//                    .date(date)
+//                    .harvest(random.nextInt(9999))
+//                    .title("dummy_"+i)
+//                    .memo("memo_"+i+"_"+crop.getName())
+//                    .crop(crop)
+//                    .build();
+//            log.setQuarter();
+//            workLogRepository.save(log);
+//            date = date.plusDays(random.nextInt(8)+1);
+//            i++;
+//            System.out.println(date.format(FinalValue.DAY_FORMATTER));
 //        }
+//        System.out.println("dummy data is set");
 //    }
+    @PostConstruct
+    public void initializeData(){
+        if(cropRepository.countCrops() == 0) {
+            for (Crop c : cropsData) {
+                try {
+                    cropRepository.save(c);
+                } catch (Exception e) {
+
+                }
+            }
+        }
+    }
 }
