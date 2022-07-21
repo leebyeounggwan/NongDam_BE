@@ -168,7 +168,7 @@ public class Initialize {
 //    }
     @PostConstruct
     public void initializeData(){
-        if(cropRepository.findAll().size() == 0) {
+        if(cropRepository.countCrops() == 0) {
             for (Crop c : cropsData) {
                 try {
                     cropRepository.save(c);
