@@ -34,9 +34,9 @@ public class WorkLogController {
     @Operation(summary = "작업일지 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
-                    content = @Content ),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content = @Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
+                    content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
     public void createWorkLog(@AuthenticationPrincipal MemberDetail detail,
                               @RequestPart(required = false) String data,
                               @RequestPart List<MultipartFile> images) throws JsonProcessingException {
@@ -47,7 +47,7 @@ public class WorkLogController {
 
     @GetMapping("/worklog/{worklogid}")
     public WorkLogResponseDto getWorkLog(@PathVariable Long worklogid,
-                                                   @AuthenticationPrincipal MemberDetail detail) {
+                                         @AuthenticationPrincipal MemberDetail detail) {
         String userEmail = detail.getUsername();
         return workLogService.getWorkLogDetails(worklogid, userEmail);
     }
@@ -56,10 +56,10 @@ public class WorkLogController {
     @Operation(summary = "작업일지 전체조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = WorkLogRequestDto.class)) }),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content = @Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = WorkLogRequestDto.class))}),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
     public List<WorkLogResponseDto> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) {
         return workLogService.getWorkLogList(detail);
     }

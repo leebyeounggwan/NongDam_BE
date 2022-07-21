@@ -1,5 +1,6 @@
 package com.example.formproject.repository;
 
+import com.example.formproject.entity.Crop;
 import com.example.formproject.entity.Member;
 import com.example.formproject.entity.WorkLog;
 import org.springframework.data.jpa.repository.JpaRepository;
