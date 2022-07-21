@@ -4,7 +4,6 @@ import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.WorkLogRequestDto;
 import com.example.formproject.dto.response.ScheduleResponseDto;
 import com.example.formproject.dto.response.WorkLogResponseDto;
-import com.example.formproject.entity.WorkLog;
 import com.example.formproject.repository.WorkLogRepository;
 import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.WorkLogService;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,9 +34,9 @@ public class WorkLogController {
     @Operation(summary = "작업일지 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
-                    content = @Content ),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content = @Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
+                    content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
     public void createWorkLog(@AuthenticationPrincipal MemberDetail detail,
                               @RequestPart(required = false) String data,
                               @RequestPart List<MultipartFile> images) throws JsonProcessingException {
@@ -47,30 +45,32 @@ public class WorkLogController {
         workLogService.createWorkLog(detail.getMember(), dto, images);
     }
 
-//    @GetMapping("/worklog/{worklogid}")
-//    public Optional<WorkLog> getWorkLog(@PathVariable Long worklogid) {
-//        return workLogRepository.findById(worklogid);
-//    }
+    @GetMapping("/worklog/{worklogid}")
+    public WorkLogResponseDto getWorkLog(@PathVariable Long worklogid,
+                                         @AuthenticationPrincipal MemberDetail detail) {
+        String userEmail = detail.getUsername();
+        return workLogService.getWorkLogDetails(worklogid, userEmail);
+    }
 
     @GetMapping("/worklog")
     @Operation(summary = "작업일지 전체조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = WorkLogRequestDto.class)) }),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content = @Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = WorkLogRequestDto.class))}),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
     public List<WorkLogResponseDto> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) {
         return workLogService.getWorkLogList(detail);
     }
 
-//    @DeleteMapping("/worklog/{worklogid}")
-//    public void deleteWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {
-//        String userEmail = detail.getUsername();
-//        workLogService.deleteWorkLog(worklogid, userEmail);
-//    }
+    @DeleteMapping("/worklog/{worklogid}")
+    public void deleteWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {
+        String userEmail = detail.getUsername();
+        workLogService.deleteWorkLog(worklogid, userEmail);
+    }
 
-//    @PatchMapping(value = "/worklog/{worklogid}", consumes = {"multipart/form-data"})
+//    @PatchMapping(value = "/worklog/{worklogid}/update", consumes = {"multipart/form-data"})
 //    public List<WorkLogResponseDto> updateWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {
 //        String userEmail = detail.getUsername();
 //        return workLogService.updateWorkLog(worklogid, userEmail);
