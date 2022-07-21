@@ -80,8 +80,11 @@ public class MemberService {
             if (profileImage != null)
                 member.updateMember(requestDto, s3Service.uploadFile(profileImage), cropRepository);
             else {
-                if(!member.getProfileImage().getFileName().equals("kakaoprofile") && !member.getProfileImage().getFileName().equals("default"))
-                    s3Service.deleteFile(member.getProfileImage().getFileName());
+                if(!member.getProfileImage().getFileName().equals("kakaoprofile") && !member.getProfileImage().getFileName().equals("default")) {
+                    String[] urlArr = member.getProfileImage().getUrl().split("/");
+                    String fileKey = urlArr[urlArr.length - 1];
+                    s3Service.deleteFile(fileKey);
+                }
                 member.updateMember(requestDto, cropRepository);
             }
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
