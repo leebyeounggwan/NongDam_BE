@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository;
 import static com.example.formproject.entity.QMember.member;
 import static com.example.formproject.entity.QCrop.crop;
-import static com.example.formproject.entity.QImages.images;
 
 import java.util.List;
 
@@ -32,7 +31,6 @@ public class QueryDslRepository extends QuerydslRepositorySupport {
     public Member selectMemberByIdFetch(int id){
         return queryFactory.selectFrom(member)
                 .leftJoin(member.crops,crop).fetchJoin()
-                .leftJoin(member.profileImage,images).fetchJoin()
                 .where(member.id.eq(id)).fetch().get(0);
     }
 }

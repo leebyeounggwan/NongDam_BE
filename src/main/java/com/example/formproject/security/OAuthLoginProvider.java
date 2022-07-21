@@ -34,7 +34,7 @@ public class OAuthLoginProvider implements OAuth2UserService<OAuth2UserRequest, 
     private void saveOrUpdate(OAuthAttributes attributes) {
         Member member = repository.findByEmail(attributes.getEmail()).orElse(null);
         if (member == null)
-            member = Member.builder().email(attributes.getEmail()).name(attributes.getName()).profileImage(Images.builder().url(attributes.getPicture()).fileName("kakaoprofile").build()).nickname(attributes.getName()).isLock(false).build();
+            member = Member.builder().email(attributes.getEmail()).name(attributes.getName()).profileImage(attributes.getPicture()).nickname(attributes.getName()).isLock(false).build();
         member.updateMember(attributes);
         repository.save(member);
         attributes.setMember(member);

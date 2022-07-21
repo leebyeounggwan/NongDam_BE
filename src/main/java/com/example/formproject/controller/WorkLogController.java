@@ -38,8 +38,8 @@ public class WorkLogController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
     public void createWorkLog(@AuthenticationPrincipal MemberDetail detail,
-                              @RequestPart(required = false) String data,
-                              @RequestPart List<MultipartFile> images) throws JsonProcessingException {
+                              @RequestPart String data,
+                              @RequestPart(required = false) List<MultipartFile> images) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         WorkLogRequestDto dto = mapper.readValue(data, WorkLogRequestDto.class);
         workLogService.createWorkLog(detail.getMember(), dto, images);

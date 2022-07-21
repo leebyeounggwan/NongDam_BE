@@ -29,7 +29,7 @@ public class MemberRequestDto {
                 .email(email)
                 .password(encoder.encode(password))
                 .nickname(nickname)
-                .profileImage(Images.builder().fileName("default").url(FinalValue.BACK_URL + "/static/default.png").build())
+                .profileImage(FinalValue.BACK_URL + "/static/default.png")
                 .name(name)
                 .build();
     }
