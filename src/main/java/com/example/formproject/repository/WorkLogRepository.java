@@ -22,7 +22,7 @@ public interface WorkLogRepository extends JpaRepository<WorkLog, Long> {
     public List<Object[]> selectHarvestYear(@Param("memberId") int memberId, @Param("cropId") int cropId,@Param("year")int year);
 
     @Query("Select year(this_.date),month(this_.date),this_.crop.name,sum(this_.harvest) from WorkLog this_ where this_.member.id=:memberId and this_.crop.id=:cropId and this_.harvest > 0 group by year(this_.date),month(this_.date) order by this_.date")
-    public List<Object[]> selectHarvest(@Param("memberId") int memberId, @Param("cropId") int cropId,@Param("startDate")LocalDate startDate,@Param("endDate")LocalDate endDate);
+    public List<Object[]> selectHarvest(@Param("memberId") int memberId, @Param("cropId") int cropId);
 
     @Query("Select max(this_.date),min(this_.date) from WorkLog this_ where this_.member.id=:memberId and this_.harvest > 0")
     public List<LocalDate[]> findTimesOfHarvest(@Param("memberId") int memberId);
