@@ -29,31 +29,31 @@ public class AccountBookService {
     private final QueryDslRepository queryDslRepository;
 
     public LineChartDto getResultsMonth(Member m){
-        List<Object[]> incomes = accountBookRepository.incomeOfMonth(m.getId());
-        List<Object[]> spands = accountBookRepository.spandOfMonth(m.getId());
+        LocalDate now = LocalDate.now();
+        LocalDate preDate = LocalDate.of(now.getYear(),now.getMonthValue(),1).minusMonths(5L);
+
+        List<Object[]> incomes = accountBookRepository.incomeOfMonth(m.getId(),preDate);
+        List<Object[]> spands = accountBookRepository.spandOfMonth(m.getId(),preDate);
 
         LineChartDto ret = new LineChartDto();
 
         LineChartDataDto income = LineChartDataDto.builder().name("수입").build();
         LineChartDataDto spand = LineChartDataDto.builder().name("지출").build();
         LineChartDataDto rawIncome = LineChartDataDto.builder().name("순이익").build();
-        LocalDate[] times = accountBookRepository.getMinDate(m.getId()).get(0);
-        LocalDate startTime = times[0];
-        LocalDate endTime = times[1];
-        while(startTime.isBefore(endTime) || (startTime.getMonthValue() == endTime.getMonthValue() && startTime.getYear() == endTime.getYear())){
-            int year = startTime.getYear();
-            int month = startTime.getMonthValue();
+        while(preDate.isBefore(now)|| preDate.isEqual(now)){
+            int year = preDate.getYear();
+            int month = preDate.getMonthValue();
             Object[] incomeData = incomes.stream().filter(e ->(int) e[0] == year && (int) e[1] == month)
-                    .findFirst().orElse(new Object[]{startTime.getYear(),startTime.getMonthValue(),0});
+                    .findFirst().orElse(null);
             Object[] spandData = spands.stream().filter(e ->(int) e[0] == year && (int) e[1] == month)
-                    .findFirst().orElse(new Object[]{startTime.getYear(),startTime.getMonthValue(),0});
-            ret.addLabel(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM")));
-            int incomeValue = Integer.parseInt(incomeData[2].toString());
-            int spandValue = Integer.parseInt(spandData[2].toString());
+                    .findFirst().orElse(null);
+            ret.addLabel(preDate.format(DateTimeFormatter.ofPattern("yyyy-MM")));
+            int incomeValue = incomeData ==null?0:Integer.parseInt(incomeData[2].toString());
+            int spandValue = spandData==null?0:Integer.parseInt(spandData[2].toString());
             income.addData(incomeValue);
             spand.addData(spandValue);
             rawIncome.addData(incomeValue - spandValue);
-            startTime = startTime.plusMonths(1L);
+            preDate = preDate.plusMonths(1L);
         }
         ret.addData(income);
         ret.addData(spand);
