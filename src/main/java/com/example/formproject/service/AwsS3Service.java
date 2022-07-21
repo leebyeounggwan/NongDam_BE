@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -23,7 +22,7 @@ import java.util.*;
 public class AwsS3Service {
 
     @Value("farmprojectbucket")
-    private String bucket;
+    private String bucketName;
 
     private final AmazonS3 amazonS3;
 
@@ -39,21 +38,21 @@ public class AwsS3Service {
         String fileName = createFileName(rawFileName);
         try (InputStream inputStream = multipartFile.getInputStream()) {
             //amazonS3객체의 putObject 메서드로 db에 저장
-            amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+            amazonS3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
         }
 
         Map<String, String> result = new HashMap<>();
-        result.put("url", String.valueOf(amazonS3.getUrl(bucket, fileName)));
+        result.put("url", String.valueOf(amazonS3.getUrl(bucketName, fileName)));
         result.put("fileName", rawFileName);
         result.put("transImgFileName", fileName);
         return result;
     }
 
-    public String deleteFile(String fileName) {
-        DeleteObjectRequest request = new DeleteObjectRequest(bucket, fileName);
+    public String deleteFile(String fileKey) {
+        DeleteObjectRequest request = new DeleteObjectRequest(bucketName, fileKey);
         amazonS3.deleteObject(request);
         return "삭제완료";
     }

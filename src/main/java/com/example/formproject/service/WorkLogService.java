@@ -135,7 +135,11 @@ public class WorkLogService {
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
             List<Images> list = workLog.getImages();
-            for (Images picture : list) s3Service.deleteFile(picture.getFileName());
+            for (Images picture : list) {
+                String[] urlArr = picture.getUrl().split("/");
+                String fileKey = urlArr[urlArr.length - 1];
+                s3Service.deleteFile(fileKey);
+            }
             workLogRepository.deleteById(worklogid);
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
     }

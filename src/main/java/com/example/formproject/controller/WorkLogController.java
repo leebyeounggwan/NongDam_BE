@@ -70,7 +70,7 @@ public class WorkLogController {
         workLogService.deleteWorkLog(worklogid, userEmail);
     }
 
-//    @PatchMapping(value = "/worklog/{worklogid}", consumes = {"multipart/form-data"})
+//    @PatchMapping(value = "/worklog/{worklogid}/update", consumes = {"multipart/form-data"})
 //    public List<WorkLogResponseDto> updateWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {
 //        String userEmail = detail.getUsername();
 //        return workLogService.updateWorkLog(worklogid, userEmail);
