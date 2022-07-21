@@ -86,7 +86,7 @@ public class MemberService {
                     try {
                         s3Service.deleteFile(fileKey);
                     }catch (AmazonS3Exception e){
-
+                        System.out.println("해당 객체가 존재하지 않습니다.");
                     }
                     member.updateMember(requestDto, cropRepository);
             }

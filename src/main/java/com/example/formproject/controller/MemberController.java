@@ -132,7 +132,7 @@ public class MemberController {
                                           @RequestPart String data,
                                           @AuthenticationPrincipal MemberDetail memberDetails) throws JsonProcessingException {
         MemberInfoRequestDto requestDto = mapper.readValue(data, MemberInfoRequestDto.class);
-        return memberService.updateMember(memberDetails.getMember().getId(), profileImage, requestDto, memberDetails.getUsername());
+        return memberService.updateMember(memberDetails.getMember().getId(), profileImage, requestDto, memberDetails.getMember().getEmail());
     }
 
     @ExceptionHandler(EmailConfirmException.class)
