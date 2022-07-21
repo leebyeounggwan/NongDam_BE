@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,9 +28,9 @@ public class AccountBookService {
     private final AccountBookRepository accountBookRepository;
     private final QueryDslRepository queryDslRepository;
 
-    public LineChartDto getResults(Member m){
-        List<Object[]> incomes = accountBookRepository.incomeOfYear(m.getId());
-        List<Object[]> spands = accountBookRepository.spandOfYear(m.getId());
+    public LineChartDto getResultsMonth(Member m){
+        List<Object[]> incomes = accountBookRepository.incomeOfMonth(m.getId());
+        List<Object[]> spands = accountBookRepository.spandOfMonth(m.getId());
 
         LineChartDto ret = new LineChartDto();
 
@@ -48,13 +47,44 @@ public class AccountBookService {
                     .findFirst().orElse(new Object[]{startTime.getYear(),startTime.getMonthValue(),0});
             Object[] spandData = spands.stream().filter(e ->(int) e[0] == year && (int) e[1] == month)
                     .findFirst().orElse(new Object[]{startTime.getYear(),startTime.getMonthValue(),0});
-            ret.addLabel(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-01")));
+            ret.addLabel(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM")));
             int incomeValue = Integer.parseInt(incomeData[2].toString());
             int spandValue = Integer.parseInt(spandData[2].toString());
             income.addData(incomeValue);
             spand.addData(spandValue);
             rawIncome.addData(incomeValue - spandValue);
             startTime = startTime.plusMonths(1L);
+        }
+        ret.addData(income);
+        ret.addData(spand);
+        ret.addData(rawIncome);
+        return ret;
+    }
+    public LineChartDto getResultsYear(Member m){
+
+        LocalDate now = LocalDate.now();
+        LocalDate pastYear = now.minusYears(5L);
+        List<Object[]> incomes = accountBookRepository.incomeOfYear(m.getId(),pastYear.getYear());
+        List<Object[]> spands = accountBookRepository.spandOfYear(m.getId(), pastYear.getYear());
+
+        LineChartDto ret = new LineChartDto();
+        LineChartDataDto income = LineChartDataDto.builder().name("수입").build();
+        LineChartDataDto spand = LineChartDataDto.builder().name("지출").build();
+        LineChartDataDto rawIncome = LineChartDataDto.builder().name("순이익").build();
+
+        while(pastYear.isBefore(now) || pastYear.isEqual(now)){
+            int year = pastYear.getYear();
+            Object[] incomeData = incomes.stream().filter(e ->(int) e[0] == year )
+                    .findFirst().orElse(null);
+            Object[] spandData = spands.stream().filter(e ->(int) e[0] == year)
+                    .findFirst().orElse(null);
+            ret.addLabel(Integer.toString(pastYear.getYear()));
+            int incomeValue = incomeData==null?0:Integer.parseInt(incomeData[1].toString());
+            int spandValue = spandData==null?0:Integer.parseInt(spandData[1].toString());
+            income.addData(incomeValue);
+            spand.addData(spandValue);
+            rawIncome.addData(incomeValue - spandValue);
+            pastYear = pastYear.plusYears(1L);
         }
         ret.addData(income);
         ret.addData(spand);
