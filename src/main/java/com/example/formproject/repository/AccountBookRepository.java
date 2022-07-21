@@ -11,11 +11,11 @@ import java.util.List;
 
 @Repository
 public interface AccountBookRepository extends JpaRepository<AccountBook,Long> {
-    @Query("Select year(this_.date),month(this_.date),sum(this_.price) from AccountBook this_ where this_.member.id=:memberId and this_.type < 3 group by year(this_.date),month(this_.date)")
-    public List<Object[]> incomeOfMonth(@Param("memberId") int memberId);
+    @Query("Select year(this_.date),month(this_.date),sum(this_.price) from AccountBook this_ where this_.member.id=:memberId and this_.type < 3 and this_.date >= :date group by year(this_.date),month(this_.date)")
+    public List<Object[]> incomeOfMonth(@Param("memberId") int memberId,@Param("date")LocalDate date);
 
-    @Query("Select year(this_.date),month(this_.date),sum(this_.price) from AccountBook this_ where this_.member.id=:memberId and this_.type > 2 group by year(this_.date),month(this_.date)")
-    public List<Object[]> spandOfMonth(@Param("memberId") int memberId);
+    @Query("Select year(this_.date),month(this_.date),sum(this_.price) from AccountBook this_ where this_.member.id=:memberId and this_.type > 2 and this_.date >= :date group by year(this_.date),month(this_.date)")
+    public List<Object[]> spandOfMonth(@Param("memberId") int memberId,@Param("date")LocalDate date);
     @Query("Select year(this_.date),sum(this_.price) from AccountBook this_ where this_.member.id=:memberId and this_.type < 3 and year(this_.date) >= :year group by year(this_.date)")
     public List<Object[]> incomeOfYear(@Param("memberId") int memberId,@Param("year")int year);
 
