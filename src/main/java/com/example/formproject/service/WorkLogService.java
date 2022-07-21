@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.example.formproject.dto.request.WorkLogRequestDto;
 import com.example.formproject.dto.response.CropDto;
 import com.example.formproject.dto.response.LineChartDataDto;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -43,8 +45,8 @@ public class WorkLogService {
             LocalDate tmp = time;
             while(tmp.isBefore(now)|| tmp.isEqual(now)) {
                 LocalDate finalTmp = tmp;
-                if(!ret.hasLabel(finalTmp.getYear()+"-"+finalTmp.getMonthValue()))
-                    ret.addLabel(finalTmp.getYear()+"-"+finalTmp.getMonthValue());
+                if(!ret.hasLabel(finalTmp.format(DateTimeFormatter.ofPattern("yyyy.MM"))))
+                    ret.addLabel(finalTmp.format(DateTimeFormatter.ofPattern("yyyy.MM")));
                 Object[] data = datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == finalTmp.getYear()&& Integer.parseInt(e[1].toString()) == finalTmp.getMonthValue()).findFirst().orElse(null);
                 dto.addData(data==null?0:Integer.parseInt(data[2].toString()));
                 tmp = tmp.plusMonths(1L);
@@ -101,10 +103,12 @@ public class WorkLogService {
     public void createWorkLog(Member member, WorkLogRequestDto dto, List<MultipartFile> files) {
         List<String> fileList = new ArrayList<>();
         WorkLog workLog = dto.build(member, cropRepository);
-        for (MultipartFile file : files) {
-            Map<String, String> result = s3Service.uploadFile(file);
-            fileList.add(result.get("url"));
-            workLog.addPicture(result.get("url"), result.get("fileName"));
+        if(files != null) {
+            for (MultipartFile file : files) {
+                Map<String, String> result = s3Service.uploadFile(file);
+                fileList.add(result.get("url"));
+                workLog.addPicture(result.get("url"));
+            }
         }
         workLogRepository.save(workLog);
     }
@@ -133,11 +137,15 @@ public class WorkLogService {
         WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
-            List<Images> list = workLog.getImages();
-            for (Images picture : list) {
-                String[] urlArr = picture.getUrl().split("/");
+            List<String> list = workLog.getImages();
+            for (String picture : list) {
+                String[] urlArr = picture.split("/");
                 String fileKey = urlArr[urlArr.length - 1];
-                s3Service.deleteFile(fileKey);
+                try {
+                    s3Service.deleteFile(fileKey);
+                }catch (AmazonS3Exception e){
+                    
+                }
             }
             workLogRepository.deleteById(worklogid);
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");

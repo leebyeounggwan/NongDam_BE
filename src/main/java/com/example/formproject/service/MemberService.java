@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.example.formproject.annotation.DeleteMemberCache;
 import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.request.LoginDto;
@@ -80,12 +81,14 @@ public class MemberService {
             if (profileImage != null)
                 member.updateMember(requestDto, s3Service.uploadFile(profileImage), cropRepository);
             else {
-                if(!member.getProfileImage().getFileName().equals("kakaoprofile") && !member.getProfileImage().getFileName().equals("default")) {
-                    String[] urlArr = member.getProfileImage().getUrl().split("/");
+                    String[] urlArr = member.getProfileImage().split("/");
                     String fileKey = urlArr[urlArr.length - 1];
-                    s3Service.deleteFile(fileKey);
-                }
-                member.updateMember(requestDto, cropRepository);
+                    try {
+                        s3Service.deleteFile(fileKey);
+                    }catch (AmazonS3Exception e){
+
+                    }
+                    member.updateMember(requestDto, cropRepository);
             }
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);

@@ -19,9 +19,9 @@ public class LineChartDataDto {
 
     @Builder.Default
     @Schema(type = "List",example = "[100,200]")
-    private List<Integer> data = new ArrayList<>();
+    private List<Long> data = new ArrayList<>();
 
-    public void addData(int data){
+    public void addData(long data){
         this.data.add(data);
     }
 }
