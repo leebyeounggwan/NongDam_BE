@@ -15,7 +15,13 @@ import java.util.List;
 
 @Repository
 public interface WorkLogRepository extends JpaRepository<WorkLog, Long> {
-    @Query("Select year(this_.date),month(this_.date),this_.crop.name,sum(this_.harvest) from WorkLog this_ where this_.member.id=:memberId and this_.crop.id=:cropId and this_.harvest > 0 group by year(this_.date),month(this_.date)")
+    @Query("Select year(this_.date),month(this_.date),sum(this_.harvest) from WorkLog this_ where this_.member.id=:memberId and this_.crop.id=:cropId and this_.harvest > 0 and year(this_.date) >= :year and month(this_.date) > :month group by year(this_.date),month(this_.date) order by year(this_.date),month(this_.date)")
+    public List<Object[]> selectHarvestMonth(@Param("memberId") int memberId, @Param("cropId") int cropId,@Param("year")int year,@Param("month")int month);
+
+    @Query("Select year(this_.date),sum(this_.harvest) from WorkLog this_ where this_.member.id=:memberId and this_.crop.id=:cropId and this_.harvest > 0 and year(this_.date) >= :year group by year(this_.date)")
+    public List<Object[]> selectHarvestYear(@Param("memberId") int memberId, @Param("cropId") int cropId,@Param("year")int year);
+
+    @Query("Select year(this_.date),month(this_.date),this_.crop.name,sum(this_.harvest) from WorkLog this_ where this_.member.id=:memberId and this_.crop.id=:cropId and this_.harvest > 0 group by year(this_.date),month(this_.date) order by this_.date")
     public List<Object[]> selectHarvest(@Param("memberId") int memberId, @Param("cropId") int cropId);
 
     @Query("Select max(this_.date),min(this_.date) from WorkLog this_ where this_.member.id=:memberId and this_.harvest > 0")

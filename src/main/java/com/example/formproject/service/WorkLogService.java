@@ -30,21 +30,46 @@ public class WorkLogService {
     private final CropRepository cropRepository;
     private final AwsS3Service s3Service;
 
-    public LineChartDto getHarvestData(Member m) {
+    public LineChartDto getHarvestMonthData(Member m) {
         LineChartDto ret = new LineChartDto();
         List<LocalDate[]> times = workLogRepository.findTimesOfHarvest(m.getId());
+        LocalDate now  = LocalDate.now();
+        LocalDate time = now.minusMonths(5L);
+        int minMonth = time.getMonthValue();
+        int minYear = time.getYear();
         for (Crop c : m.getCrops()) {
-            List<Object[]> datas = workLogRepository.selectHarvest(m.getId(), c.getId());
+            List<Object[]> datas = workLogRepository.selectHarvestMonth(m.getId(), c.getId(),minYear,minMonth);
             LineChartDataDto dto = LineChartDataDto.builder().name(c.getName()).build();
-            LocalDate startTime = times.get(0)[1];
-            LocalDate endTime = times.get(0)[0];
-            while (startTime.isBefore(endTime) || (startTime.getYear() == endTime.getYear() && startTime.getMonthValue() == endTime.getMonthValue())) {
-                int year = startTime.getYear();
-                int month = startTime.getMonthValue();
-                ret.addLabel(startTime.getYear() + "-" + startTime.getMonthValue());
-                int data = Integer.parseInt(datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == year && Integer.parseInt(e[1].toString()) == month).findFirst().orElse(new Object[]{startTime.getYear(), startTime.getMonthValue(), "",0})[3].toString());
-                dto.addData(data);
-                startTime = startTime.plusMonths(1L);
+            LocalDate tmp = time;
+            while(tmp.isBefore(now)|| tmp.isEqual(now)) {
+                LocalDate finalTmp = tmp;
+                if(!ret.hasLabel(finalTmp.getYear()+"-"+finalTmp.getMonthValue()))
+                    ret.addLabel(finalTmp.getYear()+"-"+finalTmp.getMonthValue());
+                Object[] data = datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == finalTmp.getYear()&& Integer.parseInt(e[1].toString()) == finalTmp.getMonthValue()).findFirst().orElse(null);
+                dto.addData(data==null?0:Integer.parseInt(data[2].toString()));
+                tmp = tmp.plusMonths(1L);
+            }
+            ret.addData(dto);
+        }
+        return ret;
+    }
+    public LineChartDto getHarvestYearData(Member m) {
+        LineChartDto ret = new LineChartDto();
+        List<LocalDate[]> times = workLogRepository.findTimesOfHarvest(m.getId());
+        LocalDate now  = LocalDate.now();
+        LocalDate time = now.minusYears(5L);
+        int minYear = time.getYear();
+        for (Crop c : m.getCrops()) {
+            List<Object[]> datas = workLogRepository.selectHarvestYear(m.getId(), c.getId(),minYear);
+            LineChartDataDto dto = LineChartDataDto.builder().name(c.getName()).build();
+            LocalDate tmp = time;
+            while(tmp.isBefore(now)|| tmp.isEqual(now)) {
+                LocalDate finalTmp = tmp;
+                if(!ret.hasLabel(Integer.toString(finalTmp.getYear())))
+                    ret.addLabel(Integer.toString(finalTmp.getYear()));
+                Object[] data = datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == finalTmp.getYear()).findFirst().orElse(null);
+                dto.addData(data==null?0:Integer.parseInt(data[1].toString()));
+                tmp = tmp.plusYears(1L);
             }
             ret.addData(dto);
         }

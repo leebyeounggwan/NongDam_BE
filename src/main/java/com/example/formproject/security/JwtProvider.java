@@ -118,12 +118,6 @@ public class JwtProvider {
     }
     @UseCache(cacheKey = "id", ttl = 2L,unit = TimeUnit.HOURS,timeData = true)
     public Member getMember(int id){
-        log.info("id:"+id);
-//        return repo.findByIdFechLazy(id).get();
-//        Member member = repo.findAll(id);
-//        Member member2 = repo.findById(id).get();
-//        System.out.println(member);
-//        System.out.println("member2 = " + member2);
         return  queryDsl.selectMemberByIdFetch(id);
     }
 
