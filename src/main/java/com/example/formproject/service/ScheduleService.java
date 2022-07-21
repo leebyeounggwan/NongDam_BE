@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.ScheduleRequestDto;
 import com.example.formproject.dto.response.ScheduleResponseDto;
 import com.example.formproject.entity.Member;
@@ -11,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +46,12 @@ public class ScheduleService {
     }
     @Transactional(readOnly = true)
     public List<ScheduleResponseDto> findScheduleOfMonth(Member member,int year,int month){
-        List<Schedule> schedules = scheduleRepository.findScheduleOfMonth(member.getId(),year,month);
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDateTime startTime = LocalDateTime.of(year,month,1,0,0,0);
+        startTime = startTime.minusDays(FinalValue.getBackDayOfWeekValue(startTime.getDayOfWeek()));
+        LocalDateTime endTime = yearMonth.atEndOfMonth().atTime(23,59,59);
+        endTime = endTime.plusDays(FinalValue.getForwardDayOfWeekValue(endTime.getDayOfWeek()));
+        List<Schedule> schedules = scheduleRepository.findScheduleOfMonth(member.getId(),startTime,endTime);
         List<ScheduleResponseDto> ret = new ArrayList<>();
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
         return ret;
@@ -54,6 +62,7 @@ public class ScheduleService {
         List<Schedule> schedules = scheduleRepository.findScheduleOfDay(member.getId(),now.atTime(0,0,0),now.atTime(23,59,59));
         List<ScheduleResponseDto> ret = new ArrayList<>();
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
+
         return ret;
     }
 }

@@ -15,7 +15,6 @@ import java.net.URLEncoder;
 @Service
 public class GeoService {
 
-//    public static void main(String[] args) throws IOException {
     public String[] getGeoPoint(String address) {
         String apiURL = "http://api.vworld.kr/req/address";
         System.out.println(address);
@@ -26,7 +25,6 @@ public class GeoService {
             con.setRequestMethod("POST");
 
             String text_content =  URLEncoder.encode(address, "utf-8");
-            //String text_content =  URLEncoder.encode(keyword.toString());
 
             // post request
             String postParams = "service=address";

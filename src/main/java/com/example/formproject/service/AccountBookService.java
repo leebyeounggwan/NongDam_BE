@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.AccountRequestDto;
 import com.example.formproject.dto.response.AccountResponseDto;
 import com.example.formproject.dto.response.CircleChartDto;
@@ -8,7 +9,7 @@ import com.example.formproject.dto.response.LineChartDataDto;
 import com.example.formproject.entity.AccountBook;
 import com.example.formproject.entity.Member;
 import com.example.formproject.enums.AccountType;
-import com.example.formproject.repository.AccountBookQueryDsl;
+import com.example.formproject.repository.QueryDslRepository;
 import com.example.formproject.repository.AccountBookRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountBookService {
     private final AccountBookRepository accountBookRepository;
-    private final AccountBookQueryDsl accountBookQueryDsl;
+    private final QueryDslRepository queryDslRepository;
 
     public LineChartDto getResults(Member m){
         List<Object[]> incomes = accountBookRepository.incomeOfYear(m.getId());
@@ -47,9 +49,11 @@ public class AccountBookService {
             Object[] spandData = spands.stream().filter(e ->(int) e[0] == year && (int) e[1] == month)
                     .findFirst().orElse(new Object[]{startTime.getYear(),startTime.getMonthValue(),0});
             ret.addLabel(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-01")));
-            income.addData((long)incomeData[2]);
-            spand.addData((long) spandData[2]);
-            rawIncome.addData((long) incomeData[2]- (long) spandData[2]);
+            int incomeValue = Integer.parseInt(incomeData[2].toString());
+            int spandValue = Integer.parseInt(spandData[2].toString());
+            income.addData(incomeValue);
+            spand.addData(spandValue);
+            rawIncome.addData(incomeValue - spandValue);
             startTime = startTime.plusMonths(1L);
         }
         ret.addData(income);
@@ -70,7 +74,7 @@ public class AccountBookService {
         CircleChartDto dto = new CircleChartDto();
         for(Object[] data : datas){
             dto.addLabel(AccountType.values()[(int)data[0]].name());
-            dto.addData((long) data[1]);
+            dto.addData(Long.parseLong(data[1].toString()));
         }
         return dto;
     }
@@ -85,11 +89,16 @@ public class AccountBookService {
     }
 
     public List<AccountResponseDto> findByLimits(Member member,int maxResult){
-        List<AccountBook> books = accountBookQueryDsl.findByMaxResult(member,maxResult);
+        List<AccountBook> books = queryDslRepository.selectAccountBookByMaxResult(member,maxResult);
         return convertResponse(books);
     }
     public List<AccountResponseDto> findByMonth(Member member,int year,int month){
-        List<AccountBook> books = accountBookRepository.findAccountBookByMonth(member.getId(),year,month);
+        YearMonth yearMonth = YearMonth.of(year,month);
+        LocalDate startTime = LocalDate.of(year,month,1);
+        LocalDate endTime = yearMonth.atEndOfMonth();
+        startTime = startTime.minusDays(FinalValue.getBackDayOfWeekValue(startTime.getDayOfWeek()));
+        endTime = endTime.plusDays(FinalValue.getForwardDayOfWeekValue(endTime.getDayOfWeek()));
+        List<AccountBook> books = accountBookRepository.findAccountBookByMonth(member.getId(),startTime,endTime);
         return convertResponse(books);
     }
     private List<AccountResponseDto> convertResponse(List<AccountBook> list){

@@ -80,6 +80,17 @@ public class ResultController {
     public CircleChartDto getExpenseOfYear(@AuthenticationPrincipal MemberDetail detail){
         return accountBookService.getExpenseResult(detail.getMember());
     }
+    @GetMapping("/worktime")
+    @Operation(summary = "분기별 작업 시간 데이터(막대그래프, 금년, 작년)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = LineChartDto.class))) }),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content=@Content),
+            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
+    public LineChartDto getWorkTimeResult(@AuthenticationPrincipal MemberDetail detail){
+        return workLogService.getWorkTimeData(detail.getMember());
+    }
     @GetMapping("/profile")
     @Operation(summary = "무중단 배포 확인용(무시해도됨)")
     public String getProfile () {

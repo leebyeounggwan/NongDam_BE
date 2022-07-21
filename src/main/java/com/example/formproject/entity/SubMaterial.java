@@ -23,6 +23,6 @@ public class SubMaterial extends TimeStamp {
     @Column
     private String product;
 
-    @Column
+    @Column(name = "useage")
     private String use;
 }

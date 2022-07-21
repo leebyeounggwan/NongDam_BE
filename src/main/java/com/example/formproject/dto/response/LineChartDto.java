@@ -37,6 +37,8 @@ public class LineChartDto {
         }
         return dto;
     }
-
+    public boolean hasLabel(String label){
+        return this.xLabel.contains(label);
+    }
 
 }

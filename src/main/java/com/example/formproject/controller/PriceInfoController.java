@@ -44,14 +44,13 @@ public class PriceInfoController {
     @Parameter(in = ParameterIn.PATH,name = "cropId",description = "작물 정보",example = "21",required = true)
     @Parameter(in = ParameterIn.PATH,name = "productClsCode",description = "도/소매",example = "소매",required = true)
     public DailyPriceResponseDto todayPriceInfo(@PathVariable("cropId") int cropId, @PathVariable("productClsCode")String productClsCode,
-                                                @AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
-        PriceRequestDto priceRequestDto = new PriceRequestDto();
-        priceRequestDto.setCropId(cropId);
-        priceRequestDto.setProductClsCode(productClsCode);
-        Crop crop = cropRepository.findById(priceRequestDto.getCropId()).orElseThrow();
+                                                @AuthenticationPrincipal MemberDetail memberdetail) throws ParseException {
+        PriceRequestDto priceRequestDto = new PriceRequestDto().dailyPriceRequestDto(cropId, productClsCode);
 
+        Crop crop = cropRepository.findById(priceRequestDto.getCropId()).orElseThrow();
+        System.out.println(crop.getType());
+        System.out.println(crop.getKind());
         PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
-        System.out.println(memberdetail.getMember().getCountryCode());
         return priceInfoService.dailyPrice(priceInfoRequestDto);
     }
     @GetMapping("/marketprice")
@@ -65,8 +64,8 @@ public class PriceInfoController {
     @Parameter(in = ParameterIn.PATH,name = "cropId",description = "작물 정보",example = "21",required = true)
     @Parameter(in = ParameterIn.PATH,name = "data",description = "월별/연도별 선택",example = "month",required = true)
     public List<PriceInfoDto> priceInfo(@RequestParam int cropId, @RequestParam String data,
-                                        @AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
-        PriceRequestDto priceRequestDto = new PriceRequestDto();
+                                        @AuthenticationPrincipal MemberDetail memberdetail) throws ParseException {
+        PriceRequestDto priceRequestDto = new PriceRequestDto(cropId, data);
         priceRequestDto.setCropId(cropId);
         priceRequestDto.setData(data);
         Crop crop = cropRepository.findById(priceRequestDto.getCropId()).orElseThrow();
@@ -89,7 +88,7 @@ public class PriceInfoController {
     @Parameter(in = ParameterIn.PATH,name = "cropId",description = "작물 정보",example = "21",required = true)
     @Parameter(in = ParameterIn.PATH,name = "data",description = "월별/연도별 선택",example = "month",required = true)
     public List<List<PriceInfoDto>> myPriceInfo(@PathVariable("data") String data,
-                                                @AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
+                                                @AuthenticationPrincipal MemberDetail memberdetail) throws ParseException {
 
 
         List<List<PriceInfoDto>> responseDtoList = new ArrayList<>();
@@ -97,10 +96,9 @@ public class PriceInfoController {
 
         if (crops.size() != 0) {
             for (Crop crop : crops) {
-                PriceRequestDto priceRequestDto = new PriceRequestDto();
-                priceRequestDto.setCropId(crop.getId());
-                priceRequestDto.setData(data);
-
+                PriceRequestDto priceRequestDto = new PriceRequestDto(crop.getId(), data);
+                System.out.println(crop.getType());
+                System.out.println(crop.getKind());
                 PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
                 List<PriceInfoDto> reponseDto = (priceInfoRequestDto.getData().equals("month")) ? priceInfoService.monthlyPrice(priceInfoRequestDto) : priceInfoService.yearlyPrice(priceInfoRequestDto);
                 responseDtoList.add(reponseDto);
