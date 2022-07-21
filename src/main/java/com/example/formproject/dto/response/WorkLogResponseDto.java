@@ -43,6 +43,6 @@ public class WorkLogResponseDto {
         this.harvest = workLog.getHarvest();
         this.crop = cropDto;
         this.subMaterial.addAll(workLog.getSubMaterials());
-        for (String image : workLog.getImages()) this.images.add(image);
+        this.images.addAll(workLog.getImages());
     }
 }
