@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -43,8 +44,8 @@ public class WorkLogService {
             LocalDate tmp = time;
             while(tmp.isBefore(now)|| tmp.isEqual(now)) {
                 LocalDate finalTmp = tmp;
-                if(!ret.hasLabel(finalTmp.getYear()+"-"+finalTmp.getMonthValue()))
-                    ret.addLabel(finalTmp.getYear()+"-"+finalTmp.getMonthValue());
+                if(!ret.hasLabel(finalTmp.format(DateTimeFormatter.ofPattern("yyyy.MM"))))
+                    ret.addLabel(finalTmp.format(DateTimeFormatter.ofPattern("yyyy.MM")));
                 Object[] data = datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == finalTmp.getYear()&& Integer.parseInt(e[1].toString()) == finalTmp.getMonthValue()).findFirst().orElse(null);
                 dto.addData(data==null?0:Integer.parseInt(data[2].toString()));
                 tmp = tmp.plusMonths(1L);
