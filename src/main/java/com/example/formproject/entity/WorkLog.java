@@ -1,5 +1,9 @@
 package com.example.formproject.entity;
 
+import com.example.formproject.FinalValue;
+import com.example.formproject.dto.request.SubMaterialRequestDto;
+import com.example.formproject.dto.request.WorkLogRequestDto;
+import com.example.formproject.repository.CropRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,6 +60,18 @@ public class WorkLog {
 
     @Column
     private int quarter;
+
+    public void updateWorkLog(WorkLogRequestDto requestDto, Crop crop, List<SubMaterial> SubMaterialList) {
+        this.title = requestDto.getTitle();
+        this.date = LocalDate.parse(requestDto.getDate(), FinalValue.DAY_FORMATTER);
+        this.workTime = requestDto.getWorkTime();
+        this.crop = crop;
+        this.memo = requestDto.getMemo();
+        this.subMaterials.clear();
+        this.subMaterials.addAll(SubMaterialList);
+        this.images.clear();
+        this.harvest = requestDto.getHarvest();
+    }
 
     public void setQuarter() {
         if (date != null) {

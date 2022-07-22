@@ -37,12 +37,17 @@ public class WorkLogController {
                     content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
-    public void createWorkLog(@AuthenticationPrincipal MemberDetail detail,
+    public void createWorkLog(@AuthenticationPrincipal MemberDetail details,
                               @RequestPart String data,
-                              @RequestPart(required = false) List<MultipartFile> images) throws JsonProcessingException {
+                              @RequestPart(required = false) List<MultipartFile> images) {
         ObjectMapper mapper = new ObjectMapper();
-        WorkLogRequestDto dto = mapper.readValue(data, WorkLogRequestDto.class);
-        workLogService.createWorkLog(detail.getMember(), dto, images);
+        WorkLogRequestDto dto;
+        try {
+            dto = mapper.readValue(data, WorkLogRequestDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        workLogService.createWorkLog(details.getMember(), dto, images);
     }
 
     @GetMapping("/worklog/{worklogid}")
@@ -65,14 +70,22 @@ public class WorkLogController {
     }
 
     @DeleteMapping("/worklog/{worklogid}")
-    public void deleteWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {
-        String userEmail = detail.getUsername();
-        workLogService.deleteWorkLog(worklogid, userEmail);
+    public void deleteWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail details) {
+        workLogService.deleteWorkLog(worklogid, details);
     }
 
-//    @PatchMapping(value = "/worklog/{worklogid}/update", consumes = {"multipart/form-data"})
-//    public List<WorkLogResponseDto> updateWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail detail) {
-//        String userEmail = detail.getUsername();
-//        return workLogService.updateWorkLog(worklogid, userEmail);
-//    }
+    @PutMapping(value = "/worklog/{worklogid}/update", consumes = {"multipart/form-data"})
+    public void updateWorkLog(@PathVariable Long worklogid,
+                              @RequestPart String data,
+                              @AuthenticationPrincipal MemberDetail details,
+                              @RequestPart(required = false) List<MultipartFile> images) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        WorkLogRequestDto dto;
+        try {
+            dto = mapper.readValue(data, WorkLogRequestDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        workLogService.updateWorkLog(worklogid, dto, details, images);
+    }
 }
