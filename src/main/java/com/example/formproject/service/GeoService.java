@@ -17,7 +17,7 @@ public class GeoService {
 
     public String[] getGeoPoint(String address) {
         String apiURL = "http://api.vworld.kr/req/address";
-        System.out.println(address);
+
         try{
             int responseCode = 0;
             URL url = new URL(apiURL);

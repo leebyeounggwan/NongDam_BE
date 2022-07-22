@@ -25,10 +25,10 @@ public interface AccountBookRepository extends JpaRepository<AccountBook,Long> {
     @Query("Select min(this_.date),max(this_.date) from AccountBook  this_ where this_.member.id=:memberId")
     public List<LocalDate[]> getMinDate(@Param("memberId") int memberId);
 
-    @Query("Select this_.type,sum(this_.price) from AccountBook this_ where this_.member.id=:memberId and year(this_.date) = :year and this_.type < 3 group by this_.type")
+    @Query("Select this_.type,sum(this_.price) from AccountBook this_ where this_.member.id=:memberId and year(this_.date) = :year and this_.type < 3 group by this_.type order by sum(this_.price) desc")
     public List<Object[]> getIncomeData(@Param("memberId") int memberId,@Param("year")int year);
 
-    @Query("Select this_.type,sum(this_.price) from AccountBook this_ where this_.member.id=:memberId and year(this_.date) = :year and this_.type > 2 group by this_.type")
+    @Query("Select this_.type,sum(this_.price) from AccountBook this_ where this_.member.id=:memberId and year(this_.date) = :year and this_.type > 2 group by this_.type order by sum(this_.price) desc")
     public List<Object[]> getExpenseData(@Param("memberId") int memberId,@Param("year")int year);
 
     @Query("Select this_ from AccountBook this_ where this_.member.id=:memberId and year(this_.date)=:year and month(this_.date)=:month order by this_.date desc")
