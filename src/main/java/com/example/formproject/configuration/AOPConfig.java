@@ -51,7 +51,7 @@ public class AOPConfig {
         MethodSignature signature = (MethodSignature) joinPoint.getStaticPart().getSignature();
         UseCache annotation = signature.getMethod().getAnnotation(UseCache.class);
         String keyArg =  annotation.cacheKey();
-        String cacheKey = signature.getMethod().getReturnType().getName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
+        String cacheKey = signature.getMethod().getReturnType().getSimpleName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
         if(template.hasKey(cacheKey)){
             if(annotation.timeData())
                 return mapper.readValue(template.opsForValue().get(cacheKey).toString(),signature.getMethod().getReturnType());

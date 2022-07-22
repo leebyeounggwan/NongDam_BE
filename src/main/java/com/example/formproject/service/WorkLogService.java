@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.example.formproject.dto.request.WorkLogRequestDto;
 import com.example.formproject.dto.response.CropDto;
 import com.example.formproject.dto.response.LineChartDataDto;
@@ -102,10 +103,12 @@ public class WorkLogService {
     public void createWorkLog(Member member, WorkLogRequestDto dto, List<MultipartFile> files) {
         List<String> fileList = new ArrayList<>();
         WorkLog workLog = dto.build(member, cropRepository);
-        for (MultipartFile file : files) {
-            Map<String, String> result = s3Service.uploadFile(file);
-            fileList.add(result.get("url"));
-            workLog.addPicture(result.get("url"), result.get("fileName"));
+        if(files != null) {
+            for (MultipartFile file : files) {
+                Map<String, String> result = s3Service.uploadFile(file);
+                fileList.add(result.get("url"));
+                workLog.addPicture(result.get("url"));
+            }
         }
         workLogRepository.save(workLog);
     }
@@ -134,11 +137,15 @@ public class WorkLogService {
         WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
-            List<Images> list = workLog.getImages();
-            for (Images picture : list) {
-                String[] urlArr = picture.getUrl().split("/");
+            List<String> list = workLog.getImages();
+            for (String picture : list) {
+                String[] urlArr = picture.split("/");
                 String fileKey = urlArr[urlArr.length - 1];
-                s3Service.deleteFile(fileKey);
+                try {
+                    s3Service.deleteFile(fileKey);
+                }catch (AmazonS3Exception e){
+                    System.out.println("해당 객체가 존재하지 않습니다.");
+                }
             }
             workLogRepository.deleteById(worklogid);
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");

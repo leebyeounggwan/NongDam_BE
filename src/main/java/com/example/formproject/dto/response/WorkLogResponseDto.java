@@ -4,12 +4,18 @@ import com.example.formproject.entity.Images;
 import com.example.formproject.entity.SubMaterial;
 import com.example.formproject.entity.WorkLog;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class WorkLogResponseDto {
     @Schema(type = "PK", example = "1")
     private Long id;
@@ -37,6 +43,6 @@ public class WorkLogResponseDto {
         this.harvest = workLog.getHarvest();
         this.crop = cropDto;
         this.subMaterial.addAll(workLog.getSubMaterials());
-        for (Images image : workLog.getImages()) this.images.add(image.getUrl());
+        this.images.addAll(workLog.getImages());
     }
 }

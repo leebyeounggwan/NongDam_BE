@@ -16,5 +16,8 @@ public interface CropRepository extends JpaRepository<Crop,Integer> {
     @Query("Select this_ from Crop this_ where this_.id in :ids")
     List<Crop> findAllIds(@Param("ids") List<Integer> ids);
 
+    @Query("Select count(this_) from Crop this_")
+    int countCrops();
+
 //    List<Crop> findAllByMember(Member member);
 }
