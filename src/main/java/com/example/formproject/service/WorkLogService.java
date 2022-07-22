@@ -155,13 +155,15 @@ public class WorkLogService {
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if (Objects.equals(workLog.getMember().getEmail(), details.getUsername())) {
             List<String> list = workLog.getImages();
-            for (String picture : list) {
-                try {
-                    String[] urlArr = picture.split("/");
-                    String fileKey = urlArr[urlArr.length - 1];
-                    s3Service.deleteFile(fileKey);
-                } catch (AmazonS3Exception e) {
-                    System.out.println("해당 객체가 존재하지 않습니다.");
+            if (files != null) {
+                for (String picture : list) {
+                    try {
+                        String[] urlArr = picture.split("/");
+                        String fileKey = urlArr[urlArr.length - 1];
+                        s3Service.deleteFile(fileKey);
+                    } catch (AmazonS3Exception e) {
+                        System.out.println("해당 객체가 존재하지 않습니다.");
+                    }
                 }
             }
             Crop crop = cropRepository.findById(dto.getCrop()).orElseThrow(
