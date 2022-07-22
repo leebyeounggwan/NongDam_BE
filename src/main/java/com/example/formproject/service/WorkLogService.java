@@ -175,7 +175,7 @@ public class WorkLogService {
             } catch (NullPointerException e) {
                 System.out.println("부자재 사용 목록이 없습니다.");
             }
-            workLog.updateWorkLog(dto, crop, SubMaterialList);
+            workLog.updateWorkLog(dto, crop, SubMaterialList, files);
             if (files != null) {
                 for (MultipartFile file : files) {
                     Map<String, String> result = s3Service.uploadFile(file);
