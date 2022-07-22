@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -61,7 +62,8 @@ public class WorkLog {
     @Column
     private int quarter;
 
-    public void updateWorkLog(WorkLogRequestDto requestDto, Crop crop, List<SubMaterial> SubMaterialList) {
+    public void updateWorkLog(WorkLogRequestDto requestDto, Crop crop,
+                              List<SubMaterial> SubMaterialList, List<MultipartFile> files) {
         this.title = requestDto.getTitle();
         this.date = LocalDate.parse(requestDto.getDate(), FinalValue.DAY_FORMATTER);
         this.workTime = requestDto.getWorkTime();
@@ -69,7 +71,7 @@ public class WorkLog {
         this.memo = requestDto.getMemo();
         this.subMaterials.clear();
         this.subMaterials.addAll(SubMaterialList);
-        if (requestDto.getImages() != null) this.images.clear();
+        if (files != null) this.images.clear();
         this.harvest = requestDto.getHarvest();
     }
 
