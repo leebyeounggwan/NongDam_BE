@@ -29,21 +29,12 @@ public class FinalValue {
     public final static String HTTPSTATUS_SERVERERROR="500";
     public final static DateFormat PUBDATE_PARSSER = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
     public final static DateFormat PUBDATE_CONVERTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public final static Comparator<PriceInfoService.PriceInfo> PRICE_INFO_COMPARABLE =  new Comparator<PriceInfoService.PriceInfo>() {
-        @Override
-        public int compare(PriceInfoService.PriceInfo o1, PriceInfoService.PriceInfo o2) {
-            if(o1.getYear() > o2.getYear()) {
-                return -1;
-            }else if(o1.getYear() == o2.getYear() && o1.getMonth() > o2.getMonth()){
-                return -1;
-            }
-            return 0;
-        }
-    };
+
     public static int getBackDayOfWeekValue(DayOfWeek fromDay){
         return Math.abs(fromDay.getValue()-DayOfWeek.SATURDAY.getValue()+7)%7;
     }
     public static int getForwardDayOfWeekValue(DayOfWeek fromDay){
         return Math.abs((fromDay.getValue()==7?0:fromDay.getValue())-DayOfWeek.SATURDAY.getValue());
     }
+
 }

@@ -347,15 +347,18 @@ class FormProjectApplicationTests {
         Assertions.assertThat(response.getBody().getSubMaterial().stream().filter(e->e.getProduct().equals("test 비료")).findFirst().orElse(null)).isNotNull();
         Assertions.assertThat(response.getBody().getSubMaterial().stream().filter(e->e.getProduct().equals("test 작물 씨앗")).findFirst().orElse(null)).isNotNull();
 
-//        // 월별 수확량 통계
-//        ResponseEntity<LineChartDto> lineResponse = restTemplate.exchange("/totlaharvest/month",HttpMethod.GET,request,LineChartDto.class);
-//        Assertions.assertThat(lineResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        // 연도별 수확량 통계
-//        lineResponse = restTemplate.exchange("/totlaharvest/year",HttpMethod.GET,request,LineChartDto.class);
-//        Assertions.assertThat(lineResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        // 작업 시간 통계
-//        lineResponse = restTemplate.exchange("/worktime",HttpMethod.GET,request,LineChartDto.class);
-//        Assertions.assertThat(lineResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        // 월별 수확량 통계
+        ResponseEntity<LineChartDto> lineResponse = restTemplate.exchange("/totalharvest/month",HttpMethod.GET,request,LineChartDto.class);
+        Assertions.assertThat(lineResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        // 연도별 수확량 통계
+        lineResponse = restTemplate.exchange("/totalharvest/year",HttpMethod.GET,request,LineChartDto.class);
+        Assertions.assertThat(lineResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        // 작업 시간 통계
+        lineResponse = restTemplate.exchange("/worktime",HttpMethod.GET,request,LineChartDto.class);
+        Assertions.assertThat(lineResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        // 작업일지 삭제
+        ResponseEntity<String> deleteResponse = restTemplate.exchange("/worklog/"+body.getId(),HttpMethod.DELETE,request,String.class);
+        Assertions.assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     }
 }
