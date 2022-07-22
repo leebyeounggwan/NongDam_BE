@@ -69,7 +69,7 @@ public class WorkLog {
         this.memo = requestDto.getMemo();
         this.subMaterials.clear();
         this.subMaterials.addAll(SubMaterialList);
-        this.images.clear();
+        if (requestDto.getImages() != null) this.images.clear();
         this.harvest = requestDto.getHarvest();
     }
 
