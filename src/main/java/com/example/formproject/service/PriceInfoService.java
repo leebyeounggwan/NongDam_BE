@@ -29,7 +29,8 @@ public class PriceInfoService {
     private static String certId;
 
     //일별 시세
-    public DailyPriceResponseDto dailyPrice(PriceInfoRequestDto priceInfoRequestDto) throws ParseException {
+    @UseCache(cacheKey = "cacheKey", ttl = 4L,unit = TimeUnit.HOURS,timeData = false)
+    public DailyPriceResponseDto dailyPrice(PriceInfoRequestDto priceInfoRequestDto, String cacheKey) throws ParseException {
 
         List<String> dailyDate = priceService.makeDateList("day");
         PriceApiRequestVariableDto var = new PriceApiRequestVariableDto(priceInfoRequestDto, dailyDate);
@@ -66,9 +67,9 @@ public class PriceInfoService {
     }
 
     //월별 시세
-//    @UseCache(cacheKey = "id", ttl = 2L,unit = TimeUnit.HOURS,timeData = true)
-    public List<PriceInfoDto> monthlyPrice(PriceInfoRequestDto priceInfoRequestDto, int id) throws ParseException {
-        List<String> setDateList;
+    @UseCache(cacheKey = "cacheKey", ttl = 4L,unit = TimeUnit.HOURS,timeData = false)
+    public List<PriceInfoDto> monthlyPrice(PriceInfoRequestDto priceInfoRequestDto, String cacheKey) throws ParseException {
+        List<String> setDateList = priceService.makeDateList("month");
         List<String> setPriceList;
         List<PriceInfoDto> monthlyPriceList = new ArrayList<>();
 
@@ -77,31 +78,15 @@ public class PriceInfoService {
         StringBuilder apiURL = new StringBuilder("https://www.kamis.or.kr/service/price/xml.do?action=monthlySalesList&p_yyyy=" + var.getNowYear() + "&p_period=3&p_itemcategorycode=" + var.getCategoryCode() + "&p_itemcode=" + var.getItemCode() + "&p_kindcode=" + var.getKindCode() + "&p_graderank=" + var.getGradeRank() + "&p_countycode=" + var.getCountryCode() + "&p_convert_kg_yn=Y&p_cert_key=" + apiKey + "&p_cert_id=" + certId + "&p_returntype=json"); //URL
         try {
             JSONObject obj = openApiService.ApiCall(apiURL);
-            JSONArray parse_price = (JSONArray) obj.get("price");
-            // 도소매 데이터를 위해 반복
-            for (int i = 0; i < parse_price.size(); i++) {
-                JSONObject parse_date = (JSONObject) parse_price.get(i);
-                String clsCode = (parse_date.get("productclscode").toString().equals("01")) ? "소매" : "도매";
-                String[] stringa = parse_date.get("caption").toString().split(" > ");
-                String unit = stringa[5];
-                if (unit.replaceAll("[^\\d]", "").equals("1")) {
-                    unit = unit.substring(1);
-                }
-                // 월별 시세데이터 리스트
-                JSONArray monthPriceOfThreeYear = (JSONArray) parse_date.get("item");
-                // 날짜 및 시세 데이터
-                if (monthPriceOfThreeYear == null) {
-                    List<String> list = Collections.emptyList();
-                    setDateList = list;
-                    setPriceList = list;
-                } else {
-                    List<String> priceList = priceService.monthlyPriceList(monthPriceOfThreeYear,priceInfoRequestDto.getYear(), priceInfoRequestDto.getMonth());
-                    setDateList = priceService.makeDateList("month");
-                    setPriceList = priceList;
-                }
-                PriceInfoDto monthPriceInfoDto = new PriceInfoDto(priceInfoRequestDto, var.getCountryCode(), clsCode, stringa, unit, setDateList, setPriceList);
-                monthlyPriceList.add(monthPriceInfoDto);
+            JSONArray parse_price = new JSONArray();
+            
+            if (obj.get("price").getClass().getSimpleName().equals("JSONObject")) {
+                parse_price.add(obj.get("price"));
+            } else {
+                parse_price = (JSONArray) obj.get("price");
             }
+            // 도소매 데이터를 위해 반복
+            mPriceSet(priceInfoRequestDto, setDateList, monthlyPriceList, var, parse_price);
         } catch (IOException | NullPointerException | ClassCastException | IndexOutOfBoundsException e) {
             for (int i = 0; i < 2; i++) {
                 PriceInfoDto monthPriceInfoDto = new PriceInfoDto(priceInfoRequestDto, var.getItemCode(), var.getCountryCode(), i);
@@ -111,11 +96,12 @@ public class PriceInfoService {
         return monthlyPriceList;
     }
 
+
+
     //연도별 시세
-    //    @UseCache(cacheKey = "id", ttl = 2L,unit = TimeUnit.HOURS,timeData = true)
-    public List<PriceInfoDto> yearlyPrice(PriceInfoRequestDto priceInfoRequestDto, int id) throws ParseException {
-        List<String> setDateList;
-        List<String> setPriceList;
+    @UseCache(cacheKey = "cacheKey", ttl = 4L,unit = TimeUnit.HOURS,timeData = false)
+    public List<PriceInfoDto> yearlyPrice(PriceInfoRequestDto priceInfoRequestDto, String cacheKey) throws ParseException {
+        List<String> setDateList = priceService.makeDateList("year");
         List<PriceInfoDto> yearlyPriceList = new ArrayList<>();
 
         PriceApiRequestVariableDto var = new PriceApiRequestVariableDto(priceInfoRequestDto);
@@ -124,37 +110,16 @@ public class PriceInfoService {
         
         try {
             JSONObject obj = openApiService.ApiCall(apiURL);
-            JSONArray parse_price = (JSONArray) obj.get("price");
-            List<String> dateList = priceService.makeDateList("year");
-            // 도소매
-            for (int i = 0; i < parse_price.size(); i++) {
-                List<String[]> sumDataList = new ArrayList<>();
-                List<String> yearPriceList = new ArrayList<>();
-                JSONObject parse_date = (JSONObject) parse_price.get(i);
-                String clsCode = (parse_date.get("productclscode").toString().equals("01")) ? "소매" : "도매";
-                //단위
-                String[] stringa = parse_date.get("caption").toString().split(" > ");
-                String unit = stringa[5];
-                if (unit.replaceAll("[^\\d]", "").equals("1")) {
-                    unit = unit.substring(1);
-                }
-                // 연도별 시세
-                if (parse_date.get("item").getClass().getSimpleName().equals("JSONArray")) {
-                    JSONArray yearlyPrice = (JSONArray) parse_date.get("item");
-                    priceService.getYearPrice(yearlyPrice, sumDataList);
-                    //시세가 없는 연도는 0 할당
-                    priceService.makeYearPrice(dateList, sumDataList, yearPriceList);
-
-                    setDateList = dateList;
-                    setPriceList = yearPriceList;
-                } else {
-                    List<String> list = Collections.emptyList();
-                    setDateList = list;
-                    setPriceList = list;
-                }
-                PriceInfoDto yearPriceInfoDto = new PriceInfoDto(priceInfoRequestDto, var.getCountryCode(), clsCode, stringa, unit, setDateList, setPriceList);
-                yearlyPriceList.add(yearPriceInfoDto);
+            JSONArray parse_price = new JSONArray();
+            //JSONArray parse_price = (JSONArray) obj.get("condition");
+            if (obj.get("price").getClass().getSimpleName().equals("JSONObject")) {
+                parse_price.add(obj.get("price"));
+            } else {
+                parse_price = (JSONArray) obj.get("price");
             }
+            // 도소매
+            yPriceSet(priceInfoRequestDto, setDateList, yearlyPriceList, var, parse_price);
+
         } catch (IOException | NullPointerException | ClassCastException | IndexOutOfBoundsException e) {
             for (int i = 0; i < 2; i++) {
                 PriceInfoDto yearPriceInfoDto = new PriceInfoDto(priceInfoRequestDto, var.getItemCode(), var.getCountryCode(), i);
@@ -162,5 +127,76 @@ public class PriceInfoService {
             }
         }
         return yearlyPriceList;
+    }
+
+    private void yPriceSet(PriceInfoRequestDto priceInfoRequestDto, List<String> setDateList, List<PriceInfoDto> yearlyPriceList, PriceApiRequestVariableDto var, JSONArray parse_price) {
+        
+        List<String> setPriceList;
+        for (int i = 0; i < parse_price.size(); i++) {
+            List<String[]> sumDataList = new ArrayList<>();
+            List<String> yearPriceList = new ArrayList<>();
+            JSONObject parse_date = (JSONObject) parse_price.get(i);
+            String clsCode = (parse_date.get("productclscode").toString().equals("01")) ? "소매" : "도매";
+            //단위
+            String[] stringa = parse_date.get("caption").toString().split(" > ");
+            String unit = stringa[5];
+            if (unit.replaceAll("[^\\d]", "").equals("1")) {
+                unit = unit.substring(1);
+            }
+            // 연도별 시세
+            if (parse_date.get("item").getClass().getSimpleName().equals("JSONArray")) {
+                JSONArray yearlyPrice = (JSONArray) parse_date.get("item");
+                priceService.getYearPrice(yearlyPrice, sumDataList);
+                //시세가 없는 연도는 0 할당
+                priceService.makeYearPrice(setDateList, sumDataList, yearPriceList);
+                setPriceList = yearPriceList;
+            } else {
+                List<String> list = Collections.emptyList();
+                setDateList = list;
+                setPriceList = list;
+            }
+            PriceInfoDto yearPriceInfoDto = new PriceInfoDto(priceInfoRequestDto, var.getCountryCode(), clsCode, stringa, unit, setDateList, setPriceList);
+            yearlyPriceList.add(yearPriceInfoDto);
+            if (parse_price.size() == 1 && yearPriceInfoDto.getWholeSale().equals("도매")) {
+                PriceInfoDto yearPriceInfoDto1 = new PriceInfoDto(priceInfoRequestDto, var.getItemCode(), var.getCountryCode(), 1);
+                yearlyPriceList.add(yearPriceInfoDto1);
+            }
+            if (parse_price.size() == 1 && yearPriceInfoDto.getWholeSale().equals("소매")) {
+                PriceInfoDto yearPriceInfoDto1 = new PriceInfoDto(priceInfoRequestDto, var.getItemCode(), var.getCountryCode(), 0);
+                yearlyPriceList.add(yearPriceInfoDto1);
+            }
+        }
+    }
+    private void mPriceSet(PriceInfoRequestDto priceInfoRequestDto, List<String> setDateList, List<PriceInfoDto> monthlyPriceList, PriceApiRequestVariableDto var, JSONArray parse_price) {
+        List<String> setPriceList;
+        for (int i = 0; i < parse_price.size(); i++) {
+            JSONObject parse_date = (JSONObject) parse_price.get(i);
+            String clsCode = (parse_date.get("productclscode").toString().equals("01")) ? "소매" : "도매";
+            String[] stringa = parse_date.get("caption").toString().split(" > ");
+            String unit = stringa[5];
+            if (unit.replaceAll("[^\\d]", "").equals("1")) {
+                unit = unit.substring(1);
+            }
+            // 월별 시세데이터 리스트
+            JSONArray monthPriceOfThreeYear = (JSONArray) parse_date.get("item");
+            // 날짜 및 시세 데이터
+            if (monthPriceOfThreeYear == null) {
+                List<String> list = Collections.emptyList();
+                setPriceList = list;
+            } else {
+                List<String> priceList = priceService.monthlyPriceList(monthPriceOfThreeYear, priceInfoRequestDto.getYear(), priceInfoRequestDto.getMonth());
+                setPriceList = priceList;
+            }
+            PriceInfoDto monthPriceInfoDto = new PriceInfoDto(priceInfoRequestDto, var.getCountryCode(), clsCode, stringa, unit, setDateList, setPriceList);
+            monthlyPriceList.add(monthPriceInfoDto);
+            if (parse_price.size() == 1 && monthPriceInfoDto.getWholeSale().equals("도매")) {
+                PriceInfoDto monthPriceInfoDto1 = new PriceInfoDto(priceInfoRequestDto, var.getItemCode(), var.getCountryCode(), 1);
+                monthlyPriceList.add(monthPriceInfoDto1);
+            }
+            if (parse_price.size() == 1 && monthPriceInfoDto.getWholeSale().equals("소매")) {
+                PriceInfoDto yearPriceInfoDto1 = new PriceInfoDto(priceInfoRequestDto, var.getItemCode(), var.getCountryCode(), 0);
+                monthlyPriceList.add(yearPriceInfoDto1);
+            }
+        }
     }
 }
