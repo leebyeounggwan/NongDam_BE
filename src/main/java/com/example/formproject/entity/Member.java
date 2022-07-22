@@ -3,6 +3,7 @@ package com.example.formproject.entity;
 import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.MemberInfoRequestDto;
 import com.example.formproject.repository.CropRepository;
+import com.example.formproject.security.MemberDetail;
 import com.example.formproject.security.OAuthAttributes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,12 +70,12 @@ public class Member extends TimeStamp {
         this.crops.addAll(cr);
     }
 
-    public void updateMember(MemberInfoRequestDto requestDto, CropRepository repository) {
+    public void updateMember(MemberInfoRequestDto requestDto, String defaultImage, CropRepository repository) {
         // 프로필 사진 없이 업데이트
         this.nickname = requestDto.getNickname() == null ? nickname : requestDto.getNickname();
         this.address = requestDto.getAddress() == null ? address : requestDto.getAddress();
         this.countryCode = requestDto.getCountryCode() == 0 ? countryCode : requestDto.getCountryCode();
-        this.profileImage = FinalValue.BACK_URL + "/static/default.png"; //기본 프로필 이미지
+        this.profileImage = defaultImage; //기존 이미지
         this.crops.clear();
         List<Crop> cr = repository.findAllIds(requestDto.getCrops());
         this.crops.addAll(cr);

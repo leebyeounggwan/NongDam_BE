@@ -17,6 +17,7 @@ import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.repository.RefreshTokenRepository;
 import com.example.formproject.security.JwtProvider;
+import com.example.formproject.security.MemberDetail;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
@@ -73,22 +74,22 @@ public class MemberService {
 
     @Transactional
     @DeleteMemberCache(memberIdArg = "memberid")
-    public ResponseEntity<?> updateMember(int memberid, MultipartFile profileImage, MemberInfoRequestDto requestDto, String username) {
+    public ResponseEntity<?> updateMember(String image, int memberid, MultipartFile profileImage, MemberInfoRequestDto requestDto, String username) {
         Member member = repository.findById(memberid).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않습니다."));
         String memberEmail = member.getEmail();
         if (Objects.equals(memberEmail, username)) {
-            if (profileImage != null)
-                member.updateMember(requestDto, s3Service.uploadFile(profileImage), cropRepository);
-            else {
+            if (profileImage != null) {
+                try {
                     String[] urlArr = member.getProfileImage().split("/");
                     String fileKey = urlArr[urlArr.length - 1];
-                    try {
-                        s3Service.deleteFile(fileKey);
-                    }catch (AmazonS3Exception e){
-                        System.out.println("해당 객체가 존재하지 않습니다.");
-                    }
-                    member.updateMember(requestDto, cropRepository);
+                    s3Service.deleteFile(fileKey);
+                } catch (AmazonS3Exception e) {
+                    System.out.println("해당 객체가 존재하지 않습니다.");
+                }
+                member.updateMember(requestDto, s3Service.uploadFile(profileImage), cropRepository);
+            } else {
+                member.updateMember(requestDto, image, cropRepository);
             }
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);

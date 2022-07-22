@@ -45,9 +45,7 @@ public class WorkLogRequestDto {
                 .member(member)
                 .build();
         workLog.setQuarter();
-        subMaterial.stream().forEach(e -> {
-            workLog.addSubMaterial(e.build());
-        });
+        subMaterial.forEach(e -> workLog.addSubMaterial(e.build()));
         return workLog;
     }
 }
