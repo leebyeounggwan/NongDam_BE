@@ -84,7 +84,7 @@ public class AccountBookController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
     @Parameter(in = ParameterIn.PATH,name = "accountId",description = "장부 id",example = "1",required = true)
     public void deleteAccount(@PathVariable Long accountId){
-        service.getAccountBookRepository().deleteById(accountId);
+        service.delete(accountId);
     }
     @ExceptionHandler({NumberFormatException.class,IndexOutOfBoundsException.class})
     public ResponseEntity<String> badRequest(){

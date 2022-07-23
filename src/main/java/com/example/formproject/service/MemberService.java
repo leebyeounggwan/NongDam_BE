@@ -2,10 +2,7 @@ package com.example.formproject.service;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.example.formproject.annotation.DeleteMemberCache;
-import com.example.formproject.dto.request.LoginDto;
-import com.example.formproject.dto.request.MailDto;
-import com.example.formproject.dto.request.MemberInfoRequestDto;
-import com.example.formproject.dto.request.MemberRequestDto;
+import com.example.formproject.dto.request.*;
 import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
@@ -61,6 +58,14 @@ public class MemberService {
         member.enableId();
         memberRepository.save(member);
         System.out.println("member is Enable :" + member.getEmail());
+    }
+
+    @Transactional
+    public void changePassword(Member member, PasswordChangeDto dto){
+        if(!encoder.matches(dto.getOldPassword(),member.getPassword()))
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        member.changePassword(encoder.encode(dto.getNewPassword()));
+        memberRepository.save(member);
     }
 
     public void save(MemberRequestDto dto) throws MessagingException {

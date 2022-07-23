@@ -65,7 +65,6 @@ public class ScheduleController {
     public List<ScheduleResponseDto> getDaySchedules(@AuthenticationPrincipal MemberDetail detail){
         return scheduleService.findScheduleOfDay(detail.getMember());
     }
-
     @PostMapping("/schedule")
     @Operation(summary = "일정 생성")
     @ApiResponses(value = {
@@ -78,7 +77,6 @@ public class ScheduleController {
     public ScheduleResponseDto saveSchedule(@RequestBody ScheduleRequestDto dto, @AuthenticationPrincipal MemberDetail detail){
         return scheduleService.save(detail.getMember(),dto);
     }
-
     @PutMapping("/schedule/{scheduleId}")
     @Operation(summary = "일정 수정")
     @ApiResponses(value = {
@@ -102,7 +100,7 @@ public class ScheduleController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
     @Parameter(in = ParameterIn.PATH,name = "scheduleId",description = "일정 id",example = "1",required = true)
     public void deleteSchedule(@PathVariable Long scheduleId){
-        scheduleService.getScheduleRepository().deleteById(scheduleId);
+        scheduleService.delete(scheduleId);
     }
     @ExceptionHandler({NumberFormatException.class,IndexOutOfBoundsException.class})
     public ResponseEntity<String> badRequest(){
