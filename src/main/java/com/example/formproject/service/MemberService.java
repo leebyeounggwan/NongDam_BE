@@ -2,7 +2,6 @@ package com.example.formproject.service;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.example.formproject.annotation.DeleteMemberCache;
-import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.request.LoginDto;
 import com.example.formproject.dto.request.MailDto;
 import com.example.formproject.dto.request.MemberInfoRequestDto;
@@ -10,17 +9,14 @@ import com.example.formproject.dto.request.MemberRequestDto;
 import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
-import com.example.formproject.entity.RefreshToken;
 import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.exception.EmailConfirmException;
 import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.repository.RefreshTokenRepository;
 import com.example.formproject.security.JwtProvider;
-import com.example.formproject.security.MemberDetail;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,7 +33,7 @@ import java.util.Objects;
 @Getter
 public class MemberService {
     private final JwtProvider provider;
-    private final MemberRepository repository;
+    private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder encoder;
     private final AwsS3Service s3Service;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -48,7 +44,7 @@ public class MemberService {
 
     @Transactional
     public JwtResponseDto login(LoginDto login, HttpServletResponse response) throws AuthenticationException, EmailConfirmException {
-        Member member = repository.findByEmail(login.getEmail()).orElseThrow(() -> new AuthenticationException("계정을 찾을수 없습니다."));
+        Member member = memberRepository.findByEmail(login.getEmail()).orElseThrow(() -> new AuthenticationException("계정을 찾을수 없습니다."));
         if (encoder.matches(login.getPassword(), member.getPassword())) {
             JwtResponseDto jwtResponseDto = provider.generateToken(member, response);
             if (member.isLock())
@@ -61,21 +57,21 @@ public class MemberService {
 
     @Transactional
     public void enableMember(int id) throws Exception {
-        Member member = repository.findById(id).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+        Member member = memberRepository.findById(id).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
         member.enableId();
-        repository.save(member);
+        memberRepository.save(member);
         System.out.println("member is Enable :" + member.getEmail());
     }
 
     public void save(MemberRequestDto dto) throws MessagingException {
-        Member member = repository.save(dto.build(encoder));
+        Member member = memberRepository.save(dto.build(encoder));
         emailService.sendHtmlEmail(MailDto.builder().email(dto.getEmail()).build(), member);
     }
 
     @Transactional
     @DeleteMemberCache(memberIdArg = "memberid")
     public ResponseEntity<?> updateMember(String image, int memberid, MultipartFile profileImage, MemberInfoRequestDto requestDto, String username) {
-        Member member = repository.findById(memberid).orElseThrow(
+        Member member = memberRepository.findById(memberid).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않습니다."));
         String memberEmail = member.getEmail();
         if (Objects.equals(memberEmail, username)) {
@@ -91,6 +87,7 @@ public class MemberService {
             } else {
                 member.updateMember(requestDto, image, cropRepository);
             }
+            memberRepository.save(member);
             return new ResponseEntity<>("회원정보가 수정되었습니다.", HttpStatus.NO_CONTENT);
         } else return new ResponseEntity<>("회원정보 접근권한이 없습니다.", HttpStatus.FORBIDDEN);
     }
