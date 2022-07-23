@@ -182,6 +182,7 @@ public class WorkLogService {
                     workLog.addPicture(result.get("url"));
                 }
             }
+            workLogRepository.save(workLog);
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
     }
 }
