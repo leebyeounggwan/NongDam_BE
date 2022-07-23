@@ -29,7 +29,7 @@ public class WorkLogResponseDto {
     @Schema(type = "int", example = "100")
     private Long harvest;
     private CropDto crop;
-    private List<SubMaterial> subMaterial = new ArrayList<>();
+    private List<SubMaterialResponseDto> subMaterial = new ArrayList<>();
 
     private List<String> images = new ArrayList<>();
 
@@ -41,7 +41,8 @@ public class WorkLogResponseDto {
         this.memo = workLog.getMemo();
         this.harvest = workLog.getHarvest();
         this.crop = cropDto;
-        this.subMaterial.addAll(workLog.getSubMaterials());
+        for(SubMaterial material : workLog.getSubMaterials())
+            this.subMaterial.add(new SubMaterialResponseDto(material));
         this.images.addAll(workLog.getImages());
     }
 }

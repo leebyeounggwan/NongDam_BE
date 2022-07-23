@@ -1,10 +1,7 @@
 package com.example.formproject.controller;
 
 import com.example.formproject.FinalValue;
-import com.example.formproject.dto.request.LoginDto;
-import com.example.formproject.dto.request.MailDto;
-import com.example.formproject.dto.request.MemberInfoRequestDto;
-import com.example.formproject.dto.request.MemberRequestDto;
+import com.example.formproject.dto.request.*;
 import com.example.formproject.dto.response.AccountResponseDto;
 import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.dto.response.MemberResponseDto;
@@ -131,6 +128,11 @@ public class MemberController {
                                           @AuthenticationPrincipal MemberDetail memberDetails) throws JsonProcessingException {
         MemberInfoRequestDto requestDto = mapper.readValue(data, MemberInfoRequestDto.class);
         return memberService.updateMember(memberDetails.getMember().getProfileImage(), memberDetails.getMember().getId(), profileImage, requestDto, memberDetails.getMember().getEmail());
+    }
+
+    @PutMapping("/member/password")
+    public void changePassword(@AuthenticationPrincipal MemberDetail detail, @RequestBody PasswordChangeDto dto){
+        memberService.changePassword(detail.getMember(),dto);
     }
 
     @ExceptionHandler(EmailConfirmException.class)
