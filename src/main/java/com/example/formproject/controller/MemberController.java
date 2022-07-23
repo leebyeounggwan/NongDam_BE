@@ -47,9 +47,7 @@ import java.io.PrintWriter;
 @Tag(name = "Member Api", description = "회원 정보 관련 API(백규현/이경동)")
 public class MemberController {
     private final MemberService memberService;
-
     private final OAuthService oAuthService;
-
     private final ObjectMapper mapper;
 
     // 로그인
