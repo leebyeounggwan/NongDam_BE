@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@Slf4j
-@Getter
 public class NewsService {
     @Value("${news.naver.api.url}")
     private String apiUrl;
@@ -59,7 +57,7 @@ public class NewsService {
     @UseCache(cacheKey = "tmp", ttl = 30L,unit= TimeUnit.MINUTES,timeData = false)
     public List<NewsResponseDto> getNewsInfo(String tmp) throws IOException, ParseException, org.json.simple.parser.ParseException {
         JSONParser parser = new JSONParser();
-        JSONObject object = (JSONObject) parser.parse(getNewsData("농사",5));
+        JSONObject object = (JSONObject) parser.parse(getNewsData("농사",10));
         JSONArray newsData = (JSONArray) object.get("items");
         List<NewsResponseDto> ret = new ArrayList<>();
         for(int i = 0; i < newsData.size(); i++){
