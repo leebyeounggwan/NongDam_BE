@@ -2,7 +2,6 @@ package com.example.formproject.controller;
 
 import com.example.formproject.FinalValue;
 import com.example.formproject.dto.response.*;
-import com.example.formproject.entity.Crop;
 import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.CropService;
 import com.example.formproject.service.NewsService;

@@ -14,10 +14,10 @@ import javax.persistence.*;
 @Getter
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(name = "customUnique", columnNames = {"type","category","kind"})
+                @UniqueConstraint(name = "customUnique", columnNames = {"type", "category", "kind"})
         }
 )
-public class Crop extends TimeStamp{
+public class Crop extends TimeStamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
