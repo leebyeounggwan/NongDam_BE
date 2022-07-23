@@ -71,7 +71,7 @@ public class WorkLogController {
         ObjectWriter writer = new ObjectMapper().writer();
         for(WorkLogResponseDto d : ret)
             log.info(writer.writeValueAsString(d));
-        return workLogService.getWorkLogList(detail);
+        return ret;
     }
 
     @DeleteMapping("/worklog/{worklogid}")
