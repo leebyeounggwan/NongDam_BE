@@ -9,6 +9,7 @@ import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.ScheduleRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Getter
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CropRepository cropRepository;
@@ -64,5 +64,9 @@ public class ScheduleService {
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
 
         return ret;
+    }
+    @Transactional
+    public void delete(long id){
+        scheduleRepository.deleteById(id);
     }
 }
