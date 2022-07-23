@@ -67,11 +67,7 @@ public class WorkLogController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
     public List<WorkLogResponseDto> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) throws JsonProcessingException {
-        List<WorkLogResponseDto> ret = workLogService.getWorkLogList(detail);
-        ObjectWriter writer = new ObjectMapper().writer();
-        for(WorkLogResponseDto d : ret)
-            log.info(writer.writeValueAsString(d));
-        return ret;
+        return workLogService.getWorkLogList(detail);
     }
 
     @DeleteMapping("/worklog/{worklogid}")
