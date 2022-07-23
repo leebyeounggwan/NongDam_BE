@@ -182,10 +182,10 @@ public class WorkLogService {
     @Transactional(readOnly = true)
     public WorkTimeRateDto getWorkingRate(Member member){
         int year = LocalDate.now().getYear();
-        int thisYear = workLogRepository.getSumWorkTimeOfYear(year,member.getId());
-        int preYear = workLogRepository.getSumWorkTimeOfYear(year-1,member.getId());
+        float thisYear = workLogRepository.getSumWorkTimeOfYear(year,member.getId());
+        float preYear = workLogRepository.getSumWorkTimeOfYear(year-1,member.getId());
         String rateText = thisYear >= preYear ? "증가":"감소";
-        int rate = (Math.min(thisYear,preYear)/Math.max(thisYear,preYear)) * 100;
+        int rate = Math.round((Math.max(thisYear,preYear)/Math.min(thisYear,preYear)) * 100);
         return new WorkTimeRateDto(rate,rateText);
     }
 }
