@@ -55,6 +55,9 @@ public class Member extends TimeStamp {
     @Builder.Default
     private List<Crop> crops = new ArrayList<>();
 
+    public void changePassword(String password){
+        this.password = password;
+    }
     public void updateMember(OAuthAttributes attributes) {
         this.name = attributes.getName();
         this.profileImage = attributes.getPicture();
