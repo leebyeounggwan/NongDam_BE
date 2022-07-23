@@ -9,6 +9,7 @@ import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.WorkLogService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "WorkLog Api", description = "작업 결과 관련 Api(설계 진행중,이경동)")
+@Slf4j
 public class WorkLogController {
     private final WorkLogService workLogService;
 
@@ -63,7 +66,11 @@ public class WorkLogController {
                             schema = @Schema(implementation = WorkLogRequestDto.class))}),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
-    public List<WorkLogResponseDto> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) {
+    public List<WorkLogResponseDto> getWorkLogList(@AuthenticationPrincipal MemberDetail detail) throws JsonProcessingException {
+        List<WorkLogResponseDto> ret = workLogService.getWorkLogList(detail);
+        ObjectWriter writer = new ObjectMapper().writer();
+        for(WorkLogResponseDto d : ret)
+            log.info(writer.writeValueAsString(d));
         return workLogService.getWorkLogList(detail);
     }
 

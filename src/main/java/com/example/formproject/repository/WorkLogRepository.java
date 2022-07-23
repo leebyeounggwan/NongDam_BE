@@ -27,5 +27,8 @@ public interface WorkLogRepository extends JpaRepository<WorkLog, Long> {
     @Query("Select year(this_.date),this_.quarter,sum(this_.workTime) from WorkLog this_ where this_.member.id=:memberId and year(this_.date) = :year group by year(this_.date),this_.quarter order by this_.quarter,year(this_.date)")
     public List<Object[]> selectWorkTimeofYear(@Param("memberId") int memberId, @Param("year") int year);
 
+    @Query("Select sum(this_.workTime) from WorkLog this_ where year(this_.date)=:year and this_.member.id=:id")
+    public int getSumWorkTimeOfYear(@Param("year")int year,@Param("id")int id);
+
     List<WorkLog> findAllByMemberOrderByDateDesc(Member member);
 }

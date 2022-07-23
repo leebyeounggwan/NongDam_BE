@@ -3,10 +3,7 @@ package com.example.formproject.service;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.example.formproject.dto.request.SubMaterialRequestDto;
 import com.example.formproject.dto.request.WorkLogRequestDto;
-import com.example.formproject.dto.response.CropDto;
-import com.example.formproject.dto.response.LineChartDataDto;
-import com.example.formproject.dto.response.LineChartDto;
-import com.example.formproject.dto.response.WorkLogResponseDto;
+import com.example.formproject.dto.response.*;
 import com.example.formproject.entity.*;
 import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.WorkLogRepository;
@@ -181,5 +178,14 @@ public class WorkLogService {
             }
             workLogRepository.save(workLog);
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
+    }
+    @Transactional(readOnly = true)
+    public WorkTimeRateDto getWorkingRate(Member member){
+        int year = LocalDate.now().getYear();
+        int thisYear = workLogRepository.getSumWorkTimeOfYear(year,member.getId());
+        int preYear = workLogRepository.getSumWorkTimeOfYear(year-1,member.getId());
+        String rateText = thisYear >= preYear ? "증가":"감소";
+        int rate = (Math.min(thisYear,preYear)/Math.max(thisYear,preYear)) * 100;
+        return new WorkTimeRateDto(rate,rateText);
     }
 }
