@@ -64,7 +64,7 @@ public class MemberService {
     public void changePassword(Member member, PasswordChangeDto dto){
         if(!encoder.matches(dto.getOldPassword(),member.getPassword()))
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        member.changePassword(encoder.encode(dto.getOldPassword()));
+        member.changePassword(encoder.encode(dto.getNewPassword()));
     }
 
     public void save(MemberRequestDto dto) throws MessagingException {
