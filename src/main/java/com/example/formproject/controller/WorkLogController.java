@@ -26,9 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "WorkLog Api", description = "작업 결과 관련 Api(설계 진행중,이경동)")
 public class WorkLogController {
-    private final WorkLogRepository workLogRepository;
     private final WorkLogService workLogService;
-//    private final WorkLogResponseDto workLogResponseDto;
 
     @PostMapping(value = "/worklog", consumes = {"multipart/form-data"})
     @Operation(summary = "작업일지 생성")
