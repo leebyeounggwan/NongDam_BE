@@ -37,7 +37,7 @@ public class Member extends TimeStamp {
 
     @Column
     @Builder.Default
-    private String address="";
+    private String address = "";
 
     @Column
     private int countryCode;

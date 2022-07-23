@@ -11,15 +11,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CropDto {
-    @Schema(type = "int",example = "1")
+    @Schema(type = "int", example = "1")
     private int id;
-    @Schema(type = "String",example = "백미")
+    @Schema(type = "String", example = "백미")
     private String name;
-    @Schema(type = "String",example = "식량작물")
+    @Schema(type = "String", example = "식량작물")
     private String category;
-    @Schema(type = "String",example = "쌀")
+    @Schema(type = "String", example = "쌀")
     private String type;
-    public CropDto(Crop crop){
+
+    public CropDto(Crop crop) {
         this.id = crop.getId();
         this.name = crop.getName();
         this.category = CropCategoryCode.findByCode(crop.getCategory());

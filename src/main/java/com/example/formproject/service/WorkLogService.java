@@ -11,20 +11,17 @@ import com.example.formproject.entity.*;
 import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.WorkLogRepository;
 import com.example.formproject.security.MemberDetail;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Getter
 public class WorkLogService {
     private final WorkLogRepository workLogRepository;
     private final CropRepository cropRepository;
