@@ -42,15 +42,15 @@ public class MemberService {
     private final EmailService emailService;
 
     @Transactional
-    public JwtResponseDto login(LoginDto login, HttpServletResponse response) throws AuthenticationException, EmailConfirmException {
-        Member member = memberRepository.findByEmail(login.getEmail()).orElseThrow(() -> new AuthenticationException("계정을 찾을수 없습니다.","login request"));
+    public JwtResponseDto login(LoginDto login, HttpServletResponse response) throws EmailConfirmException, WrongArgumentException {
+        Member member = memberRepository.findByEmail(login.getEmail()).orElseThrow(() -> new WrongArgumentException("계정을 찾을수 없습니다.","login request"));
         if (encoder.matches(login.getPassword(), member.getPassword())) {
             JwtResponseDto jwtResponseDto = provider.generateToken(member, response);
             if (member.isLock())
                 throw new EmailConfirmException("이메일 인증이 필요한 계정입니다.","login request");
             return jwtResponseDto;
         } else {
-            throw new AuthenticationException("계정 또는 비밀번호가 틀렸습니다.","login request");
+            throw new WrongArgumentException("계정 또는 비밀번호가 틀렸습니다.","login request");
         }
     }
 

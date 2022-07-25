@@ -57,7 +57,7 @@ public class MemberController {
                             schema = @Schema(implementation = String.class, example = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpZCIsImlkIjo2NywiZXhwIjoxNjU3MDk4Mjg5LCJpYXQiOjE2NTcwODc0ODl9._J-jgRNaqMS2_X9aZV0Cj9SgKK_R-VJzzxlexVcj_Gs"))}),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "로그인 필요", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
-    public String loginMember(@RequestBody LoginDto dto, HttpServletResponse response) throws AuthenticationException, EmailConfirmException {
+    public String loginMember(@RequestBody LoginDto dto, HttpServletResponse response) throws EmailConfirmException, WrongArgumentException {
         JwtResponseDto token = memberService.login(dto, response);
         return "Bearer " + token.getToken();
     }
