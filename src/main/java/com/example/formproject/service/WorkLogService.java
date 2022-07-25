@@ -9,6 +9,7 @@ import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.WorkLogRepository;
 import com.example.formproject.security.MemberDetail;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WorkLogService {
     private final WorkLogRepository workLogRepository;
     private final CropRepository cropRepository;
@@ -136,7 +138,7 @@ public class WorkLogService {
                     String fileKey = urlArr[urlArr.length - 1];
                     s3Service.deleteFile(fileKey);
                 } catch (AmazonS3Exception e) {
-                    System.out.println("해당 객체가 존재하지 않습니다.");
+                   log.warn("삭제할 파일 없음");
                 }
             }
             workLogRepository.deleteById(worklogid);
@@ -156,7 +158,7 @@ public class WorkLogService {
                         String fileKey = urlArr[urlArr.length - 1];
                         s3Service.deleteFile(fileKey);
                     } catch (AmazonS3Exception e) {
-                        System.out.println("해당 객체가 존재하지 않습니다.");
+                        log.warn("삭제할 파일 없음");
                     }
                 }
             }
@@ -167,7 +169,7 @@ public class WorkLogService {
                 for (SubMaterialRequestDto subMaterialRequestDto : dto.getSubMaterial())
                     SubMaterialList.add(subMaterialRequestDto.build());
             } catch (NullPointerException e) {
-                System.out.println("부자재 사용 목록이 없습니다.");
+                log.warn("부자제 목록 없음");
             }
             workLog.updateWorkLog(dto, crop, SubMaterialList, files);
             if (files != null) {

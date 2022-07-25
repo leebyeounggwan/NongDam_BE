@@ -52,9 +52,6 @@ public class PriceInfoController {
         String country = memberdetail.getMember().getCountryCode()+"";
         String countryCode = (country.equals("0")) ? "1101" : country;
         String cacheKey = cropId + countryCode + type;
-
-        System.out.println(crop.getType());
-        System.out.println(crop.getKind());
         PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
         return priceInfoService.dailyPrice(priceInfoRequestDto, cacheKey);
     }
@@ -72,9 +69,6 @@ public class PriceInfoController {
                                         @AuthenticationPrincipal MemberDetail memberdetail) throws ParseException {
         PriceRequestDto priceRequestDto = new PriceRequestDto(cropId, data);
         Crop crop = cropRepository.findById(priceRequestDto.getCropId()).orElseThrow(() -> new NullPointerException("해당 작물이 없습니다."));
-        System.out.println(crop.getType());
-        System.out.println(crop.getKind());
-
         String type = data;
         String country = memberdetail.getMember().getCountryCode()+"";
         String countryCode = (country.equals("0")) ? "1101" : country;
@@ -111,8 +105,6 @@ public class PriceInfoController {
                 int cropId = crop.getId();
                 String cacheKey = cropId + countryCode + type;
                 PriceRequestDto priceRequestDto = new PriceRequestDto(crop.getId(), data);
-                System.out.println(crop.getType());
-                System.out.println(crop.getKind());
                 PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
                 List<PriceInfoDto> reponseDto = (priceInfoRequestDto.getData().equals("month")) ? priceInfoService.monthlyPrice(priceInfoRequestDto, cacheKey) : priceInfoService.yearlyPrice(priceInfoRequestDto, cacheKey);
                 responseDtoList.add(reponseDto);

@@ -11,6 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +33,12 @@ public class Member extends TimeStamp {
     private String name;
 
     @Column(unique = true)
+    @NotBlank
+    @Email(message = "이메일")
     private String email;
 
     @Column
+    @NotBlank(message = "비밀번호")
     private String password;
 
     @Column
@@ -45,6 +51,7 @@ public class Member extends TimeStamp {
     @Column
     private String profileImage;
     @Column
+    @NotNull(message = "닉네임")
     private String nickname;
 
     @Column(columnDefinition = "boolean default true")

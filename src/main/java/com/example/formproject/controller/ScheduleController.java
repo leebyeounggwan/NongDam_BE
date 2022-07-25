@@ -5,6 +5,7 @@ import com.example.formproject.dto.request.ScheduleRequestDto;
 import com.example.formproject.dto.response.AccountResponseDto;
 import com.example.formproject.dto.response.ScheduleResponseDto;
 import com.example.formproject.entity.Member;
+import com.example.formproject.exception.WrongArgumentException;
 import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,9 +51,19 @@ public class ScheduleController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청데이터 오류",content=@Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
     @Parameter(in = ParameterIn.PATH,name = "yearMonth",description = "년월 정보",example = "2022-07",required = true)
-    public List<ScheduleResponseDto> getMonthSchedules(@AuthenticationPrincipal MemberDetail detail,@PathVariable String yearMonth){
-        String[] tmp= yearMonth.split("-");
-        return scheduleService.findScheduleOfMonth(detail.getMember(),Integer.parseInt(tmp[0]),Integer.parseInt(tmp[1]));
+    public List<ScheduleResponseDto> getMonthSchedules(@AuthenticationPrincipal MemberDetail detail,@PathVariable String yearMonth) throws WrongArgumentException {
+        String[] tmp = yearMonth.split("-");
+        if(tmp.length != 2)
+            throw new WrongArgumentException("잘못된 요청입니다.","Year-Month");
+        int year;
+        int month;
+        try {
+            year = Integer.parseInt(tmp[0]);
+            month = Integer.parseInt(tmp[1]);
+        }catch(NumberFormatException e){
+            throw new WrongArgumentException("잘못된 요청입니다.","Year-Month");
+        }
+        return scheduleService.findScheduleOfMonth(detail.getMember(),year,month);
     }
     @GetMapping("/schedule/today")
     @Operation(summary = "당일 일정 조회")
@@ -74,7 +85,7 @@ public class ScheduleController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content=@Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청데이터 오류",content=@Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content) })
-    public ScheduleResponseDto saveSchedule(@RequestBody ScheduleRequestDto dto, @AuthenticationPrincipal MemberDetail detail){
+    public ScheduleResponseDto saveSchedule(@RequestBody ScheduleRequestDto dto, @AuthenticationPrincipal MemberDetail detail) throws WrongArgumentException {
         return scheduleService.save(detail.getMember(),dto);
     }
     @PutMapping("/schedule/{scheduleId}")
@@ -87,7 +98,7 @@ public class ScheduleController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청데이터 오류",content=@Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content) })
     @Parameter(in = ParameterIn.PATH,name = "scheduleId",description = "일정 id",example = "1",required = true)
-    public ScheduleResponseDto editSchedule(@PathVariable Long scheduleId,@RequestBody ScheduleRequestDto dto){
+    public ScheduleResponseDto editSchedule(@PathVariable Long scheduleId,@RequestBody ScheduleRequestDto dto) throws WrongArgumentException {
         return scheduleService.save(scheduleId,dto);
     }
     @DeleteMapping("/schedule/{scheduleId}")

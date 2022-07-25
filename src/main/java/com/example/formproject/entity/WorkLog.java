@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,7 @@ public class WorkLog {
     private long id;
 
     @Column
+    @NotBlank(message = "제목")
     private String title;
 
     @Column
@@ -40,6 +44,7 @@ public class WorkLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
+    @NotNull(message = "작물")
     private Crop crop;
 
     @Column
@@ -57,6 +62,7 @@ public class WorkLog {
 
     @Column
     @Builder.Default
+    @PositiveOrZero(message = "수확량")
     private long harvest = 0L;
 
     @Column

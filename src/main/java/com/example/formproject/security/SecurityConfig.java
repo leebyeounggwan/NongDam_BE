@@ -1,5 +1,8 @@
 package com.example.formproject.security;
 
+import com.example.formproject.dto.response.ExceptionDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;
 import de.codecentric.boot.admin.server.services.EndpointDetector;
 import de.codecentric.boot.admin.server.services.endpoints.ProbeEndpointsStrategy;
@@ -26,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.UUID;
 
 @Configuration
@@ -76,6 +80,9 @@ public class SecurityConfig {
                     @Override
                     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
                         response.setStatus(HttpStatus.FORBIDDEN.value());
+                        PrintWriter writer = response.getWriter();
+                        ObjectWriter mapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
+                        writer.println(mapper.writeValueAsString(new ExceptionDto("로그인이 필요한 서비스 입니다.","request")));
                     }
                 });
         return httpSecurity.build();
