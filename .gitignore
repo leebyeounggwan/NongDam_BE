@@ -28,7 +28,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 PriceService.java
-**/application.properties
 **/log/**
 
 ### NetBeans ###
