@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -45,9 +46,7 @@ public class WorkLogRequestDto {
                 .member(member)
                 .build();
         workLog.setQuarter();
-        subMaterial.stream().forEach(e -> {
-            workLog.addSubMaterial(e.build());
-        });
+        subMaterial.forEach(e -> workLog.addSubMaterial(e.build()));
         return workLog;
     }
 }

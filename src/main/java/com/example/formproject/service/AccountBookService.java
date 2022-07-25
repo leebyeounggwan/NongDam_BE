@@ -13,7 +13,9 @@ import com.example.formproject.repository.QueryDslRepository;
 import com.example.formproject.repository.AccountBookRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -22,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Getter
 @RequiredArgsConstructor
 public class AccountBookService {
     private final AccountBookRepository accountBookRepository;
@@ -112,16 +113,18 @@ public class AccountBookService {
     public AccountResponseDto save(Member member, AccountRequestDto dto){
         return new AccountResponseDto(accountBookRepository.save(dto.build(member)));
     }
+
     public AccountResponseDto save(long id, AccountRequestDto dto){
         AccountBook book = accountBookRepository.findById(id).orElseThrow(()->new IllegalArgumentException("장부 정보를 찾을 수 없습니다."));
         book.update(dto);
         return new AccountResponseDto(accountBookRepository.save(book));
     }
-
+    @Transactional(readOnly = true)
     public List<AccountResponseDto> findByLimits(Member member,int maxResult){
         List<AccountBook> books = queryDslRepository.selectAccountBookByMaxResult(member,maxResult);
         return convertResponse(books);
     }
+    @Transactional(readOnly = true)
     public List<AccountResponseDto> findByMonth(Member member,int year,int month){
         YearMonth yearMonth = YearMonth.of(year,month);
         LocalDate startTime = LocalDate.of(year,month,1);
@@ -135,5 +138,9 @@ public class AccountBookService {
         List<AccountResponseDto> ret = new ArrayList<>();
         list.stream().forEach(e->ret.add(new AccountResponseDto(e)));
         return ret;
+    }
+    @Transactional
+    public void delete(long id){
+        accountBookRepository.deleteById(id);
     }
 }

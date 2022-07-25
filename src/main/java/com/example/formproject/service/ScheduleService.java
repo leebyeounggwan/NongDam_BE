@@ -5,10 +5,12 @@ import com.example.formproject.dto.request.ScheduleRequestDto;
 import com.example.formproject.dto.response.ScheduleResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.entity.Schedule;
+import com.example.formproject.exception.WrongArgumentException;
 import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.ScheduleRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,16 +23,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Getter
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CropRepository cropRepository;
     @Transactional
-    public ScheduleResponseDto save(Member member, ScheduleRequestDto dto){
+    public ScheduleResponseDto save(Member member, ScheduleRequestDto dto) throws WrongArgumentException {
         return new ScheduleResponseDto(scheduleRepository.save(dto.build(member,cropRepository)));
     }
     @Transactional
-    public ScheduleResponseDto save(long scheduleId,ScheduleRequestDto dto){
+    public ScheduleResponseDto save(long scheduleId,ScheduleRequestDto dto) throws WrongArgumentException {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new IllegalArgumentException("일정 정보를 찾을 수 없습니다"));
         schedule.update(dto,cropRepository);
         return new ScheduleResponseDto(scheduleRepository.save(schedule));
@@ -64,5 +65,9 @@ public class ScheduleService {
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
 
         return ret;
+    }
+    @Transactional
+    public void delete(long id){
+        scheduleRepository.deleteById(id);
     }
 }

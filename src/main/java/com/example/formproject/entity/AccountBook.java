@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 
 @Entity
@@ -24,6 +25,7 @@ public class AccountBook {
     private int type;
 
     @Column
+    @PositiveOrZero(message = "가격")
     private int price;
 
     @Column

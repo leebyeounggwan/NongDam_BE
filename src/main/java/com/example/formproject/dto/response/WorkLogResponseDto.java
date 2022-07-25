@@ -1,6 +1,5 @@
 package com.example.formproject.dto.response;
 
-import com.example.formproject.entity.Images;
 import com.example.formproject.entity.SubMaterial;
 import com.example.formproject.entity.WorkLog;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,7 +14,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class WorkLogResponseDto {
     @Schema(type = "PK", example = "1")
     private Long id;
@@ -30,8 +28,7 @@ public class WorkLogResponseDto {
     @Schema(type = "int", example = "100")
     private Long harvest;
     private CropDto crop;
-    private List<SubMaterial> subMaterial = new ArrayList<>();
-
+    private List<SubMaterialResponseDto> subMaterial = new ArrayList<>();
     private List<String> images = new ArrayList<>();
 
     public WorkLogResponseDto(WorkLog workLog, CropDto cropDto) {
@@ -42,7 +39,8 @@ public class WorkLogResponseDto {
         this.memo = workLog.getMemo();
         this.harvest = workLog.getHarvest();
         this.crop = cropDto;
-        this.subMaterial.addAll(workLog.getSubMaterials());
+        for(SubMaterial material : workLog.getSubMaterials())
+            this.subMaterial.add(new SubMaterialResponseDto(material));
         this.images.addAll(workLog.getImages());
     }
 }
