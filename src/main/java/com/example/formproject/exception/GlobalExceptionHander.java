@@ -3,6 +3,7 @@ package com.example.formproject.exception;
 import com.example.formproject.dto.response.ExceptionDto;
 import com.example.formproject.exception.EmailConfirmException;
 import com.example.formproject.exception.WrongArgumentException;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHander {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionDto> unExpectedException(Exception e){
-        e.printStackTrace();
+        log.error("UnCatchedError",e);
         return new ResponseEntity<>(new ExceptionDto("예상하지 못한 오류가 발생했습니다.",e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(WrongArgumentException.class)

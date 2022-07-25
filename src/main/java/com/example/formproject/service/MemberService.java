@@ -15,6 +15,7 @@ import com.example.formproject.repository.RefreshTokenRepository;
 import com.example.formproject.security.JwtProvider;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,7 +29,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@Getter
+@Slf4j
 public class MemberService {
     private final JwtProvider provider;
     private final MemberRepository memberRepository;
@@ -86,7 +87,7 @@ public class MemberService {
                     String fileKey = urlArr[urlArr.length - 1];
                     s3Service.deleteFile(fileKey);
                 } catch (AmazonS3Exception e) {
-                    System.out.println("해당 객체가 존재하지 않습니다.");
+                    log.warn("삭제할 파일 없음");
                 }
                 member.updateMember(requestDto, s3Service.uploadFile(profileImage), cropRepository);
             } else {

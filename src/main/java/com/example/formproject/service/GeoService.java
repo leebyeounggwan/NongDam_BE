@@ -59,7 +59,6 @@ public class GeoService {
             while ((inputLine = br.readLine()) != null) {
                 response.append(inputLine);
             }
-            System.out.println(response);
             br.close();
             con.disconnect();
 
@@ -67,7 +66,6 @@ public class GeoService {
             JSONParser parser = new JSONParser();
             JSONObject obj = (JSONObject) parser.parse(point);
             JSONObject parse_response = (JSONObject) obj.get("response");
-            System.out.println(parse_response);
             JSONObject parse_result = (JSONObject) parse_response.get("result");
             JSONObject parse_point = (JSONObject) parse_result.get("point");
             String x = parse_point.get("x").toString();
