@@ -65,7 +65,7 @@ public class NewsResponseDto implements Serializable {
                     this.article = "";
                 }
             }
-        }catch (SSLHandshakeException e){
+        }catch (Exception e){
             this.imageUrl="";
             this.article="";
         }
