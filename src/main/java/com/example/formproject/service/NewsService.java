@@ -2,11 +2,10 @@ package com.example.formproject.service;
 
 import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.response.NewsResponseDto;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -55,7 +53,7 @@ public class NewsService {
 //        return dto;
 //    }
     @UseCache(cacheKey = "tmp", ttl = 30L,unit= TimeUnit.MINUTES,timeData = false)
-    public List<NewsResponseDto> getNewsInfo(String tmp) throws IOException, ParseException, org.json.simple.parser.ParseException {
+    public List<NewsResponseDto> getNewsInfo(String tmp) throws IOException, ParseException {
         JSONParser parser = new JSONParser();
         JSONObject object = (JSONObject) parser.parse(getNewsData("농사",10));
         JSONArray newsData = (JSONArray) object.get("items");

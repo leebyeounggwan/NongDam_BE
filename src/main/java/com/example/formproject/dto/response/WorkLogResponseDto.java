@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class WorkLogResponseDto {
     @Schema(type = "PK", example = "1")
     private Long id;
@@ -30,7 +29,6 @@ public class WorkLogResponseDto {
     private Long harvest;
     private CropDto crop;
     private List<SubMaterialResponseDto> subMaterial = new ArrayList<>();
-
     private List<String> images = new ArrayList<>();
 
     public WorkLogResponseDto(WorkLog workLog, CropDto cropDto) {

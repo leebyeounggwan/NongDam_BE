@@ -8,6 +8,7 @@ import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.exception.EmailConfirmException;
+import com.example.formproject.exception.WrongArgumentException;
 import com.example.formproject.repository.CropRepository;
 import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.repository.RefreshTokenRepository;
@@ -41,29 +42,28 @@ public class MemberService {
 
     @Transactional
     public JwtResponseDto login(LoginDto login, HttpServletResponse response) throws AuthenticationException, EmailConfirmException {
-        Member member = memberRepository.findByEmail(login.getEmail()).orElseThrow(() -> new AuthenticationException("계정을 찾을수 없습니다."));
+        Member member = memberRepository.findByEmail(login.getEmail()).orElseThrow(() -> new AuthenticationException("계정을 찾을수 없습니다.","login request"));
         if (encoder.matches(login.getPassword(), member.getPassword())) {
             JwtResponseDto jwtResponseDto = provider.generateToken(member, response);
             if (member.isLock())
-                throw new EmailConfirmException("이메일 인증이 필요한 계정입니다.");
+                throw new EmailConfirmException("이메일 인증이 필요한 계정입니다.","login request");
             return jwtResponseDto;
         } else {
-            throw new AuthenticationException("계정 또는 비밀번호가 틀렸습니다.");
+            throw new AuthenticationException("계정 또는 비밀번호가 틀렸습니다.","login request");
         }
     }
 
     @Transactional
     public void enableMember(int id) throws Exception {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
+        Member member = memberRepository.findById(id).orElseThrow(() -> new WrongArgumentException("계정을 찾을 수 없습니다.","Id"));
         member.enableId();
         memberRepository.save(member);
-        System.out.println("member is Enable :" + member.getEmail());
     }
 
     @Transactional
-    public void changePassword(Member member, PasswordChangeDto dto){
+    public void changePassword(Member member, PasswordChangeDto dto) throws WrongArgumentException {
         if(!encoder.matches(dto.getOldPassword(),member.getPassword()))
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new WrongArgumentException("비밀번호가 일치하지 않습니다.","password");
         member.changePassword(encoder.encode(dto.getNewPassword()));
         memberRepository.save(member);
     }

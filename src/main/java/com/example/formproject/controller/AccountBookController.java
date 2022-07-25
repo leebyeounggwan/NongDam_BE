@@ -3,6 +3,7 @@ package com.example.formproject.controller;
 import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.AccountRequestDto;
 import com.example.formproject.dto.response.AccountResponseDto;
+import com.example.formproject.exception.WrongArgumentException;
 import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.AccountBookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,9 +39,19 @@ public class AccountBookController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청데이터 오류",content=@Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content=@Content)})
     @Parameter(in = ParameterIn.PATH,name = "yearMonth",description = "년월 정보",example = "2022-07",required = true)
-    public List<AccountResponseDto> findByMonth(@AuthenticationPrincipal MemberDetail detail, @PathVariable String yearMonth){
+    public List<AccountResponseDto> findByMonth(@AuthenticationPrincipal MemberDetail detail, @PathVariable String yearMonth) throws WrongArgumentException {
         String[] tmp = yearMonth.split("-");
-        return service.findByMonth(detail.getMember(),Integer.parseInt(tmp[0]),Integer.parseInt(tmp[1]));
+        if(tmp.length != 2)
+            throw new WrongArgumentException("잘못된 요청입니다.","Year-Month");
+        int year;
+        int month;
+        try {
+            year = Integer.parseInt(tmp[0]);
+            month = Integer.parseInt(tmp[1]);
+        }catch(NumberFormatException e){
+            throw new WrongArgumentException("잘못된 요청입니다.","Year-Month");
+        }
+        return service.findByMonth(detail.getMember(),year,month);
     }
     @GetMapping("/accountbook")
     @Operation(summary = "최근 10개 장부 기록")
@@ -85,9 +96,5 @@ public class AccountBookController {
     @Parameter(in = ParameterIn.PATH,name = "accountId",description = "장부 id",example = "1",required = true)
     public void deleteAccount(@PathVariable Long accountId){
         service.delete(accountId);
-    }
-    @ExceptionHandler({NumberFormatException.class,IndexOutOfBoundsException.class})
-    public ResponseEntity<String> badRequest(){
-        return new ResponseEntity("요청데이터가 잘못되었습니다.",HttpStatus.BAD_REQUEST);
     }
 }

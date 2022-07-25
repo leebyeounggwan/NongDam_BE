@@ -8,6 +8,7 @@ import com.example.formproject.dto.response.MemberResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.exception.EmailConfirmException;
+import com.example.formproject.exception.WrongArgumentException;
 import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.security.MemberDetail;
 import com.example.formproject.service.EmailService;
@@ -98,7 +99,7 @@ public class MemberController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료"),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청 데이터 오류", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
-    public void joinMember(@RequestBody MemberRequestDto dto) throws IOException, MessagingException {
+    public void joinMember(@RequestBody MemberRequestDto dto) throws MessagingException {
         memberService.save(dto);
     }
 
@@ -110,7 +111,9 @@ public class MemberController {
                             schema = @Schema(implementation = MemberResponseDto.class))}),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
-    public MemberResponseDto getMember(@AuthenticationPrincipal MemberDetail memberDetail) {
+    public MemberResponseDto getMember(@AuthenticationPrincipal MemberDetail memberDetail) throws AuthenticationException {
+        if(memberDetail.getMember() == null)
+            throw new AuthenticationException("로그인이 필요한 서비스 입니다.","member info");
         return memberService.makeMemberResponseDto(memberDetail.getMember());
     }
 
@@ -125,18 +128,17 @@ public class MemberController {
     @Parameter(in = ParameterIn.PATH, name = "memberid", description = "사용자 id(database id)", example = "1", required = true)
     public ResponseEntity<?> updateMember(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
                                           @RequestPart String data,
-                                          @AuthenticationPrincipal MemberDetail memberDetails) throws JsonProcessingException {
+                                          @AuthenticationPrincipal MemberDetail memberDetails) throws JsonProcessingException, AuthenticationException {
+        if(memberDetails.getMember() == null)
+            throw new AuthenticationException("로그인이 필요한 서비스 입니다.","update member");
         MemberInfoRequestDto requestDto = mapper.readValue(data, MemberInfoRequestDto.class);
         return memberService.updateMember(memberDetails.getMember().getProfileImage(), memberDetails.getMember().getId(), profileImage, requestDto, memberDetails.getMember().getEmail());
     }
 
     @PutMapping("/member/password")
-    public void changePassword(@AuthenticationPrincipal MemberDetail detail, @RequestBody PasswordChangeDto dto){
+    public void changePassword(@AuthenticationPrincipal MemberDetail detail, @RequestBody PasswordChangeDto dto) throws AuthenticationException, WrongArgumentException {
+        if(detail.getMember() == null)
+            throw new AuthenticationException("로그인이 필요한 서비스 입니다.","change password");
         memberService.changePassword(detail.getMember(),dto);
-    }
-
-    @ExceptionHandler(EmailConfirmException.class)
-    public ResponseEntity handlingAuthExp(EmailConfirmException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 }
