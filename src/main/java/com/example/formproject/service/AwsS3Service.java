@@ -41,7 +41,7 @@ public class AwsS3Service {
 
         //fileName에 파라미터로 들어온 파일의 이름을 할당.
         String rawFileName = multipartFile.getOriginalFilename();
-        log.debug(rawFileName);
+        log.info(rawFileName);
         String fileName = createFileName(rawFileName);
         try (InputStream inputStream = multipartFile.getInputStream()) {
             //amazonS3객체의 putObject 메서드로 db에 저장
