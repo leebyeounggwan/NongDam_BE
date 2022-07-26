@@ -6,6 +6,8 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AwsS3Service {
 
     @Value("farmprojectbucket")
@@ -35,6 +38,8 @@ public class AwsS3Service {
 
         //fileName에 파라미터로 들어온 파일의 이름을 할당.
         String rawFileName = multipartFile.getOriginalFilename();
+        Logger log1 = log;
+        log1.debug(rawFileName);
         String fileName = createFileName(rawFileName);
         try (InputStream inputStream = multipartFile.getInputStream()) {
             //amazonS3객체의 putObject 메서드로 db에 저장

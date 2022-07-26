@@ -110,7 +110,7 @@ public class WorkLogService {
     public List<WorkLogResponseDto> getWorkLogList(MemberDetail detail) throws IllegalArgumentException {
         List<WorkLogResponseDto> responseDtoList = new ArrayList<>();
         List<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
-        if (workLogList != null) {
+        if (workLogList.size() == 0) {
             for (WorkLog log : workLogList)
                 responseDtoList.add(new WorkLogResponseDto(log, new CropDto(log.getCrop())));
             return responseDtoList;
