@@ -113,8 +113,8 @@ public class WorkLogService {
         if (workLogList.size() == 0) {
             for (WorkLog log : workLogList)
                 responseDtoList.add(new WorkLogResponseDto(log, new CropDto(log.getCrop())));
-            return responseDtoList;
-        } else throw new NullPointerException("작성된 게시글이 없습니다.");
+        }
+        return responseDtoList;
     }
 
     @Transactional(readOnly = true)
