@@ -91,7 +91,7 @@ public class MemberController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료"),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청 데이터 오류", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
-    public void joinMember(@RequestBody MemberRequestDto dto) throws MessagingException {
+    public void joinMember(@RequestBody MemberRequestDto dto) throws MessagingException, WrongArgumentException {
         memberService.save(dto);
     }
 
