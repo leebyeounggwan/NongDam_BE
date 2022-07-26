@@ -4,33 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(name = "customUnique", columnNames = {"type", "category", "kind"})
-        }
-)
-public class Crop extends TimeStamp {
+public class Images extends TimeStamp{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column
-    private int category;
+    private String url;
 
     @Column
-    private int type;
-
-    @Column
-    private String kind;
-
-    @Column
-    private String name;
+    private String fileName;
 }

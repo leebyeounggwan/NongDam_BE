@@ -1,5 +1,6 @@
 package com.example.formproject.security;
 
+import com.example.formproject.entity.Images;
 import com.example.formproject.entity.Member;
 import com.example.formproject.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

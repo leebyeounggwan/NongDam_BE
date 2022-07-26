@@ -1,12 +1,15 @@
 package com.example.formproject.dto.response;
 
+import com.example.formproject.dto.request.PriceInfoRequestDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.json.simple.JSONObject;
+import com.example.formproject.enums.CountryCode;
+import com.example.formproject.enums.CropTypeCode;
+
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class DailyPriceResponseDto {
     @Schema(type = "String",example = "쌀")
@@ -23,4 +26,25 @@ public class DailyPriceResponseDto {
     private String latestDate;
     @Schema(type = "String",example = "1,500")
     private String latestDatePrice;
+
+    public DailyPriceResponseDto(PriceInfoRequestDto priceInfoRequestDto,String p_itemcode, String p_countrycode, JSONObject parse_latestDate, String unit) {
+        this.crop = CropTypeCode.findByCode(Integer.parseInt(p_itemcode)).toString();
+        this.type = priceInfoRequestDto.getName();
+        this.unit = unit;
+        this.country = CountryCode.findByCountryCode(Integer.parseInt(p_countrycode)).toString();
+        this.wholeSale = priceInfoRequestDto.getProductClsCode();
+        this.latestDate = parse_latestDate.get("yyyy").toString() + "-" + parse_latestDate.get("regday").toString().replace("/", "-");
+        this.latestDatePrice = parse_latestDate.get("price").toString();
+    }
+
+    public DailyPriceResponseDto(PriceInfoRequestDto priceInfoRequestDto, String p_itemcode, String p_countrycode) {
+        this.crop = CropTypeCode.findByCode(Integer.parseInt(p_itemcode)).toString();
+        this.type = priceInfoRequestDto.getName();
+        this.unit = "kg";
+        this.country = CountryCode.findByCountryCode(Integer.parseInt(p_countrycode)).toString();
+        this.wholeSale = priceInfoRequestDto.getProductClsCode();
+        this.latestDate = "";
+        this.latestDatePrice = "";
+    }
 }
+

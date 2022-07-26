@@ -3,6 +3,7 @@ package com.example.formproject.entity;
 import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.MemberInfoRequestDto;
 import com.example.formproject.repository.CropRepository;
+import com.example.formproject.security.MemberDetail;
 import com.example.formproject.security.OAuthAttributes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,32 +33,38 @@ public class Member extends TimeStamp {
     private String name;
 
     @Column(unique = true)
+    @NotBlank
+    @Email(message = "이메일")
     private String email;
 
     @Column
+    @NotBlank(message = "비밀번호")
     private String password;
 
     @Column
     @Builder.Default
-    private String address="";
+    private String address = "";
 
     @Column
     private int countryCode;
 
     @Column
     private String profileImage;
-
     @Column
+    @NotNull(message = "닉네임")
     private String nickname;
 
     @Column(columnDefinition = "boolean default true")
     @Builder.Default
     private boolean isLock = true;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @Builder.Default
     private List<Crop> crops = new ArrayList<>();
 
+    public void changePassword(String password){
+        this.password = password;
+    }
     public void updateMember(OAuthAttributes attributes) {
         this.name = attributes.getName();
         this.profileImage = attributes.getPicture();
@@ -70,12 +80,12 @@ public class Member extends TimeStamp {
         this.crops.addAll(cr);
     }
 
-    public void updateMember(MemberInfoRequestDto requestDto, CropRepository repository) {
+    public void updateMember(MemberInfoRequestDto requestDto, String defaultImage, CropRepository repository) {
         // 프로필 사진 없이 업데이트
         this.nickname = requestDto.getNickname() == null ? nickname : requestDto.getNickname();
         this.address = requestDto.getAddress() == null ? address : requestDto.getAddress();
         this.countryCode = requestDto.getCountryCode() == 0 ? countryCode : requestDto.getCountryCode();
-        this.profileImage = FinalValue.BACK_URL + "/static/default.png"; //기본 프로필 이미지
+        this.profileImage = defaultImage; //기존 이미지
         this.crops.clear();
         List<Crop> cr = repository.findAllIds(requestDto.getCrops());
         this.crops.addAll(cr);

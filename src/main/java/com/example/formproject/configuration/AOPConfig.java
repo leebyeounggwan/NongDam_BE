@@ -51,7 +51,7 @@ public class AOPConfig {
         MethodSignature signature = (MethodSignature) joinPoint.getStaticPart().getSignature();
         UseCache annotation = signature.getMethod().getAnnotation(UseCache.class);
         String keyArg =  annotation.cacheKey();
-        String cacheKey = signature.getMethod().getReturnType().getName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
+        String cacheKey = signature.getMethod().getReturnType().getSimpleName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
         if(template.hasKey(cacheKey)){
             if(annotation.timeData())
                 return mapper.readValue(template.opsForValue().get(cacheKey).toString(),signature.getMethod().getReturnType());
@@ -81,7 +81,7 @@ public class AOPConfig {
         MethodSignature signature = (MethodSignature) joinPoint.getStaticPart().getSignature();
         DeleteMemberCache annotation = signature.getMethod().getAnnotation(DeleteMemberCache.class);
         String keyArg =  annotation.memberIdArg();
-        String cacheKey = Member.class.getName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
+        String cacheKey = Member.class.getSimpleName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
         if(template.hasKey(cacheKey)){
             log.info("member Delete");
             template.delete(cacheKey);

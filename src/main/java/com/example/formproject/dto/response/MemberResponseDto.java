@@ -1,13 +1,18 @@
 package com.example.formproject.dto.response;
 
+import com.example.formproject.FinalValue;
 import com.example.formproject.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberResponseDto {
     @Schema(type = "PK", example = "1")
     private int id;
@@ -31,7 +36,7 @@ public class MemberResponseDto {
         this.email = member.getEmail();
         this.address = member.getAddress();
         this.nickname = member.getNickname();
-        this.profileImage = member.getProfileImage();
+        this.profileImage = member.getProfileImage() == null ? FinalValue.BACK_URL + "/static/default.png" : member.getProfileImage();
         this.countryCode = member.getCountryCode();
         member.getCrops().stream().forEach(e -> this.crops.add(new CropDto(e)));
     }

@@ -15,10 +15,9 @@ import java.net.URLEncoder;
 @Service
 public class GeoService {
 
-//    public static void main(String[] args) throws IOException {
     public String[] getGeoPoint(String address) {
         String apiURL = "http://api.vworld.kr/req/address";
-        System.out.println(address);
+
         try{
             int responseCode = 0;
             URL url = new URL(apiURL);
@@ -26,7 +25,6 @@ public class GeoService {
             con.setRequestMethod("POST");
 
             String text_content =  URLEncoder.encode(address, "utf-8");
-            //String text_content =  URLEncoder.encode(keyword.toString());
 
             // post request
             String postParams = "service=address";
@@ -61,7 +59,6 @@ public class GeoService {
             while ((inputLine = br.readLine()) != null) {
                 response.append(inputLine);
             }
-            System.out.println(response);
             br.close();
             con.disconnect();
 
@@ -69,7 +66,6 @@ public class GeoService {
             JSONParser parser = new JSONParser();
             JSONObject obj = (JSONObject) parser.parse(point);
             JSONObject parse_response = (JSONObject) obj.get("response");
-            System.out.println(parse_response);
             JSONObject parse_result = (JSONObject) parse_response.get("result");
             JSONObject parse_point = (JSONObject) parse_result.get("point");
             String x = parse_point.get("x").toString();

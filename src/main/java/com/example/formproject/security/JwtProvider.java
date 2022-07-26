@@ -4,6 +4,7 @@ import com.example.formproject.annotation.UseCache;
 import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.repository.MemberRepository;
+import com.example.formproject.repository.QueryDslRepository;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,15 +33,13 @@ public class JwtProvider {
     private final long ValidTime = 1000L * 60 * 60;
     private final long refreshValidTime = 1000L * 60 * 60 * 24;
 
-    private MemberRepository repo;
+    private QueryDslRepository queryDsl;
 
     @Autowired
     private RedisTemplate<String, Object> template;
 
     @Autowired
-    public JwtProvider(MemberRepository repo) {
-        this.repo = repo;
-    }
+    public JwtProvider(QueryDslRepository queryDsl) {this.queryDsl = queryDsl;}
 
     public void setTokenHeader(JwtResponseDto token, HttpServletResponse response) {
         response.addHeader("Authorization",token.getToken());
@@ -97,8 +96,8 @@ public class JwtProvider {
         refreshToken = refreshToken.replaceAll("Bearer ","");
         jwtToken = jwtToken.replaceAll("Bearer ","");
         BoundValueOperations<String,Object> saveObject = template.boundValueOps(refreshToken);
-        saveObject.expire(Duration.ofMillis(refreshValidTime));
         saveObject.set(jwtToken);
+        template.expire(refreshToken,refreshValidTime,TimeUnit.MILLISECONDS);
     }
 
 
@@ -119,7 +118,7 @@ public class JwtProvider {
     }
     @UseCache(cacheKey = "id", ttl = 2L,unit = TimeUnit.HOURS,timeData = true)
     public Member getMember(int id){
-        return repo.findById(id).get();
+        return  queryDsl.selectMemberByIdFetch(id);
     }
 
     // 토큰에서 회원 정보 추출

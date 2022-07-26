@@ -1,14 +1,14 @@
 package com.example.formproject.dto.response;
-
+import com.example.formproject.dto.request.PriceInfoRequestDto;
+import com.example.formproject.enums.CountryCode;
+import com.example.formproject.enums.CropTypeCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import java.util.Collections;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class PriceInfoDto {
     @Schema(type = "String",example = "쌀")
@@ -25,4 +25,24 @@ public class PriceInfoDto {
     private List<String> dateList;
     @Schema(type = "List<String>",example = "[1,500,1,600,1,400,1,500,1,700,1,700,1,550]")
     private List<String> priceList;
+
+    public PriceInfoDto(PriceInfoRequestDto priceInfoRequestDto, String countyCode, String clsCode, String[] stringa, String unit, List<String> dateList, List<String> priceList) {
+        this.crop = stringa[2];
+        this.type = priceInfoRequestDto.getName();
+        this.unit = unit;
+        this.country = CountryCode.findByCountryCode(Integer.parseInt(countyCode)).toString();
+        this.wholeSale = clsCode;
+        this.dateList = dateList;
+        this.priceList = priceList;
+    }
+    public PriceInfoDto(PriceInfoRequestDto priceInfoRequestDto, String itemCode, String countyCode, int i) {
+        List<String> list = Collections.emptyList();
+        this.crop = CropTypeCode.findByCode(Integer.parseInt(itemCode)).toString();
+        this.type = priceInfoRequestDto.getName();
+        this.unit = "kg";
+        this.country = CountryCode.findByCountryCode(Integer.parseInt(countyCode)).toString();
+        this.wholeSale = (i==0) ? "도매" : "소매";
+        this.dateList = list;
+        this.priceList = list;
+    }
 }

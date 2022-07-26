@@ -1,7 +1,7 @@
 package com.example.formproject.exception;
 
-public class EmailConfirmException extends Exception{
-    public EmailConfirmException(String m){
-        super(m);
+public class EmailConfirmException extends CustomException {
+    public EmailConfirmException(String m, String field) {
+        super(m, field);
     }
 }

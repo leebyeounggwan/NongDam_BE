@@ -1,6 +1,7 @@
 package com.example.formproject.dto.request;
 
 import com.example.formproject.FinalValue;
+import com.example.formproject.entity.Images;
 import com.example.formproject.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

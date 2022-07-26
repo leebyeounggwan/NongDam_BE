@@ -18,4 +18,15 @@ public class PriceRequestDto {
     private String gradeRank;
     @Schema(type = "String",example = "month")
     private String data;
+
+    public PriceRequestDto dailyPriceRequestDto(int cropId, String productClsCode) {
+        this.cropId = cropId;
+        this.productClsCode = productClsCode;
+        return this;
+    }
+
+    public PriceRequestDto(int cropId, String data) {
+        this.cropId = cropId;
+        this.data = data;
+    }
 }

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 @RequiredArgsConstructor
 @Service
 public class CropService {
