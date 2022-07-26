@@ -3,6 +3,7 @@ package com.example.formproject.configuration;
 
 import com.example.formproject.annotation.DeleteMemberCache;
 import com.example.formproject.annotation.UseCache;
+import com.example.formproject.dto.response.WeatherResponse;
 import com.example.formproject.entity.Member;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -81,9 +82,13 @@ public class AOPConfig {
         MethodSignature signature = (MethodSignature) joinPoint.getStaticPart().getSignature();
         DeleteMemberCache annotation = signature.getMethod().getAnnotation(DeleteMemberCache.class);
         String keyArg =  annotation.memberIdArg();
-        String cacheKey = Member.class.getSimpleName()+":"+getCacheKeyArg(keyArg,joinPoint,signature).toString();
+        String key = getCacheKeyArg(keyArg,joinPoint,signature).toString();
+        String cacheKey = Member.class.getSimpleName()+":"+ key;
         if(template.hasKey(cacheKey)){
-            log.info("member Delete");
+            template.delete(cacheKey);
+        }
+        cacheKey = WeatherResponse.class.getSimpleName()+":"+ key;
+        if(template.hasKey(cacheKey)){
             template.delete(cacheKey);
         }
     }
