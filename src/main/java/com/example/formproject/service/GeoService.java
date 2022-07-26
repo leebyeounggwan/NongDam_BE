@@ -68,7 +68,6 @@ public class GeoService {
             String point = response.toString();
             JSONParser parser = new JSONParser();
             JSONObject obj = (JSONObject) parser.parse(point);
-            System.out.println(obj);
             JSONObject parse_response = (JSONObject) obj.get("response");
             JSONObject parse_result = (JSONObject) parse_response.get("result");
             JSONObject parse_point = (JSONObject) parse_result.get("point");
@@ -78,10 +77,8 @@ public class GeoService {
             return new String[] {x,y};
 
         }catch(Exception e){
-
             e.printStackTrace();
-            log.info(e.getMessage());
-
+            
             address = address.replaceAll("[0-9]", "");
             if (i) {
                 i = false;
