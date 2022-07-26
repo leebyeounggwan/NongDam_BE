@@ -69,7 +69,10 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public void save(MemberRequestDto dto) throws MessagingException {
+    public void save(MemberRequestDto dto) throws MessagingException, WrongArgumentException {
+        if(!memberRepository.findByEmail(dto.getEmail()).isEmpty()){
+            throw new WrongArgumentException("이미 사용중인 이메일 입니다.","email");
+        }
         Member member = memberRepository.save(dto.build(encoder));
         emailService.sendHtmlEmail(MailDto.builder().email(dto.getEmail()).build(), member);
     }
