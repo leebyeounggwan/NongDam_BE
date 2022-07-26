@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +41,7 @@ public class AwsS3Service {
 
         //fileName에 파라미터로 들어온 파일의 이름을 할당.
         String rawFileName = multipartFile.getOriginalFilename();
-        Logger log1 = log;
-        log1.debug(rawFileName);
+        log.debug(rawFileName);
         String fileName = createFileName(rawFileName);
         try (InputStream inputStream = multipartFile.getInputStream()) {
             //amazonS3객체의 putObject 메서드로 db에 저장
