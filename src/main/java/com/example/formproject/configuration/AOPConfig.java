@@ -65,12 +65,18 @@ public class AOPConfig {
                 saveObject.set(mapper.writer().writeValueAsString(o));
             else
                 saveObject.set(o);
-            if(annotation.ttl() != 0L)
-                template.expire(cacheKey,annotation.ttl(),annotation.unit());
-            else{
+            if(annotation.ttl() == 0L){
                 LocalDateTime expireTime = LocalDate.now().atTime(LocalDateTime.now().getHour()+1,0,0);
                 long minute = Duration.between(LocalDateTime.now(),expireTime).toMinutes();
                 template.expire(cacheKey,minute,annotation.unit());
+            }else if(annotation.ttl()== -1L){
+                LocalDateTime expireTime = LocalDate.now().atTime(16,0,0);
+                if(expireTime.isBefore(LocalDateTime.now()))
+                    expireTime.plusDays(1L);
+                long minute = Duration.between(LocalDateTime.now(),expireTime).toMinutes();
+                template.expire(cacheKey,minute,annotation.unit());
+            }else{
+                template.expire(cacheKey,annotation.ttl(),annotation.unit());
             }
             return o;
         }
