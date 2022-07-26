@@ -109,12 +109,10 @@ public class WorkLogService {
     @Transactional(readOnly = true)
     public List<WorkLogResponseDto> getWorkLogList(MemberDetail detail) throws IllegalArgumentException {
         List<WorkLogResponseDto> responseDtoList = new ArrayList<>();
-        List<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByDateDesc(detail.getMember());
-        if (workLogList.get(0) != null) {
-            for (WorkLog log : workLogList)
-                responseDtoList.add(new WorkLogResponseDto(log, new CropDto(log.getCrop())));
-            return responseDtoList;
-        } else throw new NullPointerException("작성된 게시글이 없습니다.");
+        List<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByIdDesc(detail.getMember());
+        for (WorkLog log : workLogList)
+            responseDtoList.add(new WorkLogResponseDto(log,new CropDto(log.getCrop())));
+        return responseDtoList;
     }
 
     @Transactional(readOnly = true)

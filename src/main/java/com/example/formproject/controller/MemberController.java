@@ -1,17 +1,16 @@
 package com.example.formproject.controller;
 
 import com.example.formproject.FinalValue;
-import com.example.formproject.dto.request.*;
-import com.example.formproject.dto.response.AccountResponseDto;
+import com.example.formproject.dto.request.LoginDto;
+import com.example.formproject.dto.request.MemberInfoRequestDto;
+import com.example.formproject.dto.request.MemberRequestDto;
+import com.example.formproject.dto.request.PasswordChangeDto;
 import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.dto.response.MemberResponseDto;
-import com.example.formproject.entity.Member;
 import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.exception.EmailConfirmException;
 import com.example.formproject.exception.WrongArgumentException;
-import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.security.MemberDetail;
-import com.example.formproject.service.EmailService;
 import com.example.formproject.service.MemberService;
 import com.example.formproject.service.OAuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,26 +18,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.utility.RandomString;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 @RestController
 @RequiredArgsConstructor
@@ -99,7 +91,7 @@ public class MemberController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료"),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_BADREQUEST, description = "요청 데이터 오류", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
-    public void joinMember(@RequestBody MemberRequestDto dto) throws MessagingException {
+    public void joinMember(@RequestBody MemberRequestDto dto) throws MessagingException, WrongArgumentException {
         memberService.save(dto);
     }
 

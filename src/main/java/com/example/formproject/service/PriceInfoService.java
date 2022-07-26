@@ -30,7 +30,7 @@ public class PriceInfoService {
     private static String certId;
 
     //일별 시세
-    @UseCache(cacheKey = "cacheKey", ttl = 4L,unit = TimeUnit.HOURS,timeData = false)
+    @UseCache(cacheKey = "cacheKey", ttl = -1L,unit = TimeUnit.HOURS,timeData = false)
     public DailyPriceResponseDto dailyPrice(PriceInfoRequestDto priceInfoRequestDto, String cacheKey) throws ParseException {
 
         List<String> dailyDate = makeDateList("day");
@@ -64,7 +64,7 @@ public class PriceInfoService {
     }
 
     //월별 시세
-    @UseCache(cacheKey = "cacheKey", ttl = 4L,unit = TimeUnit.HOURS,timeData = false)
+    @UseCache(cacheKey = "cacheKey", ttl = -1L,unit = TimeUnit.HOURS,timeData = false)
     public List<PriceInfoDto> monthlyPrice(PriceInfoRequestDto priceInfoRequestDto, String cacheKey) throws ParseException {
         List<String> setDateList = makeDateList("month");
         List<PriceInfoDto> PriceList = new ArrayList<>();
@@ -89,7 +89,7 @@ public class PriceInfoService {
     }
 
     //연도별 시세
-    @UseCache(cacheKey = "cacheKey", ttl = 4L,unit = TimeUnit.HOURS,timeData = false)
+    @UseCache(cacheKey = "cacheKey", ttl = -1L,unit = TimeUnit.HOURS,timeData = false)
     public List<PriceInfoDto> yearlyPrice(PriceInfoRequestDto priceInfoRequestDto, String cacheKey) throws ParseException {
         List<String> setDateList = makeDateList("year");
         List<PriceInfoDto> yearlyPriceList = new ArrayList<>();
