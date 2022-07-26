@@ -47,7 +47,7 @@ public class WorkLog {
     @NotNull(message = "작물")
     private Crop crop;
 
-    @Column
+    @Column(length = 500)
     private String memo;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
