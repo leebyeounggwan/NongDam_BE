@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,11 @@ import java.net.URLEncoder;
 
 //9796290E-0590-3531-B798-07A913B8A6A9
 @Service
+@Slf4j
 public class GeoService {
-
+    boolean i = true;
     public String[] getGeoPoint(String address) {
+
         String apiURL = "http://api.vworld.kr/req/address";
 
         try{
@@ -75,7 +78,14 @@ public class GeoService {
 
         }catch(Exception e){
             e.printStackTrace();
-            return null;
+            
+            address = address.replaceAll("[0-9]", "");
+            if (i) {
+                i = false;
+                return getGeoPoint(address);
+            } else {
+                return null;
+            }
         }
     }
 }
