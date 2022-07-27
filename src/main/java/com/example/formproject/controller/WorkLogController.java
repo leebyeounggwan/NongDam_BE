@@ -55,7 +55,7 @@ public class WorkLogController {
     public WorkLogResponseDto getWorkLog(@PathVariable Long worklogid,
                                          @AuthenticationPrincipal MemberDetail detail) {
         String userEmail = detail.getUsername();
-        return workLogService.getWorkLogDetails(worklogid, userEmail);
+        return workLogService.getWorkLogDetails(worklogid, detail.getMember().getId());
     }
 
     @GetMapping("/worklog")
