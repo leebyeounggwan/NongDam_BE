@@ -37,7 +37,7 @@ public class WeatherController {
                             schema = @Schema(implementation = ScheduleResponseDto.class)) }),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
-    public WeatherResponse getWeather(@AuthenticationPrincipal MemberDetail memberdetail) throws IOException, ParseException {
+    public WeatherResponse getWeather(@AuthenticationPrincipal MemberDetail memberdetail) throws Exception {
         return weatherService.getWeather(memberdetail,memberdetail.getMember().getId());
     }
 

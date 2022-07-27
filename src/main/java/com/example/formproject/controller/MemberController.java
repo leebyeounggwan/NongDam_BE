@@ -104,7 +104,7 @@ public class MemberController {
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
     public MemberResponseDto getMember(@AuthenticationPrincipal MemberDetail memberDetail) throws AuthenticationException {
-        if(memberDetail.getMember() == null)
+        if(memberDetail == null)
             throw new AuthenticationException("로그인이 필요한 서비스 입니다.","member info");
         return memberService.makeMemberResponseDto(memberDetail.getMember());
     }
@@ -121,7 +121,7 @@ public class MemberController {
     public ResponseEntity<?> updateMember(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
                                           @RequestPart String data,
                                           @AuthenticationPrincipal MemberDetail memberDetails) throws JsonProcessingException, AuthenticationException {
-        if(memberDetails.getMember() == null)
+        if(memberDetails == null)
             throw new AuthenticationException("로그인이 필요한 서비스 입니다.","update member");
         MemberInfoRequestDto requestDto = mapper.readValue(data, MemberInfoRequestDto.class);
         return memberService.updateMember(memberDetails.getMember().getProfileImage(), memberDetails.getMember().getId(), profileImage, requestDto, memberDetails.getMember().getEmail());
@@ -129,7 +129,7 @@ public class MemberController {
 
     @PutMapping("/member/password")
     public void changePassword(@AuthenticationPrincipal MemberDetail detail, @RequestBody PasswordChangeDto dto) throws AuthenticationException, WrongArgumentException {
-        if(detail.getMember() == null)
+        if(detail == null)
             throw new AuthenticationException("로그인이 필요한 서비스 입니다.","change password");
         memberService.changePassword(detail.getMember(),dto);
     }
