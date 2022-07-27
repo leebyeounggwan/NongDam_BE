@@ -36,13 +36,13 @@ public class QueryDslRepository extends QuerydslRepositorySupport {
                 .where(member.id.eq(id)).fetch().get(0);
     }
     public Tuple selectNextWorkLog(int memberId, long workLogId) throws IndexOutOfBoundsException {
-        return queryFactory.select(workLog.id,workLog.title).from(workLog)
+        return queryFactory.select(workLog.id,workLog.title,workLog.date).from(workLog)
                 .where(workLog.member.id.eq(memberId),workLog.id.gt(workLogId))
                 .orderBy(workLog.id.asc())
                 .limit(1).fetch().get(0);
     }
     public Tuple selectPreviousWorkLog(int memberId, long workLogId) throws IndexOutOfBoundsException {
-        return queryFactory.select(workLog.id,workLog.title).from(workLog)
+        return queryFactory.select(workLog.id,workLog.title,workLog.date).from(workLog)
                 .where(workLog.member.id.eq(memberId),workLog.id.lt(workLogId))
                 .orderBy(workLog.id.desc())
                 .limit(1).fetch().get(0);
