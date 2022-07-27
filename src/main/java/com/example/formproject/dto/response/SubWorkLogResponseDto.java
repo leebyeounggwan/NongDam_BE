@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class SubWorkLogResponseDto {
     private long id;
     private String title;
+    private String date;
 }
