@@ -21,7 +21,7 @@ public class OpenWeatherApiService {
     private final OpenApiService openApiService;
     private final GeoService geoService;
     @UseCache(ttl = 0L,cacheKey = "cacheKey",unit = TimeUnit.MINUTES,timeData = false)
-    public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
+    public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws Exception {
         WeatherResponse weatherResponse = new WeatherResponse();
 
         String address = (!memberdetail.getMember().getAddress().isEmpty()) ? memberdetail.getMember().getAddress() : "서울 송파구 양재대로 932";
