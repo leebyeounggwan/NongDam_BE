@@ -31,6 +31,10 @@ public class WorkLogResponseDto {
     private List<SubMaterialResponseDto> subMaterial = new ArrayList<>();
     private List<String> images = new ArrayList<>();
 
+    private SubWorkLogResponseDto pre;
+
+    private SubWorkLogResponseDto next;
+
     public WorkLogResponseDto(WorkLog workLog, CropDto cropDto) {
         this.id = workLog.getId();
         this.title = workLog.getTitle();
@@ -42,5 +46,11 @@ public class WorkLogResponseDto {
         for(SubMaterial material : workLog.getSubMaterials())
             this.subMaterial.add(new SubMaterialResponseDto(material));
         this.images.addAll(workLog.getImages());
+    }
+    public void setPreviousWorkLogInfo(SubWorkLogResponseDto pre){
+        this.pre = pre;
+    }
+    public void setNextWorkLogInfo(SubWorkLogResponseDto next){
+        this.next = next;
     }
 }

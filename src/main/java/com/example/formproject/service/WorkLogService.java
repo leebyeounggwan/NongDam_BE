@@ -1,13 +1,16 @@
 package com.example.formproject.service;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.SubMaterialRequestDto;
 import com.example.formproject.dto.request.WorkLogRequestDto;
 import com.example.formproject.dto.response.*;
 import com.example.formproject.entity.*;
 import com.example.formproject.repository.CropRepository;
+import com.example.formproject.repository.QueryDslRepository;
 import com.example.formproject.repository.WorkLogRepository;
 import com.example.formproject.security.MemberDetail;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,8 @@ public class WorkLogService {
     private final WorkLogRepository workLogRepository;
     private final CropRepository cropRepository;
     private final AwsS3Service s3Service;
+
+    private final QueryDslRepository queryDslRepository;
 
     public LineChartDto getHarvestMonthData(Member m) {
         LineChartDto ret = new LineChartDto();
@@ -116,12 +121,26 @@ public class WorkLogService {
     }
 
     @Transactional(readOnly = true)
-    public WorkLogResponseDto getWorkLogDetails(Long worklogid, String userEmail) {
+    public WorkLogResponseDto getWorkLogDetails(Long worklogid, int memberId) {
         WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-        if (Objects.equals(workLog.getMember().getEmail(), userEmail)) {
-            return new WorkLogResponseDto(workLog, new CropDto(workLog.getCrop()));
+        WorkLogResponseDto ret;
+        if (workLog.getMember().getId() == memberId) {
+            ret =  new WorkLogResponseDto(workLog, new CropDto(workLog.getCrop()));
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
+        try {
+            Tuple next = queryDslRepository.selectNextWorkLog(memberId, worklogid);
+            ret.setNextWorkLogInfo(new SubWorkLogResponseDto(next.get(0,Long.class),next.get(1,String.class),next.get(2,LocalDate.class).format(FinalValue.DAY_FORMATTER)));
+        }catch (IndexOutOfBoundsException e){
+            ret.setNextWorkLogInfo(null);
+        }
+        try {
+            Tuple pre = queryDslRepository.selectPreviousWorkLog(memberId, worklogid);
+            ret.setPreviousWorkLogInfo(new SubWorkLogResponseDto(pre.get(0,Long.class),pre.get(1,String.class),pre.get(2,LocalDate.class).format(FinalValue.DAY_FORMATTER)));
+        }catch (IndexOutOfBoundsException e){
+            ret.setPreviousWorkLogInfo(null);
+        }
+        return ret;
     }
 
     @Transactional
@@ -184,8 +203,8 @@ public class WorkLogService {
         int year = LocalDate.now().getYear();
         float thisYear = workLogRepository.getSumWorkTimeOfYear(year,member.getId());
         float preYear = workLogRepository.getSumWorkTimeOfYear(year-1,member.getId());
-        String rateText = thisYear >= preYear ? "증가":"감소";
-        int rate = Math.round((thisYear/preYear) * 100);
+        String rateText=thisYear >= preYear?"증가":"감소";
+        int rate =Math.abs(100 - Math.round((thisYear/preYear) * 100));
         return new WorkTimeRateDto(rate,rateText);
     }
 }
