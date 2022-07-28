@@ -21,7 +21,7 @@ public class OpenWeatherApiService {
     private final OpenApiService openApiService;
     private final GeoService geoService;
     @UseCache(ttl = 0L,cacheKey = "cacheKey",unit = TimeUnit.MINUTES,timeData = false)
-    public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws IOException, ParseException {
+    public WeatherResponse getWeather(MemberDetail memberdetail, int cacheKey) throws Exception {
         WeatherResponse weatherResponse = new WeatherResponse();
 
         String address = (!memberdetail.getMember().getAddress().isEmpty()) ? memberdetail.getMember().getAddress() : "서울 송파구 양재대로 932";
@@ -59,19 +59,21 @@ public class OpenWeatherApiService {
         } else {
             weatherResponse.setRn(rain.get("1h").toString());
         }
-        weatherResponse.setTemp(parse_response.get("temp").toString().split("\\.")[0]);
-        weatherResponse.setWs(String.format("%.1f" ,parse_response.get("wind_speed")));
-        weatherResponse.setRhm(parse_response.get("humidity").toString());
+
         JSONArray parse_weather = (JSONArray) parse_response.get("weather");
         JSONObject value = (JSONObject) parse_weather.get(0);
-        weatherResponse.setWeather(value.get("description").toString());
+        String weather = (value.get("description").toString().equals("약간의 구름이 낀 하늘")) ? "구름이 낀 하늘" : value.get("description").toString();
         String icon = value.get("icon").toString();
+        weatherResponse.setTemp(parse_response.get("temp").toString().split("\\.")[0]);
+        weatherResponse.setWs(String.format("%.1f", ((double) parse_response.get("wind_speed"))));
+        weatherResponse.setRhm(parse_response.get("humidity").toString());
+        weatherResponse.setWeather(weather);
         weatherResponse.setIconURL("http://idontcare.shop/static/weathericon/"+icon+".png");
 
         String[] strAddr = address.split(" ");
-
         weatherResponse.setAddress(strAddr[0]+" "+strAddr[1]);
-        weatherResponse.setDewPoint(String.format("%.1f" ,parse_response.get("dew_point")));
+        String dewPoint = String.format("%.1f", ((double) parse_response.get("dew_point")));
+        weatherResponse.setDewPoint(dewPoint);
     }
 
     public void hourlyTempParse (JSONObject obj, WeatherResponse weatherResponse) {

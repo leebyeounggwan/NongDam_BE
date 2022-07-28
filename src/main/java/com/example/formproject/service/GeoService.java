@@ -16,12 +16,18 @@ import java.net.URLEncoder;
 @Service
 @Slf4j
 public class GeoService {
-    boolean i = true;
-    public String[] getGeoPoint(String address) {
+    public String[] getGeoPoint(String address) throws Exception {
+        try{
+            return getLatLng(address);
+        }catch (Exception e){
+            address = address.replaceAll("[0-9]", "");
+            return getLatLng(address);
+        }
+    }
+    public String[] getLatLng(String address) throws Exception {
 
         String apiURL = "http://api.vworld.kr/req/address";
 
-        try{
             int responseCode = 0;
             URL url = new URL(apiURL);
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
@@ -64,7 +70,6 @@ public class GeoService {
             }
             br.close();
             con.disconnect();
-
             String point = response.toString();
             JSONParser parser = new JSONParser();
             JSONObject obj = (JSONObject) parser.parse(point);
@@ -76,17 +81,7 @@ public class GeoService {
 
             return new String[] {x,y};
 
-        }catch(Exception e){
-            e.printStackTrace();
-            
-            address = address.replaceAll("[0-9]", "");
-            if (i) {
-                i = false;
-                return getGeoPoint(address);
-            } else {
-                return null;
-            }
         }
     }
-}
+
 
