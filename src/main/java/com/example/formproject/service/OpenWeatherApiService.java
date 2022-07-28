@@ -62,7 +62,7 @@ public class OpenWeatherApiService {
 
         JSONArray parse_weather = (JSONArray) parse_response.get("weather");
         JSONObject value = (JSONObject) parse_weather.get(0);
-        String weather = (value.get("description").toString().equals("약간의 구름이 낀 하늘")) ? "구름이 낀 하늘" : value.get("description").toString();
+        String weather = (value.get("description").toString().equals("약간의 구름이 낀 하늘")) ? "구름 낀 하늘" : value.get("description").toString();
         String icon = value.get("icon").toString();
         weatherResponse.setTemp(parse_response.get("temp").toString().split("\\.")[0]);
         weatherResponse.setWs(String.format("%.1f", ((double) parse_response.get("wind_speed"))));
