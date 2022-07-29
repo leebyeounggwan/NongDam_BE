@@ -65,14 +65,14 @@ public class OpenWeatherApiService {
         String weather = (value.get("description").toString().equals("약간의 구름이 낀 하늘")) ? "구름 낀 하늘" : value.get("description").toString();
         String icon = value.get("icon").toString();
         weatherResponse.setTemp(parse_response.get("temp").toString().split("\\.")[0]);
-        weatherResponse.setWs(String.format("%.1f", ((double) parse_response.get("wind_speed"))));
+        weatherResponse.setWs(String.format("%.1f", Double.parseDouble(parse_response.get("wind_speed").toString())));
         weatherResponse.setRhm(parse_response.get("humidity").toString());
         weatherResponse.setWeather(weather);
         weatherResponse.setIconURL("http://idontcare.shop/static/weathericon/"+icon+".png");
 
         String[] strAddr = address.split(" ");
         weatherResponse.setAddress(strAddr[0]+" "+strAddr[1]);
-        String dewPoint = String.format("%.1f", ((double) parse_response.get("dew_point")));
+        String dewPoint = String.format("%.1f", Double.parseDouble(parse_response.get("dew_point").toString()));
         weatherResponse.setDewPoint(dewPoint);
     }
 
