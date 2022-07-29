@@ -14,7 +14,7 @@ public class FinalValue {
     public static final String LOGIN_URL = "/member/login";
     public final static String REDIRECT_URL = "http://localhost:3000/code/auth";
 
-    public final static String FRONT_URL = "https://www.nongdam.site";
+    public final static String FRONT_URL = "https://nongdam.site";
 
     public final static String BACK_URL= "https://idontcare.shop";
 
