@@ -1,5 +1,6 @@
 package com.example.formproject.service;
 
+import com.example.formproject.configuration.RestConfig;
 import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.entity.Member;
 import com.example.formproject.repository.MemberRepository;
@@ -7,7 +8,13 @@ import com.example.formproject.security.JwtProvider;
 import com.example.formproject.security.KakaoOauth;
 import com.example.formproject.security.OAuthAttributes;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -24,8 +31,10 @@ public class OAuthService {
     private final KakaoOauth kakaoOauth;
     private final JwtProvider provider;
     private final MemberRepository memberRepository;
+    private final RestTemplate template;
+
     public String getAccessToken(String code){
-        RestTemplate template = new RestTemplate();
+
         MultiValueMap<String,Object> params = new LinkedMultiValueMap<>();
         params.add("grant_type","authorization_code");
         params.add("client_id",kakaoOauth.getKAKAO_CLIENT_ID());
@@ -45,7 +54,7 @@ public class OAuthService {
         headers.set("Authorization", "Bearer "+accessToken);
         HttpEntity request = new HttpEntity(headers);
 
-        RestTemplate template = new RestTemplate();
+
         ResponseEntity<Map> res = template.exchange(kakaoOauth.getKAKAO_USER_INFO_URL(),HttpMethod.GET,request,Map.class);
         OAuthAttributes attr = OAuthAttributes.ofKakao(null,res.getBody());
         Member m = memberRepository.findByEmail(attr.getEmail()).orElse(null);

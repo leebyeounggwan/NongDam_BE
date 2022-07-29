@@ -82,6 +82,7 @@ public class SecurityConfig {
                         response.setStatus(HttpStatus.FORBIDDEN.value());
                         PrintWriter writer = response.getWriter();
                         ObjectWriter mapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
+                        response.setHeader("Content-Type","application/json; charset=UTF-8;");
                         writer.println(mapper.writeValueAsString(new ExceptionDto("로그인이 필요한 서비스 입니다.","request")));
                     }
                 });
