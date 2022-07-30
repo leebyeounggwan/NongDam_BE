@@ -38,8 +38,8 @@ public class AccountBookService {
 
         LineChartDto ret = new LineChartDto();
 
-        LineChartDataDto income = LineChartDataDto.builder().name("수입").build();
-        LineChartDataDto spand = LineChartDataDto.builder().name("지출").build();
+        LineChartDataDto income = LineChartDataDto.builder().name("매출").build();
+        LineChartDataDto spand = LineChartDataDto.builder().name("비용").build();
         LineChartDataDto rawIncome = LineChartDataDto.builder().name("순이익").build();
         while(preDate.isBefore(now)|| preDate.isEqual(now)){
             int year = preDate.getYear();
@@ -69,8 +69,8 @@ public class AccountBookService {
         List<Object[]> spands = accountBookRepository.spandOfYear(m.getId(), pastYear.getYear());
 
         LineChartDto ret = new LineChartDto();
-        LineChartDataDto income = LineChartDataDto.builder().name("수입").build();
-        LineChartDataDto spand = LineChartDataDto.builder().name("지출").build();
+        LineChartDataDto income = LineChartDataDto.builder().name("매출").build();
+        LineChartDataDto spand = LineChartDataDto.builder().name("비용").build();
         LineChartDataDto rawIncome = LineChartDataDto.builder().name("순이익").build();
 
         while(pastYear.isBefore(now) || pastYear.isEqual(now)){
