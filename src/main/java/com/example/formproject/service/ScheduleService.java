@@ -52,7 +52,7 @@ public class ScheduleService {
         startTime = startTime.minusDays(FinalValue.getBackDayOfWeekValue(startTime.getDayOfWeek()));
         LocalDateTime endTime = yearMonth.atEndOfMonth().atTime(23,59,59);
         endTime = endTime.plusDays(FinalValue.getForwardDayOfWeekValue(endTime.getDayOfWeek()));
-        List<Schedule> schedules = scheduleRepository.findScheduleOfMonth(member.getId(),startTime,endTime);
+        List<Schedule> schedules = scheduleRepository.findScheduleOfMonth(member.getId(),startTime,endTime,year,month);
         List<ScheduleResponseDto> ret = new ArrayList<>();
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
         return ret;
