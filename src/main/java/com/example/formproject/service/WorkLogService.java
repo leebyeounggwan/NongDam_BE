@@ -203,8 +203,15 @@ public class WorkLogService {
         int year = LocalDate.now().getYear();
         float thisYear = workLogRepository.getSumWorkTimeOfYear(year,member.getId());
         float preYear = workLogRepository.getSumWorkTimeOfYear(year-1,member.getId());
+        int rate;
         String rateText=thisYear >= preYear?"증가":"감소";
-        int rate =Math.abs(100 - Math.round((thisYear/preYear) * 100));
+        if(preYear == 0 && thisYear == 0){
+            rate = 0;
+        }else if(preYear == 0 && thisYear > 0){
+            rate = 100;
+        }else {
+            rate = Math.abs(100 - Math.round((thisYear / preYear) * 100));
+        }
         return new WorkTimeRateDto(rate,rateText);
     }
 }
