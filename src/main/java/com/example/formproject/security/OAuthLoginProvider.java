@@ -2,6 +2,7 @@ package com.example.formproject.security;
 
 import com.example.formproject.entity.Images;
 import com.example.formproject.entity.Member;
+import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -25,7 +26,12 @@ public class OAuthLoginProvider implements OAuth2UserService<OAuth2UserRequest, 
         OAuth2User user = delegate.loadUser(userRequest);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
-        OAuthAttributes attr = OAuthAttributes.of(registrationId, userNameAttributeName, user.getAttributes());
+        OAuthAttributes attr = null;
+        try {
+            attr = OAuthAttributes.of(registrationId, userNameAttributeName, user.getAttributes());
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        }
         saveOrUpdate(attr);
         return new DefaultOAuth2User(Collections.emptyList(), attr.getAttributes(), userNameAttributeName);
     }
