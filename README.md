@@ -49,7 +49,9 @@
 
 <br/><br/>
 <h2>🔥 이슈 및 트러블슈팅</h2>
-<a href="https://elegant-burglar-a24.notion.site/BackEnd-TroubleShooting-56f5d95764af4b80a9818352013cc307"> 👨‍🔧 Redis, 서버 모니터링</a><br />
-<a href="https://elegant-burglar-a24.notion.site/BackEnd-TroubleShooting-CI-CD-62eda4f967a549e598aea8d9deeb1e02"> ⚙️ CI/CD </a>
+<a href="https://www.notion.so/BackEnd-TroubleShooting-Cache-56f5d95764af4b80a9818352013cc307"> 👨‍🔧 Redis</a><br />
+<a href="https://www.notion.so/BackEnd-TroubleShooting-dbe8df1e583b4c47bdf92e63a87a2313"> 🖥️ 서버 모니터링</a><br />
+<a href="https://www.notion.so/BackEnd-TroubleShooting-CI-CD-62eda4f967a549e598aea8d9deeb1e02"> ⚙️ CI/CD </a><br/>
+<a href="https://www.notion.so/BackEnd-TroubleShooting-Kakao-13d36886e5784282ba345c22df249cf3"> 🔑 카카오 로그인 </a>
 <br/><br/>
 <h2>⛳️ 추후 계획</h2>
