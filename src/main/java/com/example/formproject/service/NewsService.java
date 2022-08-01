@@ -55,12 +55,20 @@ public class NewsService {
     @UseCache(cacheKey = "tmp", ttl = 30L,unit= TimeUnit.MINUTES,timeData = false)
     public List<NewsResponseDto> getNewsInfo(String tmp) throws IOException, ParseException {
         JSONParser parser = new JSONParser();
-        JSONObject object = (JSONObject) parser.parse(getNewsData("농사",10));
+        JSONObject object = (JSONObject) parser.parse(getNewsData("농사",15));
         JSONArray newsData = (JSONArray) object.get("items");
         List<NewsResponseDto> ret = new ArrayList<>();
-        for(int i = 0; i < newsData.size(); i++){
+        int i = 0;
+        while(ret.size() != 10){
             JSONObject o = (JSONObject) newsData.get(i);
-            ret.add(new NewsResponseDto(o));
+            try{
+                ret.add(new NewsResponseDto(o));
+            }catch (IOException|IndexOutOfBoundsException e){
+
+            }
+            i++;
+            if(i >= newsData.size())
+                break;
         }
         return ret;
     }

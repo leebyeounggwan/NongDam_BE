@@ -79,7 +79,7 @@ public class MemberController {
             ),
             @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)
     })
-    public String accessTokenToMember(@RequestBody String t, HttpServletResponse response) {
+    public String accessTokenToMember(@RequestBody String t, HttpServletResponse response) throws AuthenticationException {
         JwtResponseDto dto = oAuthService.kakaoLogin(t, response);
 
         return dto.getToken();

@@ -1,39 +1,22 @@
 <h3>농장을 한 눈에 담다,</h3>
 <h1>농담 🧑‍🌾</h1>
 
-<h2>서비스 소개</h2>
-
-<span>농담은 <strong>귀농한 청년</strong> 혹은 <strong>농장 관리자</strong>에게 
-농장 운영에 필요한 데이터를 모아 제공하고 <br/>
-누적된 <strong>농장데이터 통계 분석</strong>으로 생산성을 높여주는 서비스입니다.</span>
-
 <br/><br/>
-
+<a href='https://ifh.cc/v-8HHVWl' target='_blank'><img src='https://i.esdrop.com/d/f/uGYnB1LAdo/6LyTC3ARo9.png' border='0'></a>
 <h2>서비스 핵심기능</h2>
 
-01  ⛅️ 실시간 <strong> 날씨정보</strong> 제공 [open api](https://openweathermap.org/api/one-call-api)
+01  ⛅️ 실시간 <strong> 날씨정보</strong> 제공 [open api](https://openweathermap.org/api/one-call-api) - 이병관 -  
+02   📈 지역/작물별  <strong>도/소매 시세정보</strong> 제공 [open api](https://www.kamis.or.kr/customer/reference/openapi_list.do?action=detail&boardno=2) - 이병관 -  
+03  📆 <strong>일정관리</strong> (Todo List) - 백규현 -  
+04 💵 <strong>농장장부</strong> (수입, 지출 기록) - 백규현 -  
+05   ✍️ <strong>농장일지</strong> - 이경동 -  
+06 📊 <strong>농장 관리 현황</strong> (연도별 매출현황, 수확량, 수입&지출 통계, 작업시간 통계) - 백규현 -
 
-02   📈 지역/작물별  <strong>도/소매 시세정보</strong> 제공 [open api](https://www.kamis.or.kr/customer/reference/openapi_list.do?action=detail&boardno=2)
 
-03  📆 <strong>일정관리</strong> (Todo List) 
-
-04 💵 <strong>농장장부</strong> (수입, 지출 기록)
-
-05   ✍️ <strong>농장일지</strong>
-
-06 📊 <strong>농장 관리 현황</strong> (연도별 매출현황, 수확량, 수입&지출 통계, 작업시간 통계)
 <br/><br/>
 <h2>팀 소개</h2>
 <br/>
 <strong>프로젝트 기간</strong> <br/> 22.06.24 - 22.08.05 (6주)
-
-
-<h3>Member 🧑‍💻 </h3>
-	
-<strong>FE</strong> 	손윤주, 김수진	<br/>
-<strong>BE</strong> 	백규현, 이병관, 이경동<br/>
-<strong>Designer</strong>	정기혁	
-<br/><br/>
 
 <h2>🩻 Service Architecture</h2>
 <br/><br/><br/><br/>
@@ -43,37 +26,54 @@
 
 <br/><br/><br/><br/>
 <h2>🛠 Tech & Platfrom</h2>
-
-<h3>Front-End </h3>
 <div>
-<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> 
-<img src="https://img.shields.io/badge/React Router-CA4245?style=for-the-badge&logo=React Router&logoColor=white">
-<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=black"> 
-<img src="https://img.shields.io/badge/redux-764ABC?style=for-the-badge&logo=redux&logoColor=white"> 
+<img src="https://img.shields.io/badge/IntelliJ IDEA-000000.svg?&style=for-the-badge&logo=IntelliJ IDEA&logoColor=white">
+<img src="https://img.shields.io/badge/spring Framework-6DB33F.svg?&style=for-the-badge&logo=Spring&logoColor=white">
+<img src="https://img.shields.io/badge/spring%20boot-6DB33F.svg?&style=for-the-badge&logo=Spring%20boot&logoColor=white">
+<img src="https://img.shields.io/badge/Gradle-02303A.svg?&style=for-the-badge&logo=Gradle&logoColor=white">
+<img src="https://img.shields.io/badge/JWT-000000.svg?&style=for-the-badge&logo=Json%20Web%20Tokens&logoColor=white">
 </div>
-
 <div>
-<img src="https://img.shields.io/badge/styled-components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white"> 
-<img src="https://img.shields.io/badge/html-E34F26?style=for-the-badge&logo=html&logoColor=white"> 
-<img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css&logoColor=white"> 
-<img src="https://img.shields.io/badge/Amazon S3-569A31?style=for-the-badge&logo=Amazon S3&logoColor=white"> 	
+<img src="https://img.shields.io/badge/MYSQL-2075C9.svg?&style=for-the-badge&logo=MYSQL&logoColor=white">
+<img src="https://img.shields.io/badge/REDIS-C92860.svg?&style=for-the-badge&logo=REDIS&logoColor=white">
+<img src="https://img.shields.io/badge/NGINX-009639.svg?&style=for-the-badge&logo=NGINX&logoColor=white">
+<img src="https://img.shields.io/badge/Prometheus-E6522C.svg?&style=for-the-badge&logo=Prometheus&logoColor=white">
+<img src="https://img.shields.io/badge/GRAFANA-C930C3.svg?&style=for-the-badge&logo=GRAFANA&logoColor=white">
 </div>
-<h3>Back-End </h3>
-<h3>Design </h3>
-<h3>Tools</h3>
+<div>
+<img src="https://img.shields.io/badge/jenkins-C90E05.svg?&style=for-the-badge&logo=Jenkins&logoColor=white">
+<img src="https://img.shields.io/badge/AMAZON%20EC2-58C4C7.svg?&style=for-the-badge&logo=AMAZON%20EC2&logoColor=white">
+<img src="https://img.shields.io/badge/AMAZON%20S3-C78348.svg?&style=for-the-badge&logo=AMAZON%20S3&logoColor=white">
+<img src="https://img.shields.io/badge/Swagger-85EA2D.svg?&style=for-the-badge&logo=Swagger&logoColor=white">
+</div>
 
 <br/><br/>
 <h2>📚 주요 라이브러리</h2>
+Spring Boot Admin Starter Server 2.7.2<br/>
+Lombok<br/>
+JSON Web Token 0.9.1<br/>
+Spring Boot Starter Security<br/>
+Spring Boot Starter Mail<br/>
+Spring Boot Starter AOP<br/>
+Spring Boot Starter Data JPA<br/>
+Spring Boot Starter Oauth2.0 Client<br/>
+Spring Boot Starter Web<br/>
+Spring Boot Starter Data Redis<br/>
+QueryDSL 1.0.10<br/>
+Spring Cloud Stater AWS 2.2.6<br/>
+Jackson DataBind<br/>
+Jackson DataType JSR310<br/>
+JSON Simple 1.1.1<br/>
+Jsoup 1.15.2<br/>
+Springdoc OpenAPI UI 1.6.8<br/>
+Springdoc OpenAPI Security 1.6.8<br/>
+Swagger UI 1.0<br/>
 
 <br/><br/>
 <h2>🔥 이슈 및 트러블슈팅</h2>
-<h4>FE</h4>
- <a href="https://www.notion.so/ddef012e021b485a85f85440a5af15f7" > 📒 장부 월별 내역 페이지네이션</a><br/>
-  <a href="https://www.notion.so/throttle-f4adb557f7c34fb1b2b650ef33389073" > 👉 스와이프 throttle로 렌더링 제어하기</a><br/>
- <h4>BE</h4>
-<a href="https://elegant-burglar-a24.notion.site/BackEnd-TroubleShooting-56f5d95764af4b80a9818352013cc307"> 👨‍🔧 Redis, 모니터링 툴 사용하기</a>
+<a href="https://www.notion.so/BackEnd-TroubleShooting-Cache-56f5d95764af4b80a9818352013cc307"> 👨‍🔧 Redis</a><br />
+<a href="https://www.notion.so/BackEnd-TroubleShooting-dbe8df1e583b4c47bdf92e63a87a2313"> 🖥️ 서버 모니터링</a><br />
+<a href="https://www.notion.so/BackEnd-TroubleShooting-CI-CD-62eda4f967a549e598aea8d9deeb1e02"> ⚙️ CI/CD </a><br/>
+<a href="https://www.notion.so/BackEnd-TroubleShooting-Kakao-13d36886e5784282ba345c22df249cf3"> 🔑 카카오 로그인 </a>
 <br/><br/>
 <h2>⛳️ 추후 계획</h2>
-<h4>FE - Github Actions CI/CD 구축</h4>
-<h4>FE - 디자인 적용, keyframes 애니메이션으로 UX 강화</h4>
-<h4>BE - 서버 안정화 (CPU점유율, DB응답속도 최적화)</h4>

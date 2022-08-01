@@ -13,11 +13,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import javax.net.ssl.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -42,33 +42,38 @@ public class NewsResponseDto implements Serializable {
     private String pubDate;
     private String article;
 
-    public NewsResponseDto(JSONObject object) throws IOException {
-        this.title = object.get("title").toString().replaceAll("&quot;","");
-        this.descript = object.get("description").toString().replaceAll("<b>","").replaceAll("</b>","");
+    public NewsResponseDto(JSONObject object) throws IOException,IndexOutOfBoundsException {
+        this.title = object.get("title").toString().replaceAll("&quot;", "");
+        this.descript = object.get("description").toString().replaceAll("<b>", "").replaceAll("</b>", "");
         this.link = object.get("link").toString();
         this.pubDate = object.get("pubDate").toString();
+        Connection conn = Jsoup.connect(this.link);
+        Document document = null;
         try {
-            Connection conn = Jsoup.connect(this.link);
-            Document document = conn.get();
-            Element head = document.getElementsByTag("head").get(0);
-            try {
-                this.imageUrl = head.getElementsByAttributeValue("property", "og:image").get(0).attr("content");
-            } catch (IndexOutOfBoundsException e) {
-                this.imageUrl = "";
+            document = conn.get();
+        } catch (IOException e) {
+            URL url = new URL(link);
+            HttpURLConnection connect = (HttpURLConnection) url.openConnection();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream()));
+            String tmp;
+            StringBuilder builder = new StringBuilder();
+            while ((tmp = reader.readLine()) != null) {
+                builder.append(tmp);
             }
-            try {
-                this.article = head.getElementsByAttributeValue("property", "og:article:author").get(0).attr("content");
-            } catch (IndexOutOfBoundsException e) {
-                try {
-                    head.getElementsByAttributeValue("property", "Copyright").get(0).attr("content");
-                } catch (IndexOutOfBoundsException f) {
-                    this.article = "";
-                }
-            }
-        }catch (Exception e){
-            this.imageUrl="";
-            this.article="";
+            document = Jsoup.parse(builder.toString());
         }
+        Element head = document.getElementsByTag("head").get(0);
+        this.imageUrl = head.getElementsByAttributeValue("property", "og:image").get(0).attr("content");
+        try {
+            this.article = head.getElementsByAttributeValue("property", "og:article:author").get(0).attr("content");
+        } catch (IndexOutOfBoundsException e) {
+            try {
+                this.article = head.getElementsByAttributeValue("property", "Copyright").get(0).attr("content");
+            } catch (IndexOutOfBoundsException f) {
+                throw new IndexOutOfBoundsException();
+            }
+        }
+
     }
     public void setTime() throws ParseException {
         this.time = convertTimeData(this.pubDate);

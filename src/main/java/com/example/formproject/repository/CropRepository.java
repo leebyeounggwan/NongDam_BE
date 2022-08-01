@@ -1,7 +1,6 @@
 package com.example.formproject.repository;
 
 import com.example.formproject.entity.Crop;
-import com.example.formproject.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

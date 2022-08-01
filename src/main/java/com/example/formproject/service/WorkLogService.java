@@ -13,6 +13,7 @@ import com.example.formproject.security.MemberDetail;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.AopInvocationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -201,10 +202,27 @@ public class WorkLogService {
     @Transactional(readOnly = true)
     public WorkTimeRateDto getWorkingRate(Member member){
         int year = LocalDate.now().getYear();
-        float thisYear = workLogRepository.getSumWorkTimeOfYear(year,member.getId());
-        float preYear = workLogRepository.getSumWorkTimeOfYear(year-1,member.getId());
+        float thisYear;
+        float preYear;
+        try {
+            thisYear = workLogRepository.getSumWorkTimeOfYear(year, member.getId());
+        }catch (AopInvocationException e){
+            thisYear = 0;
+        }
+        try {
+            preYear = workLogRepository.getSumWorkTimeOfYear(year - 1, member.getId());
+        }catch (AopInvocationException e){
+            preYear = 0;
+        }
+        int rate;
         String rateText=thisYear >= preYear?"증가":"감소";
-        int rate =Math.abs(100 - Math.round((thisYear/preYear) * 100));
+        if(preYear == 0 && thisYear == 0){
+            rate = 0;
+        }else if(preYear == 0 && thisYear > 0){
+            rate = 100;
+        }else {
+            rate = Math.abs(100 - Math.round((thisYear / preYear) * 100));
+        }
         return new WorkTimeRateDto(rate,rateText);
     }
 }

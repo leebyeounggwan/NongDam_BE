@@ -3,6 +3,7 @@ package com.example.formproject.service;
 import com.example.formproject.configuration.RestConfig;
 import com.example.formproject.dto.response.JwtResponseDto;
 import com.example.formproject.entity.Member;
+import com.example.formproject.exception.AuthenticationException;
 import com.example.formproject.repository.MemberRepository;
 import com.example.formproject.security.JwtProvider;
 import com.example.formproject.security.KakaoOauth;
@@ -47,7 +48,7 @@ public class OAuthService {
         return ret.get("access_token").toString();
     }
     @Transactional
-    public JwtResponseDto kakaoLogin(String code, HttpServletResponse response){
+    public JwtResponseDto kakaoLogin(String code, HttpServletResponse response) throws AuthenticationException {
         String accessToken = getAccessToken(code);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
