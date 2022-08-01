@@ -46,7 +46,7 @@
 
 <br/><br/>
 <h2>📚 주요 라이브러리</h2>
-spring Boot Admin Starter Server 2.7.2<br/>
+Spring Boot Admin Starter Server 2.7.2<br/>
 Lombok<br/>
 JSON Web Token 0.9.1<br/>
 Spring Boot Starter Security<br/>
