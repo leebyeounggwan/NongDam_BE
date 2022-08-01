@@ -5,14 +5,14 @@
 
 <h2>서비스 핵심기능</h2>
 
-01  ⛅️ 실시간 <strong> 날씨정보</strong> 제공 [open api](https://openweathermap.org/api/one-call-api) - 이병관 -
-02   📈 지역/작물별  <strong>도/소매 시세정보</strong> 제공 [open api](https://www.kamis.or.kr/customer/reference/openapi_list.do?action=detail&boardno=2) - 이병관 -
-03  📆 <strong>일정관리</strong> (Todo List) - 백규현 -
-04 💵 <strong>농장장부</strong> (수입, 지출 기록) - 백규현 -
-
-05   ✍️ <strong>농장일지</strong> - 이경동 -
-
+01  ⛅️ 실시간 <strong> 날씨정보</strong> 제공 [open api](https://openweathermap.org/api/one-call-api) - 이병관 -  
+02   📈 지역/작물별  <strong>도/소매 시세정보</strong> 제공 [open api](https://www.kamis.or.kr/customer/reference/openapi_list.do?action=detail&boardno=2) - 이병관 -  
+03  📆 <strong>일정관리</strong> (Todo List) - 백규현 -  
+04 💵 <strong>농장장부</strong> (수입, 지출 기록) - 백규현 -  
+05   ✍️ <strong>농장일지</strong> - 이경동 -  
 06 📊 <strong>농장 관리 현황</strong> (연도별 매출현황, 수확량, 수입&지출 통계, 작업시간 통계) - 백규현 -
+
+
 <br/><br/>
 <h2>팀 소개</h2>
 <br/>
