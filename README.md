@@ -2,7 +2,7 @@
 <h1>농담 🧑‍🌾</h1>
 
 <br/><br/>
-
+<a href='https://ifh.cc/v-8HHVWl' target='_blank'><img src='https://i.esdrop.com/d/f/uGYnB1LAdo/6LyTC3ARo9.png' border='0'></a>
 <h2>서비스 핵심기능</h2>
 
 01  ⛅️ 실시간 <strong> 날씨정보</strong> 제공 [open api](https://openweathermap.org/api/one-call-api) - 이병관 -  
@@ -28,16 +28,20 @@
 <h2>🛠 Tech & Platfrom</h2>
 <div>
 <img src="https://img.shields.io/badge/spring%20boot-9FC919.svg?&style=for-the-badge&logo=Spring&logoColor=white">
-<img src="https://img.shields.io/badge/jenkins-C90E05.svg?&style=for-the-badge&logo=Jenkins&logoColor=white">
 <img src="https://img.shields.io/badge/JWT-1BC5C9.svg?&style=for-the-badge&logo=Json%20Web%20Tokens&logoColor=white">
 <img src="https://img.shields.io/badge/MYSQL-2075C9.svg?&style=for-the-badge&logo=MYSQL&logoColor=white">
+<img src="https://img.shields.io/badge/REDIS-C92860.svg?&style=for-the-badge&logo=REDIS&logoColor=white">
 </div>
 <div>
-<img src="https://img.shields.io/badge/GRAFANA-C930C3.svg?&style=for-the-badge&logo=GRAFANA&logoColor=white">
-<img src="https://img.shields.io/badge/REDIS-C92860.svg?&style=for-the-badge&logo=REDIS&logoColor=white">
 <img src="https://img.shields.io/badge/NGINX-3FC752.svg?&style=for-the-badge&logo=NGINX&logoColor=white">
-<img src="https://img.shields.io/badge/AMAZON%20C2-58C4C7.svg?&style=for-the-badge&logo=AMAZON%20EC2&logoColor=white">
+<img src="https://img.shields.io/badge/Prometheus-E6522C.svg?&style=for-the-badge&logo=Prometheus&logoColor=white">
+<img src="https://img.shields.io/badge/GRAFANA-C930C3.svg?&style=for-the-badge&logo=GRAFANA&logoColor=white">
+<img src="https://img.shields.io/badge/jenkins-C90E05.svg?&style=for-the-badge&logo=Jenkins&logoColor=white">
+</div>
+<div>
+<img src="https://img.shields.io/badge/AMAZON%20EC2-58C4C7.svg?&style=for-the-badge&logo=AMAZON%20EC2&logoColor=white">
 <img src="https://img.shields.io/badge/AMAZON%20S3-C78348.svg?&style=for-the-badge&logo=AMAZON%20S3&logoColor=white">
+<img src="https://img.shields.io/badge/GitHub-181717.svg?&style=for-the-badge&logo=GitHub&logoColor=white">
 </div>
 
 <br/><br/>
