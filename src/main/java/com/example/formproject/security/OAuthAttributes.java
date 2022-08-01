@@ -1,6 +1,7 @@
 package com.example.formproject.security;
 
 import com.example.formproject.entity.Member;
+import com.example.formproject.exception.AuthenticationException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class OAuthAttributes {
     private String email;
     private String picture;
 
-    public static OAuthAttributes of(String serviceType, String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes of(String serviceType, String userNameAttributeName, Map<String, Object> attributes) throws AuthenticationException {
         if (serviceType.equals("naver"))
             return ofNaver(userNameAttributeName, attributes);
         else if (serviceType.equals("google"))
@@ -62,9 +63,11 @@ public class OAuthAttributes {
                 .build();
     }
 
-    public static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) throws AuthenticationException {
         Map<String, Object> accountInfo = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> profile = (Map<String, Object>) accountInfo.get("profile");
+        if(!Boolean.parseBoolean(accountInfo.get("has_email").toString()))
+            throw new AuthenticationException("이메일 항목 제공이 필요합니다.","email");
         return OAuthAttributes.builder()
                 .name((String) profile.get("nickname"))
                 .email((String) accountInfo.get("email"))
