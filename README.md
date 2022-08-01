@@ -28,7 +28,7 @@
 <h2>🛠 Tech & Platfrom</h2>
 <div>
 <img src="https://img.shields.io/badge/spring%20boot-9FC919.svg?&style=for-the-badge&logo=Spring&logoColor=white">
-<img src="https://img.shields.io/badge/JWT-1BC5C9.svg?&style=for-the-badge&logo=Json%20Web%20Tokens&logoColor=white">
+<img src="https://img.shields.io/badge/JWT-000000.svg?&style=for-the-badge&logo=Json%20Web%20Tokens&logoColor=white">
 <img src="https://img.shields.io/badge/MYSQL-2075C9.svg?&style=for-the-badge&logo=MYSQL&logoColor=white">
 <img src="https://img.shields.io/badge/REDIS-C92860.svg?&style=for-the-badge&logo=REDIS&logoColor=white">
 </div>
@@ -46,6 +46,25 @@
 
 <br/><br/>
 <h2>📚 주요 라이브러리</h2>
+spring Boot Admin Starter Server 2.7.2<br/>
+Lombok<br/>
+JSON Web Token 0.9.1<br/>
+Spring Boot Starter Security<br/>
+Spring Boot Starter Mail<br/>
+Spring Boot Starter AOP<br/>
+Spring Boot Starter Data JPA<br/>
+Spring Boot Starter Oauth2.0 Client<br/>
+Spring Boot Starter Web<br/>
+Spring Boot Starter Data Redis<br/>
+QueryDSL 1.0.10<br/>
+Spring Cloud Stater AWS 2.2.6<br/>
+Jackson DataBind<br/>
+Jackson DataType JSR310<br/>
+JSON Simple 1.1.1<br/>
+Jsoup 1.15.2<br/>
+Springdoc OpenAPI UI 1.6.8<br/>
+Springdoc OpenAPI Security 1.6.8<br/>
+Swagger UI 1.0<br/>
 
 <br/><br/>
 <h2>🔥 이슈 및 트러블슈팅</h2>
