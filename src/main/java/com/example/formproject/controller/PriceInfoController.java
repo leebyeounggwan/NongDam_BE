@@ -2,7 +2,6 @@ package com.example.formproject.controller;
 
 import com.example.formproject.FinalValue;
 import com.example.formproject.dto.request.PriceInfoRequestDto;
-import com.example.formproject.dto.request.PriceRequestDto;
 import com.example.formproject.dto.response.DailyPriceResponseDto;
 import com.example.formproject.dto.response.PriceInfoDto;
 import com.example.formproject.entity.Crop;
@@ -21,8 +20,6 @@ import org.json.simple.parser.ParseException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
