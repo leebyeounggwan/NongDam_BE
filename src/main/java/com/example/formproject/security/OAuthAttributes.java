@@ -70,7 +70,7 @@ public class OAuthAttributes {
         Map<String, Object> accountInfo = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> profile = (Map<String, Object>) accountInfo.get("profile");
         if(Objects.isNull(accountInfo.get("email")))
-            throw new AuthenticationException("이메일 항목 제공이 필요합니다.","email");
+            throw new AuthenticationException("이메일 항목 제공이 필요합니다. ※ 브라우저 케시를 삭제후 다시 시도해 주세요.","email");
         return OAuthAttributes.builder()
                 .name((String) profile.get("nickname"))
                 .email((String) accountInfo.get("email"))
