@@ -19,10 +19,9 @@ public class PriceRequestDto {
     @Schema(type = "String",example = "month")
     private String data;
 
-    public PriceRequestDto dailyPriceRequestDto(int cropId, String productClsCode) {
+    public PriceRequestDto (String productClsCode, int cropId) {
         this.cropId = cropId;
         this.productClsCode = productClsCode;
-        return this;
     }
 
     public PriceRequestDto(int cropId, String data) {
