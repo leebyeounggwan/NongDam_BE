@@ -30,9 +30,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class PriceInfoController {
-
     private final PriceInfoService priceInfoService;
     private final CropRepository cropRepository;
+
+
     @GetMapping("/todaymarketprice/{cropId}/{productClsCode}")
     @Operation(summary = "당일 시세 조회")
     @ApiResponses(value = {
@@ -45,16 +46,13 @@ public class PriceInfoController {
     @Parameter(in = ParameterIn.PATH,name = "productClsCode",description = "도/소매",example = "소매",required = true)
     public DailyPriceResponseDto todayPriceInfo(@PathVariable("cropId") int cropId, @PathVariable("productClsCode")String productClsCode,
                                                 @AuthenticationPrincipal MemberDetail memberdetail) throws ParseException {
-        PriceRequestDto priceRequestDto = new PriceRequestDto().dailyPriceRequestDto(cropId, productClsCode);
+        Crop crop = cropRepository.findById(cropId).orElseThrow(() -> new NullPointerException("해당 작물이 없습니다."));
+        CacheKey cacheKey = new CacheKey(memberdetail, productClsCode, crop);
+        PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, memberdetail, productClsCode);
 
-        Crop crop = cropRepository.findById(priceRequestDto.getCropId()).orElseThrow(() -> new NullPointerException("해당 작물이 없습니다."));
-        String type = productClsCode;
-        String country = memberdetail.getMember().getCountryCode()+"";
-        String countryCode = (country.equals("0")) ? "1101" : country;
-        String cacheKey = cropId + countryCode + type;
-        PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
-        return priceInfoService.dailyPrice(priceInfoRequestDto, cacheKey);
+        return priceInfoService.dailyPrice(priceInfoRequestDto, cacheKey.key);
     }
+
     @GetMapping("/marketprice")
     @Operation(summary = "선택한 작물의 월별/연도별 시세 조회")
     @ApiResponses(value = {
@@ -67,17 +65,11 @@ public class PriceInfoController {
     @Parameter(in = ParameterIn.PATH,name = "data",description = "월별/연도별 선택",example = "month",required = true)
     public List<PriceInfoDto> priceInfo(@RequestParam int cropId, @RequestParam String data,
                                         @AuthenticationPrincipal MemberDetail memberdetail) throws ParseException {
-        PriceRequestDto priceRequestDto = new PriceRequestDto(cropId, data);
-        Crop crop = cropRepository.findById(priceRequestDto.getCropId()).orElseThrow(() -> new NullPointerException("해당 작물이 없습니다."));
-        String type = data;
-        String country = memberdetail.getMember().getCountryCode()+"";
-        String countryCode = (country.equals("0")) ? "1101" : country;
-        String cacheKey = cropId + countryCode + type;
+        Crop crop = cropRepository.findById(cropId).orElseThrow(() -> new NullPointerException("해당 작물이 없습니다."));
+        CacheKey cacheKey = new CacheKey(memberdetail, data, crop);
+        PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, data, memberdetail);
 
-        PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
-        List<PriceInfoDto> reponseDto = (priceInfoRequestDto.getData().equals("month")) ? priceInfoService.monthlyPrice(priceInfoRequestDto, cacheKey) : priceInfoService.yearlyPrice(priceInfoRequestDto, cacheKey);
-
-        return reponseDto;
+        return priceInfoService.monthAndYearPrice(priceInfoRequestDto, cacheKey.key);
     }
 
     @GetMapping("/marketprices/{data}")
@@ -93,55 +85,35 @@ public class PriceInfoController {
             @PathVariable String data,
             @AuthenticationPrincipal MemberDetail memberdetail) throws ParseException {
 
-
         List<List<PriceInfoDto>> responseDtoList = new ArrayList<>();
         List<Crop> crops = memberdetail.getMember().getCrops();
-        String type = data;
-        String country = memberdetail.getMember().getCountryCode()+"";
-        String countryCode = (country.equals("0")) ? "1101" : country;
 
         if (crops.size() != 0) {
             for (Crop crop : crops) {
-                int cropId = crop.getId();
-                String cacheKey = cropId + countryCode + type;
-                PriceRequestDto priceRequestDto = new PriceRequestDto(crop.getId(), data);
-                PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
-                List<PriceInfoDto> reponseDto = (priceInfoRequestDto.getData().equals("month")) ? priceInfoService.monthlyPrice(priceInfoRequestDto, cacheKey) : priceInfoService.yearlyPrice(priceInfoRequestDto, cacheKey);
+                CacheKey cacheKey = new CacheKey(memberdetail, data, crop);
+                PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, data, memberdetail);
+                List<PriceInfoDto> reponseDto = priceInfoService.monthAndYearPrice(priceInfoRequestDto, cacheKey.key);
+
                 responseDtoList.add(reponseDto);
             }
         }
         return responseDtoList;
     }
 
-/*    @GetMapping("/marketprices/year")
-    @Operation(summary = "내가 등록한 모든 작물의 연도별 시세 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PriceInfoDto.class)) }),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요",content = @Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류",content = @Content)})
-    public List<List<PriceInfoDto>> myPriceInfoYear(@AuthenticationPrincipal MemberDetail memberdetail) throws ParseException {
+    private static class CacheKey {
+        String type;
+        String country;
+        String countryCode;
+        int cropId;
+        String key;
 
-
-        List<List<PriceInfoDto>> responseDtoList = new ArrayList<>();
-        List<Crop> crops = memberdetail.getMember().getCrops();
-        String type = "year";
-        String country = memberdetail.getMember().getCountryCode()+"";
-        String countryCode = (country.equals("0")) ? "1101" : country;
-
-        if (crops.size() != 0) {
-            for (Crop crop : crops) {
-                int cropId = crop.getId();
-                String cacheKey = cropId + countryCode + type;
-                PriceRequestDto priceRequestDto = new PriceRequestDto(crop.getId(), "year");
-                System.out.println(crop.getType());
-                System.out.println(crop.getKind());
-                PriceInfoRequestDto priceInfoRequestDto = new PriceInfoRequestDto(crop, priceRequestDto, memberdetail);
-                List<PriceInfoDto> reponseDto = priceInfoService.yearlyPrice(priceInfoRequestDto, cacheKey);
-                responseDtoList.add(reponseDto);
-            }
+        private CacheKey(MemberDetail memberdetail, String data, Crop crop) {
+            this.type = data;
+            this.country = memberdetail.getMember().getCountryCode()+"";
+            this.countryCode = (country.equals("0")) ? "1101" : country;
+            this.cropId = crop.getId();
+            this.key = cropId + countryCode + type;
         }
-        return responseDtoList;
-    }*/
+    }
+
 }

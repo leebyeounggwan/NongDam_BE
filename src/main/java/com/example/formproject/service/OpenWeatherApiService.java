@@ -37,9 +37,7 @@ public class OpenWeatherApiService {
         // 주간 기온
         WeatherDto dailyTemp = setTempList(obj, "daily");
 
-        WeatherResponse weatherResponse = new WeatherResponse(currentTempDto, hourlyTemp, dailyTemp);
-
-        return weatherResponse;
+        return new WeatherResponse(currentTempDto, hourlyTemp, dailyTemp);
     }
 
 
