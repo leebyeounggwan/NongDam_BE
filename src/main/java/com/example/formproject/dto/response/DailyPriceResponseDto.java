@@ -1,14 +1,10 @@
 package com.example.formproject.dto.response;
 
-import com.example.formproject.dto.request.PriceApiRequestVariableDto;
-import com.example.formproject.dto.request.PriceInfoRequestDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import com.example.formproject.enums.CountryCode;
-import com.example.formproject.enums.CropTypeCode;
 
 
 @Getter
