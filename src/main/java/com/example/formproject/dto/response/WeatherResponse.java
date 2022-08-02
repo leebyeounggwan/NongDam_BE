@@ -3,13 +3,10 @@ package com.example.formproject.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 public class WeatherResponse {
-
-
     // 기온
     @Schema(type = "String",example = "25")
     private String temp;
@@ -37,19 +34,24 @@ public class WeatherResponse {
     //이슬점
     @Schema(type = "String",example = "22.3")
     private String dewPoint;
+
     //시간별 날씨
     private WeatherDto hour;
     //주간 날씨
     private WeatherDto day;
 
+    public WeatherResponse(CurrentTempDto currentTempDto, WeatherDto hourlyTemp, WeatherDto dailyTemp) {
+        this.temp = currentTempDto.getTemp();
+        this.rn = currentTempDto.getRn();
+        this.sn = currentTempDto.getSn();
+        this.ws = currentTempDto.getWs();
+        this.rhm = currentTempDto.getRhm();
+        this.weather = currentTempDto.getWeather();
+        this.iconURL = currentTempDto.getIconURL();
+        this.address = currentTempDto.getAddress();
+        this.dewPoint = currentTempDto.getDewPoint();
+        this.hour = hourlyTemp;
+        this.day = dailyTemp;
+    }
 }
 
-    /*{
-    기온 / 날씨 / 강수량 / 습도 / 바람 (하루기준)
-        minTamp : 5.5 (최저기온)
-            maxTamp : 20.4 (최고 기온)
-        sumRn : 2 (일 강수량)
-        avgWs : 2 (평균 풍속)
-        avgRhm: 3 (평균 상대 습도)
-        weather : “” (날씨)
-    }*/

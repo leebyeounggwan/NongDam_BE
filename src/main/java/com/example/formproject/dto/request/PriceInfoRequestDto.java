@@ -35,16 +35,26 @@ public class PriceInfoRequestDto {
     private int month = dateTime.getMonthOfYear();
     private int day = dateTime.getDayOfMonth();
 
-    public PriceInfoRequestDto(Crop crop, PriceRequestDto priceRequestDto, MemberDetail memberdetail) {
+    public PriceInfoRequestDto(Crop crop, String data, MemberDetail memberdetail) {
 
-        this.productClsCode = priceRequestDto.getProductClsCode();
-        this.gradeRank = priceRequestDto.getGradeRank();
+        this.productClsCode = null;
+        this.gradeRank = null;
         this.category = crop.getCategory();
         this.type = crop.getType();
         this.kind = crop.getKind();
         this.name = crop.getName();
         this.countryCode = memberdetail.getMember().getCountryCode()+"";
-        this.data = priceRequestDto.getData();
+        this.data = data;
+    }
+    public PriceInfoRequestDto(Crop crop, MemberDetail memberdetail, String clsCode) {
+        this.productClsCode = clsCode;
+        this.gradeRank = null;
+        this.category = crop.getCategory();
+        this.type = crop.getType();
+        this.kind = crop.getKind();
+        this.name = crop.getName();
+        this.countryCode = memberdetail.getMember().getCountryCode()+"";
+        this.data = null;
     }
 }
 

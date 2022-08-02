@@ -19,6 +19,12 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -359,6 +365,20 @@ class FormProjectApplicationTests {
         // 작업일지 삭제
         ResponseEntity<String> deleteResponse = restTemplate.exchange("/worklog/"+body.getId(),HttpMethod.DELETE,request,String.class);
         Assertions.assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    }
+
+    @Test
+    void Http테스트() throws IOException {
+        String link = "http://www.ddanzi.com/744864957";
+        URL url = new URL(link);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String tmp;
+        StringBuilder builder = new StringBuilder();
+        while((tmp = reader.readLine()) != null){
+            builder.append(tmp);
+        }
 
     }
 }

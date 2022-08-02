@@ -1,16 +1,20 @@
 package com.example.formproject.security;
 
 import com.example.formproject.entity.Member;
+import com.example.formproject.exception.AuthenticationException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Builder
 @Getter
 @Setter
+@Slf4j
 public class OAuthAttributes {
     private Map<String, Object> attributes;
 
@@ -21,7 +25,7 @@ public class OAuthAttributes {
     private String email;
     private String picture;
 
-    public static OAuthAttributes of(String serviceType, String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes of(String serviceType, String userNameAttributeName, Map<String, Object> attributes) throws AuthenticationException {
         if (serviceType.equals("naver"))
             return ofNaver(userNameAttributeName, attributes);
         else if (serviceType.equals("google"))
@@ -62,9 +66,11 @@ public class OAuthAttributes {
                 .build();
     }
 
-    public static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) throws AuthenticationException {
         Map<String, Object> accountInfo = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> profile = (Map<String, Object>) accountInfo.get("profile");
+        if(Objects.isNull(accountInfo.get("email")))
+            throw new AuthenticationException("이메일 항목 제공이 필요합니다. ※ 브라우저 케시를 삭제후 다시 시도해 주세요.","email");
         return OAuthAttributes.builder()
                 .name((String) profile.get("nickname"))
                 .email((String) accountInfo.get("email"))

@@ -18,6 +18,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +39,18 @@ public class ScheduleService {
     }
     @Transactional(readOnly = true)
     public List<ScheduleResponseDto> findScheduleOfWeek(Member member){
-        LocalDateTime now = LocalDate.now().atTime(23,59,59);
-        LocalDateTime lastWeek = now.minusWeeks(1L).toLocalDate().atTime(0,0,0);
+        LocalDateTime now = getSameWeek(LocalDate.now(),DayOfWeek.MONDAY).atTime(0,0,0);
+        LocalDateTime lastWeek = getNextWeek(LocalDate.now(),DayOfWeek.SUNDAY).atTime(23,59,59);
         List<Schedule> schedules = scheduleRepository.findScheduleLastWeek(member.getId(),now,lastWeek);
         List<ScheduleResponseDto> ret = new ArrayList<>();
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
         return ret;
+    }
+    private LocalDate getSameWeek(LocalDate d,DayOfWeek day){
+        return d.with(TemporalAdjusters.previousOrSame(day));
+    }
+    private LocalDate getNextWeek(LocalDate d,DayOfWeek day){
+        return d.with(TemporalAdjusters.nextOrSame(day));
     }
     @Transactional(readOnly = true)
     public List<ScheduleResponseDto> findScheduleOfMonth(Member member,int year,int month){
@@ -52,7 +59,7 @@ public class ScheduleService {
         startTime = startTime.minusDays(FinalValue.getBackDayOfWeekValue(startTime.getDayOfWeek()));
         LocalDateTime endTime = yearMonth.atEndOfMonth().atTime(23,59,59);
         endTime = endTime.plusDays(FinalValue.getForwardDayOfWeekValue(endTime.getDayOfWeek()));
-        List<Schedule> schedules = scheduleRepository.findScheduleOfMonth(member.getId(),startTime,endTime);
+        List<Schedule> schedules = scheduleRepository.findScheduleOfMonth(member.getId(),startTime,endTime,year,month);
         List<ScheduleResponseDto> ret = new ArrayList<>();
         schedules.stream().forEach(e-> ret.add(new ScheduleResponseDto(e)));
         return ret;
