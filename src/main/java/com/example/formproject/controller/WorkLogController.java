@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,17 +67,17 @@ public class WorkLogController {
         return workLogService.getWorkLogList(detail);
     }
 
-    @GetMapping("/workloglist")
-    @Operation(summary = "작업일지 전체조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = WorkLogRequestDto.class))}),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
-            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
-    public Page<WorkLogResponseDto> getWorkLogListPage(@AuthenticationPrincipal MemberDetail detail) throws JsonProcessingException {
-        return workLogService.getWorkLogListPage(detail);
-    }
+//    @GetMapping("/worklog")
+//    @Operation(summary = "작업일지 전체조회")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_OK, description = "응답 완료",
+//                    content = {@Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = WorkLogRequestDto.class))}),
+//            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_FORBIDDEN, description = "로그인 필요", content = @Content),
+//            @ApiResponse(responseCode = FinalValue.HTTPSTATUS_SERVERERROR, description = "서버 오류", content = @Content)})
+//    public Page<WorkLogResponseDto> getWorkLogListPage(@AuthenticationPrincipal MemberDetail detail) throws JsonProcessingException {
+//        return workLogService.getWorkLogListPage(detail);
+//    }
 
     @DeleteMapping("/worklog/{worklogid}")
     public void deleteWorkLog(@PathVariable Long worklogid, @AuthenticationPrincipal MemberDetail details) {
