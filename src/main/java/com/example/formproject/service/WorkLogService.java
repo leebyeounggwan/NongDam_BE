@@ -14,6 +14,8 @@ import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.AopInvocationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,7 +49,8 @@ public class WorkLogService {
                 LocalDate finalTmp = tmp;
                 if (!ret.hasLabel(finalTmp.format(DateTimeFormatter.ofPattern("yyyy.MM"))))
                     ret.addLabel(finalTmp.format(DateTimeFormatter.ofPattern("yyyy.MM")));
-                Object[] data = datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == finalTmp.getYear() && Integer.parseInt(e[1].toString()) == finalTmp.getMonthValue()).findFirst().orElse(null);
+                Object[] data = datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == finalTmp.getYear()
+                                && Integer.parseInt(e[1].toString()) == finalTmp.getMonthValue()).findFirst().orElse(null);
                 dto.addData(data == null ? 0 : Integer.parseInt(data[2].toString()));
                 tmp = tmp.plusMonths(1L);
             }
@@ -70,7 +73,8 @@ public class WorkLogService {
                 LocalDate finalTmp = tmp;
                 if (!ret.hasLabel(Integer.toString(finalTmp.getYear())))
                     ret.addLabel(Integer.toString(finalTmp.getYear()));
-                Object[] data = datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == finalTmp.getYear()).findFirst().orElse(null);
+                Object[] data = datas.stream().filter(
+                        e -> Integer.parseInt(e[0].toString()) == finalTmp.getYear()).findFirst().orElse(null);
                 dto.addData(data == null ? 0 : Integer.parseInt(data[1].toString()));
                 tmp = tmp.plusYears(1L);
             }
@@ -89,10 +93,12 @@ public class WorkLogService {
         for (int idx = 1; idx < 5; idx++) {
             int finalIdx = idx;
             LineChartDataDto data = LineChartDataDto.builder().name(idx + "분기").build();
-            Object[] preYearData = preYear.stream().filter(e -> Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
+            Object[] preYearData = preYear.stream().filter(
+                    e -> Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
             int number1 = preYearData == null ? 0 : Integer.parseInt(preYearData[2].toString());
             data.addData(number1);
-            Object[] thisYearData = thisYear.stream().filter(e -> Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
+            Object[] thisYearData = thisYear.stream().filter(
+                    e -> Integer.parseInt(e[1].toString()) == finalIdx).findFirst().orElse(null);
             int number2 = thisYearData == null ? 0 : Integer.parseInt(thisYearData[2].toString());
             data.addData(number2);
             ret.addData(data);
@@ -122,6 +128,13 @@ public class WorkLogService {
     }
 
     @Transactional(readOnly = true)
+    public Page<WorkLogResponseDto> getWorkLogListPage(MemberDetail detail) throws IllegalArgumentException {
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        Page<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByIdDesc(detail.getMember(), pageRequest);
+        return workLogList.map(workLog -> new WorkLogResponseDto(workLog, new CropDto(workLog.getCrop())));
+    }
+
+    @Transactional(readOnly = true)
     public WorkLogResponseDto getWorkLogDetails(Long worklogid, int memberId) {
         WorkLog workLog = workLogRepository.findById(worklogid).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -131,13 +144,17 @@ public class WorkLogService {
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
         try {
             Tuple next = queryDslRepository.selectNextWorkLog(memberId, worklogid);
-            ret.setNextWorkLogInfo(new SubWorkLogResponseDto(next.get(0,Long.class),next.get(1,String.class),next.get(2,LocalDate.class).format(FinalValue.DAY_FORMATTER)));
+            ret.setNextWorkLogInfo(new SubWorkLogResponseDto(
+                    next.get(0,Long.class),next.get(1,String.class),
+                    next.get(2,LocalDate.class).format(FinalValue.DAY_FORMATTER)));
         }catch (IndexOutOfBoundsException e){
             ret.setNextWorkLogInfo(null);
         }
         try {
             Tuple pre = queryDslRepository.selectPreviousWorkLog(memberId, worklogid);
-            ret.setPreviousWorkLogInfo(new SubWorkLogResponseDto(pre.get(0,Long.class),pre.get(1,String.class),pre.get(2,LocalDate.class).format(FinalValue.DAY_FORMATTER)));
+            ret.setPreviousWorkLogInfo(new SubWorkLogResponseDto(
+                    pre.get(0,Long.class),pre.get(1,String.class),
+                    pre.get(2,LocalDate.class).format(FinalValue.DAY_FORMATTER)));
         }catch (IndexOutOfBoundsException e){
             ret.setPreviousWorkLogInfo(null);
         }

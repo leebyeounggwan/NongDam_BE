@@ -2,6 +2,8 @@ package com.example.formproject.repository;
 
 import com.example.formproject.entity.Member;
 import com.example.formproject.entity.WorkLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,7 +32,6 @@ public interface WorkLogRepository extends JpaRepository<WorkLog, Long> {
     @Query("Select sum(this_.workTime) from WorkLog this_ where year(this_.date)=:year and this_.member.id=:id")
     public int getSumWorkTimeOfYear(@Param("year")int year,@Param("id")int id);
 
-
-
     List<WorkLog> findAllByMemberOrderByIdDesc(Member member);
+    Page<WorkLog> findAllByMemberOrderByIdDesc(Member member, PageRequest pageRequest);
 }
