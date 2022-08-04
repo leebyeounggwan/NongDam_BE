@@ -50,7 +50,7 @@ public class WorkLogService {
                 if (!ret.hasLabel(finalTmp.format(DateTimeFormatter.ofPattern("yyyy.MM"))))
                     ret.addLabel(finalTmp.format(DateTimeFormatter.ofPattern("yyyy.MM")));
                 Object[] data = datas.stream().filter(e -> Integer.parseInt(e[0].toString()) == finalTmp.getYear()
-                                && Integer.parseInt(e[1].toString()) == finalTmp.getMonthValue()).findFirst().orElse(null);
+                        && Integer.parseInt(e[1].toString()) == finalTmp.getMonthValue()).findFirst().orElse(null);
                 dto.addData(data == null ? 0 : Integer.parseInt(data[2].toString()));
                 tmp = tmp.plusMonths(1L);
             }
@@ -123,7 +123,7 @@ public class WorkLogService {
         List<WorkLogResponseDto> responseDtoList = new ArrayList<>();
         List<WorkLog> workLogList = workLogRepository.findAllByMemberOrderByIdDesc(detail.getMember());
         for (WorkLog log : workLogList)
-            responseDtoList.add(new WorkLogResponseDto(log,new CropDto(log.getCrop())));
+            responseDtoList.add(new WorkLogResponseDto(log, new CropDto(log.getCrop())));
         return responseDtoList;
     }
 
@@ -140,22 +140,22 @@ public class WorkLogService {
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         WorkLogResponseDto ret;
         if (workLog.getMember().getId() == memberId) {
-            ret =  new WorkLogResponseDto(workLog, new CropDto(workLog.getCrop()));
+            ret = new WorkLogResponseDto(workLog, new CropDto(workLog.getCrop()));
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
         try {
             Tuple next = queryDslRepository.selectNextWorkLog(memberId, worklogid);
             ret.setNextWorkLogInfo(new SubWorkLogResponseDto(
-                    next.get(0,Long.class),next.get(1,String.class),
-                    next.get(2,LocalDate.class).format(FinalValue.DAY_FORMATTER)));
-        }catch (IndexOutOfBoundsException e){
+                    next.get(0, Long.class), next.get(1, String.class),
+                    next.get(2, LocalDate.class).format(FinalValue.DAY_FORMATTER)));
+        } catch (IndexOutOfBoundsException e) {
             ret.setNextWorkLogInfo(null);
         }
         try {
             Tuple pre = queryDslRepository.selectPreviousWorkLog(memberId, worklogid);
             ret.setPreviousWorkLogInfo(new SubWorkLogResponseDto(
-                    pre.get(0,Long.class),pre.get(1,String.class),
-                    pre.get(2,LocalDate.class).format(FinalValue.DAY_FORMATTER)));
-        }catch (IndexOutOfBoundsException e){
+                    pre.get(0, Long.class), pre.get(1, String.class),
+                    pre.get(2, LocalDate.class).format(FinalValue.DAY_FORMATTER)));
+        } catch (IndexOutOfBoundsException e) {
             ret.setPreviousWorkLogInfo(null);
         }
         return ret;
@@ -173,7 +173,7 @@ public class WorkLogService {
                     String fileKey = urlArr[urlArr.length - 1];
                     s3Service.deleteFile(fileKey);
                 } catch (AmazonS3Exception e) {
-                   log.warn("삭제할 파일 없음");
+                    log.warn("삭제할 파일 없음");
                 }
             }
             workLogRepository.deleteById(worklogid);
@@ -216,30 +216,31 @@ public class WorkLogService {
             workLogRepository.save(workLog);
         } else throw new IllegalArgumentException("작성자 본인이 아닙니다.");
     }
+
     @Transactional(readOnly = true)
-    public WorkTimeRateDto getWorkingRate(Member member){
+    public WorkTimeRateDto getWorkingRate(Member member) {
         int year = LocalDate.now().getYear();
         float thisYear;
         float preYear;
         try {
             thisYear = workLogRepository.getSumWorkTimeOfYear(year, member.getId());
-        }catch (AopInvocationException e){
+        } catch (AopInvocationException e) {
             thisYear = 0;
         }
         try {
             preYear = workLogRepository.getSumWorkTimeOfYear(year - 1, member.getId());
-        }catch (AopInvocationException e){
+        } catch (AopInvocationException e) {
             preYear = 0;
         }
         int rate;
-        String rateText=thisYear >= preYear?"증가":"감소";
-        if(preYear == 0 && thisYear == 0){
+        String rateText = thisYear >= preYear ? "증가" : "감소";
+        if (preYear == 0 && thisYear == 0) {
             rate = 0;
-        }else if(preYear == 0 && thisYear > 0){
+        } else if (preYear == 0 && thisYear > 0) {
             rate = 100;
-        }else {
+        } else {
             rate = Math.abs(100 - Math.round((thisYear / preYear) * 100));
         }
-        return new WorkTimeRateDto(rate,rateText);
+        return new WorkTimeRateDto(rate, rateText);
     }
 }
