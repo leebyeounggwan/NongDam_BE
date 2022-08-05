@@ -32,8 +32,8 @@ public class Member extends TimeStamp {
     @Column
     private String name;
 
-    @Column(unique = true)
-    @NotBlank
+    @Column(unique = true,nullable = false)
+    @NotNull
     @Email(message = "이메일")
     private String email;
 
