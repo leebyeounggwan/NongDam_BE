@@ -6,7 +6,7 @@
 <h2>서비스 핵심기능</h2>
 
 01  ⛅️ 실시간 <strong> 날씨정보</strong> 제공 [open api](https://openweathermap.org/api/one-call-api) - 이병관 -  
-02   📈 지역/작물별  <strong>도/소매 시세정보</strong> 제공 [open api](https://www.kamis.or.kr/customer/reference/openapi_list.do?action=detail&boardno=2) - 이병관 -  
+02   📈 지역/작물별  <strong>도/소매 시세 정보</strong> 제공 [open api](https://www.kamis.or.kr/customer/reference/openapi_list.do?action=detail&boardno=2) - 이병관 -  
 03  📆 <strong>일정관리</strong> (Todo List) - 백규현 -  
 04 💵 <strong>농장장부</strong> (수입, 지출 기록) - 백규현 -  
 05   ✍️ <strong>농장일지</strong> - 이경동 -  
@@ -71,7 +71,7 @@ Springdoc OpenAPI Security 1.6.8<br/>
 Swagger UI 1.0<br/>
 
 <br/><br/>
-<h2>🔥 이슈 및 트러블슈팅</h2>
+<h2>🔥 이슈 및 트러블 슈팅</h2>
 <a href="https://www.notion.so/BackEnd-TroubleShooting-Cache-56f5d95764af4b80a9818352013cc307"> 👨‍🔧 Redis</a><br />
 <a href="https://www.notion.so/BackEnd-TroubleShooting-dbe8df1e583b4c47bdf92e63a87a2313"> 🖥️ 서버 모니터링</a><br />
 <a href="https://www.notion.so/BackEnd-TroubleShooting-CI-CD-62eda4f967a549e598aea8d9deeb1e02"> ⚙️ CI/CD </a><br/>
